@@ -11,8 +11,8 @@
     </div>
 
     <!-- Jurisdicción / Alcance de datos -->
-    <div class="scope-badge" [class.scoped]="auth.currentUser().scopeType !== 'global'">
-      <app-icon name="map-pin" size="xs" [color]="auth.currentUser().scopeType !== 'global' ? 'var(--forest-green)' : '#718096'"></app-icon>
+    <div class="scope-badge" [class.scoped]="auth.currentUser()?.scopeType !== 'global'">
+      <app-icon name="map-pin" size="xs" [color]="auth.currentUser()?.scopeType !== 'global' ? 'var(--forest-green)' : '#718096'"></app-icon>
       <span>{{ auth.scopeBadge() }}</span>
     </div>
   </div>
@@ -25,7 +25,7 @@
         <app-icon name="user-check" size="xs" color="var(--forest-green)"></app-icon>
         <span>Ver como:</span>
       </label>
-      <select [value]="auth.currentUser().roleCode" (change)="onRoleChange($event)" class="role-select">
+      <select [value]="auth.currentUser()?.roleCode ?? 'ADMIN'" (change)="onRoleChange($event)" class="role-select">
         <option value="ADMIN">Director General (Admin)</option>
         <option value="FINANCE">Contador (Finanzas)</option>
         <option value="COORDINATOR">Coordinador Santa Cruz</option>

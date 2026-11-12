@@ -1,0 +1,36 @@
+<div class="forbidden-page">
+  <div class="forbidden-card">
+    <div class="icon-wrap">
+      <app-icon name="shield-x" size="48px" color="#e11d48"></app-icon>
+    </div>
+
+    <h1 class="forbidden-title">Acceso Restringido</h1>
+    <p class="forbidden-desc">
+      Tu rol de usuario (<strong>{{ auth.currentUser()?.roleName }}</strong>) no dispone de los permisos
+      necesarios para consultar o administrar este módulo.
+    </p>
+
+    <div class="scope-info">
+      <div class="scope-row">
+        <span class="label">Alcance asignado:</span>
+        <span class="value">{{ auth.currentUser()?.scopeLabel }}</span>
+      </div>
+      <div class="scope-row">
+        <span class="label">Código de Rol:</span>
+        <span class="badge-role">{{ auth.currentUser()?.roleCode }}</span>
+      </div>
+    </div>
+
+    <div class="actions-group">
+      <a routerLink="/dashboard" class="btn btn-primary">
+        <app-icon name="home" size="18px" color="#ffffff"></app-icon>
+        <span>Ir al Dashboard</span>
+      </a>
+
+      <button type="button" class="btn btn-secondary" (click)="auth.switchUser('ADMIN')">
+        <app-icon name="user-check" size="18px" color="#232046"></app-icon>
+        <span>Cambiar a Administrador</span>
+      </button>
+    </div>
+  </div>
+</div>

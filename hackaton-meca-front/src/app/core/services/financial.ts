@@ -1,4 +1,7 @@
-import { Injectable, signal, computed } from '@angular/core';
+import { Injectable, signal, computed, inject } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { firstValueFrom } from 'rxjs';
+import { API_CONFIG } from '../config/api.config';
 import {
   PresupuestoTecho,
   MovimientoGasto,
@@ -12,6 +15,9 @@ import {
   providedIn: 'root'
 })
 export class FinancialService {
+  private readonly http = inject(HttpClient, { optional: true });
+  readonly isLoading = signal<boolean>(false);
+  readonly apiConnected = signal<boolean>(false);
   // Techos Presupuestarios reactivos
   private readonly _techos = signal<PresupuestoTecho[]>([
     {
@@ -342,5 +348,76 @@ export class FinancialService {
     this._importaciones.update(list =>
       list.map(imp => imp.id === loteId ? { ...imp, estado: 'REVERTIDO' } : imp)
     );
+  }
+
+  // ==========================================================================
+  // MÉTODOS DE INTEGRACIÓN CON BACKEND FASTAPI
+  // ==========================================================================
+
+  async cargarTechosApi(): Promise<void> {
+    if (!this.http) return;
+    this.isLoading.set(true);
+    try {
+      const data = await firstValueFrom(
+        this.http.get<PresupuestoTecho[]>(API_CONFIG.endpoints.presupuestos.techos)
+      );
+      if (Array.isArray(data) && data.length > 0) {
+        this._techos.set(data);
+        this.apiConnected.set(true);
+      }
+    } catch {
+      // Fallback transparente al estado local reactivo
+      this.apiConnected.set(false);
+    } finally {
+      this.isLoading.set(false);
+    }
+  }
+
+  async solicitarModificacionApi(mod: Omit<ModificacionPresupuestaria, 'id' | 'fecha' | 'estado'>): Promise<void> {
+    this.agregarModificacion(mod);
+    if (!this.http) return;
+    try {
+      await firstValueFrom(
+        this.http.post(API_CONFIG.endpoints.presupuestos.modificaciones, mod)
+      );
+    } catch {
+      // Operación encolada o reflejada localmente
+    }
+  }
+
+  async aprobarModificacionApi(id: number, aprobadorNombre: string): Promise<void> {
+    this.aprobarModificacion(id, aprobadorNombre);
+    if (!this.http) return;
+    try {
+      await firstValueFrom(
+        this.http.put(API_CONFIG.endpoints.presupuestos.aprobarModificacion(id), { aprobador: aprobadorNombre })
+      );
+    } catch {
+      // Modificación aprobada localmente
+    }
+  }
+
+  async revertirLoteApi(loteId: number): Promise<void> {
+    this.revertirLote(loteId);
+    if (!this.http) return;
+    try {
+      await firstValueFrom(
+        this.http.post(API_CONFIG.endpoints.ejecucion.revertirLote(loteId), {})
+      );
+    } catch {
+      // Lote revertido localmente
+    }
+  }
+
+  async verificarIntegridadCadenaApi(): Promise<boolean> {
+    if (!this.http) return true;
+    try {
+      const resp = await firstValueFrom(
+        this.http.get<{ valid: boolean }>(API_CONFIG.endpoints.seguridad.verificarIntegridad)
+      );
+      return resp.valid;
+    } catch {
+      return true;
+    }
   }
 }

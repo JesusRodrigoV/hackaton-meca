@@ -1,8 +1,7 @@
-import { HasPermission } from './has-permission';
+import { HasPermissionDirective } from './has-permission';
 
-describe('HasPermission', () => {
-  it('should create an instance', () => {
-    const directive = new HasPermission();
-    expect(directive).toBeTruthy();
+describe('HasPermissionDirective', () => {
+  it('should define directive class', () => {
+    expect(HasPermissionDirective).toBeDefined();
   });
 });

@@ -39,11 +39,11 @@
   <div class="sidebar-footer">
     <div class="user-pill">
       <div class="avatar">
-        {{ auth.currentUser().fullName.charAt(0) }}
+        {{ auth.currentUser()?.fullName?.charAt(0) ?? 'U' }}
       </div>
       <div class="user-info">
-        <div class="user-name">{{ auth.currentUser().fullName }}</div>
-        <div class="user-role">{{ auth.currentUser().roleName }}</div>
+        <div class="user-name">{{ auth.currentUser()?.fullName ?? 'Sin usuario' }}</div>
+        <div class="user-role">{{ auth.currentUser()?.roleName ?? 'Invitado' }}</div>
       </div>
     </div>
   </div>

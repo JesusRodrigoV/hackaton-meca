@@ -1,5 +1,5 @@
 import { Component, inject, signal } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { AuthService, PRESET_USERS } from '../../../core/auth/auth';
 import { BoxIconComponent } from '../../../shared/components/box-icon/box-icon';
@@ -12,6 +12,7 @@ import { BoxIconComponent } from '../../../shared/components/box-icon/box-icon';
 })
 export class Login {
   private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
   private readonly authService = inject(AuthService);
 
   readonly email = signal<string>('admin@ensenaporbolivia.org');
@@ -59,7 +60,8 @@ export class Login {
     if (preset) {
       this.email.set(preset.email);
       this.authService.switchUser(roleKey);
-      this.router.navigate(['/dashboard']);
+      const returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/dashboard';
+      this.router.navigateByUrl(returnUrl);
     }
   }
 
@@ -84,7 +86,8 @@ export class Login {
         this.authService.switchUser('ADMIN');
       }
 
-      this.router.navigate(['/dashboard']);
+      const returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/dashboard';
+      this.router.navigateByUrl(returnUrl);
     }, 400);
   }
 }

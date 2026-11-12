@@ -1,0 +1,103 @@
+.forbidden-page {
+  min-height: calc(100vh - 120px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1rem;
+}
+
+.forbidden-card {
+  max-width: 480px;
+  width: 100%;
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  padding: 2.5rem 2rem;
+  text-align: center;
+  box-shadow: var(--shadow-md);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  .icon-wrap {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background-color: var(--rosewood-subtle);
+    border: 1px solid var(--rosewood-border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1.25rem;
+  }
+
+  .forbidden-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--space-indigo);
+    margin-bottom: 0.5rem;
+    letter-spacing: -0.02em;
+  }
+
+  .forbidden-desc {
+    font-size: 0.875rem;
+    color: var(--color-text-secondary);
+    line-height: 1.5;
+    margin-bottom: 1.5rem;
+
+    strong {
+      color: var(--deep-space-blue);
+    }
+  }
+
+  .scope-info {
+    width: 100%;
+    background-color: #f8fafc;
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    padding: 0.875rem 1rem;
+    margin-bottom: 1.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    text-align: left;
+
+    .scope-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.8125rem;
+
+      .label {
+        color: var(--color-text-muted);
+        font-weight: 500;
+      }
+
+      .value {
+        color: var(--deep-space-blue);
+        font-weight: 600;
+      }
+
+      .badge-role {
+        padding: 0.15rem 0.45rem;
+        border-radius: 4px;
+        background-color: rgba(35, 32, 70, 0.08);
+        color: var(--space-indigo);
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 0.6875rem;
+        font-weight: 700;
+      }
+    }
+  }
+
+  .actions-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    width: 100%;
+
+    .btn {
+      width: 100%;
+    }
+  }
+}
