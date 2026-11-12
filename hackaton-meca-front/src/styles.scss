@@ -1,80 +1,58 @@
 /* ==========================================================================
-   PALETA OFICIAL MEJORADA - ENSEÑA POR BOLIVIA (WEB PÚBLICA)
+   SISTEMA DE DISEÑO INSTITUCIONAL - ENSEÑA POR BOLIVIA
+   Paleta Oficial: Bright Snow, Midnight Indigo, Forest Green, Tuscan Sun, Deep Space Blue, Rosewood
    ========================================================================== */
 
-/* CSS HEX Variables */
 :root {
-  --bright-snow: #f8f9faff;
-  --space-indigo: #2b255cff;
-  --forest-green: #00923dff;
-  --tuscan-sun: #ecc562ff;
-  --deep-space-blue: #0d2439ff;
+  /* Paleta Base Oficial */
+  --bright-snow: #f8f9fa;
+  --space-indigo: #232046;
+  --forest-green: #00923d;
+  --forest-green-hover: #007832;
+  --forest-green-subtle: rgba(0, 146, 61, 0.09);
+  --forest-green-border: rgba(0, 146, 61, 0.25);
+  --forest-green-text: #007531;
 
-  /* Aliases para compatibilidad y semántica */
-  --cerulean: var(--forest-green);
-  --mint-leaf: var(--forest-green);
+  --tuscan-sun: #ecc562;
+  --tuscan-sun-subtle: rgba(236, 197, 98, 0.22);
+  --tuscan-sun-border: rgba(236, 197, 98, 0.45);
+  --tuscan-sun-text: #7c5e10;
+
+  --deep-space-blue: #0d2439;
+  --deep-space-subtle: rgba(13, 36, 57, 0.06);
+
   --rosewood: #e11d48;
+  --rosewood-hover: #be123c;
+  --rosewood-subtle: rgba(225, 29, 72, 0.09);
+  --rosewood-border: rgba(225, 29, 72, 0.25);
+  --rosewood-text: #be123c;
 
-  /* Semántica de Aplicación */
+  /* Neutros Estructurados */
   --color-bg: var(--bright-snow);
   --color-surface: #ffffff;
+  --color-border: #e2e8f0;
+  --color-border-subtle: #f1f5f9;
+
   --color-text-primary: var(--deep-space-blue);
-  --color-text-secondary: #4a5568;
-  --color-text-muted: #718096;
-  --color-primary: var(--space-indigo);
-  --color-accent: var(--forest-green);
-  --color-success: var(--forest-green);
+  --color-text-secondary: #475569;
+  --color-text-muted: #64748b;
+
+  /* Tokens Semánticos */
+  --color-primary: var(--forest-green);
+  --color-primary-hover: var(--forest-green-hover);
+  --color-brand: var(--space-indigo);
   --color-warning: var(--tuscan-sun);
   --color-danger: var(--rosewood);
-  --color-border: #e2e8f0;
+  --color-success: var(--forest-green);
+
+  /* Sombras Tintadas Suaves */
+  --shadow-sm: 0 1px 2px rgba(13, 36, 57, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(13, 36, 57, 0.07), 0 2px 4px -2px rgba(13, 36, 57, 0.05);
+  --shadow-lg: 0 10px 15px -3px rgba(13, 36, 57, 0.08), 0 4px 6px -4px rgba(13, 36, 57, 0.04);
 }
-
-/* CSS HSL Variables */
-:root {
-  --bright-snow-hsl: hsla(210, 17%, 98%, 1);
-  --space-indigo-hsl: hsla(247, 43%, 25%, 1);
-  --forest-green-hsl: hsla(145, 100%, 29%, 1);
-  --tuscan-sun-hsl: hsla(43, 78%, 65%, 1);
-  --deep-space-blue-hsl: hsla(209, 63%, 14%, 1);
-}
-
-/* SCSS Variables (Hex) */
-$bright-snow: #f8f9faff;
-$space-indigo: #2b255cff;
-$forest-green: #00923dff;
-$tuscan-sun: #ecc562ff;
-$deep-space-blue: #0d2439ff;
-$cerulean: #00923dff;
-$mint-leaf: #00923dff;
-$rosewood: #e11d48;
-
-/* SCSS Variables (HSL) */
-$bright-snow-hsl: hsla(210, 17%, 98%, 1);
-$space-indigo-hsl: hsla(247, 43%, 25%, 1);
-$forest-green-hsl: hsla(145, 100%, 29%, 1);
-$tuscan-sun-hsl: hsla(43, 78%, 65%, 1);
-$deep-space-blue-hsl: hsla(209, 63%, 14%, 1);
-
-/* SCSS Variables (RGB) */
-$bright-snow-rgb: rgba(248, 249, 250, 1);
-$space-indigo-rgb: rgba(43, 37, 92, 1);
-$forest-green-rgb: rgba(0, 146, 61, 1);
-$tuscan-sun-rgb: rgba(236, 197, 98, 1);
-$deep-space-blue-rgb: rgba(13, 36, 57, 1);
-
-/* SCSS Gradients */
-$gradient-top: linear-gradient(0deg, #f8f9faff, #2b255cff, #00923dff, #ecc562ff, #0d2439ff);
-$gradient-right: linear-gradient(90deg, #f8f9faff, #2b255cff, #00923dff, #ecc562ff, #0d2439ff);
-$gradient-bottom: linear-gradient(180deg, #f8f9faff, #2b255cff, #00923dff, #ecc562ff, #0d2439ff);
-$gradient-left: linear-gradient(270deg, #f8f9faff, #2b255cff, #00923dff, #ecc562ff, #0d2439ff);
-$gradient-top-right: linear-gradient(45deg, #f8f9faff, #2b255cff, #00923dff, #ecc562ff, #0d2439ff);
-$gradient-bottom-right: linear-gradient(135deg, #f8f9faff, #2b255cff, #00923dff, #ecc562ff, #0d2439ff);
-$gradient-top-left: linear-gradient(225deg, #f8f9faff, #2b255cff, #00923dff, #ecc562ff, #0d2439ff);
-$gradient-bottom-left: linear-gradient(315deg, #f8f9faff, #2b255cff, #00923dff, #ecc562ff, #0d2439ff);
-$gradient-radial: radial-gradient(#f8f9faff, #2b255cff, #00923dff, #ecc562ff, #0d2439ff);
 
 /* ==========================================================================
-   ESTILOS GLOBALES BASE
+   RESET & TIPOGRAFÍA BASE
    ========================================================================== */
 
 * {
@@ -84,16 +62,248 @@ $gradient-radial: radial-gradient(#f8f9faff, #2b255cff, #00923dff, #ecc562ff, #0
 }
 
 body {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  background-color: var(--bright-snow);
-  color: var(--deep-space-blue);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  background-color: var(--color-bg);
+  color: var(--color-text-primary);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  line-height: 1.5;
 }
 
-/* Tipografía de cifras contables */
+/* Cifras numéricas contables de alta legibilidad */
 .tabular-nums, .numeric-data {
-  font-family: 'JetBrains Mono', 'Roboto Mono', monospace;
+  font-family: 'JetBrains Mono', 'SF Mono', 'Roboto Mono', Menlo, Consolas, monospace;
   font-variant-numeric: tabular-nums;
   text-align: right;
 }
+
+/* ==========================================================================
+   COMPONENTES UI COMPARTIDOS (BOTONES, BADGES, TABLAS, FORMULARIOS)
+   ========================================================================== */
+
+/* Botones Base */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.15s ease;
+  user-select: none;
+  white-space: nowrap;
+
+  &:active {
+    transform: translateY(1px);
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+  }
+}
+
+.btn-primary {
+  background-color: var(--forest-green);
+  color: #ffffff;
+  border-color: var(--forest-green);
+  box-shadow: var(--shadow-sm);
+
+  &:hover:not(:disabled) {
+    background-color: var(--forest-green-hover);
+    border-color: var(--forest-green-hover);
+  }
+}
+
+.btn-secondary {
+  background-color: #ffffff;
+  color: var(--deep-space-blue);
+  border-color: #cbd5e1;
+  box-shadow: var(--shadow-sm);
+
+  &:hover:not(:disabled) {
+    background-color: #f8fafc;
+    border-color: #94a3b8;
+  }
+}
+
+.btn-brand {
+  background-color: var(--space-indigo);
+  color: #ffffff;
+  border-color: var(--space-indigo);
+  box-shadow: var(--shadow-sm);
+
+  &:hover:not(:disabled) {
+    background-color: #1a1738;
+    border-color: #1a1738;
+  }
+}
+
+.btn-danger {
+  background-color: var(--rosewood-subtle);
+  color: var(--rosewood-text);
+  border-color: var(--rosewood-border);
+
+  &:hover:not(:disabled) {
+    background-color: var(--rosewood);
+    color: #ffffff;
+    border-color: var(--rosewood);
+  }
+}
+
+.btn-icon-sm {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  background-color: #f8fafc;
+  border: 1px solid var(--color-border);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition: all 0.15s ease;
+
+  &:hover {
+    background-color: var(--forest-green-subtle);
+    border-color: var(--forest-green-border);
+    color: var(--forest-green);
+  }
+}
+
+/* Badges y Pastillas de Estado */
+.status-badge, .badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.25rem 0.55rem;
+  border-radius: 6px;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.status-ok, .status-approved, .badge-success {
+  background-color: var(--forest-green-subtle);
+  color: var(--forest-green-text);
+  border: 1px solid var(--forest-green-border);
+}
+
+.status-warning, .status-draft, .badge-warning {
+  background-color: var(--tuscan-sun-subtle);
+  color: var(--tuscan-sun-text);
+  border: 1px solid var(--tuscan-sun-border);
+}
+
+.status-danger, .status-rejected, .badge-danger {
+  background-color: var(--rosewood-subtle);
+  color: var(--rosewood-text);
+  border: 1px solid var(--rosewood-border);
+}
+
+.status-neutral, .badge-neutral {
+  background-color: #f1f5f9;
+  color: var(--color-text-secondary);
+  border: 1px solid var(--color-border);
+}
+
+.badge-fin, .badge-indigo {
+  background-color: rgba(35, 32, 70, 0.08);
+  color: var(--space-indigo);
+  border: 1px solid rgba(35, 32, 70, 0.2);
+}
+
+/* Contenedores y Tarjetas */
+.card {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  padding: 1.25rem;
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow 0.15s ease;
+}
+
+/* Tablas Maestras */
+.table-container {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  overflow-x: auto;
+  box-shadow: var(--shadow-sm);
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8125rem;
+
+  th {
+    background-color: #f8fafc;
+    color: var(--color-text-secondary);
+    font-weight: 700;
+    text-align: left;
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--color-border);
+    white-space: nowrap;
+    text-transform: uppercase;
+    font-size: 0.725rem;
+    letter-spacing: 0.05em;
+  }
+
+  td {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--color-border-subtle);
+    color: var(--deep-space-blue);
+    vertical-align: middle;
+  }
+
+  tbody tr {
+    transition: background-color 0.1s ease;
+
+    &:hover {
+      background-color: #f8fafc;
+    }
+
+    &.row-alert {
+      background-color: rgba(225, 29, 72, 0.03);
+    }
+  }
+}
+
+/* Entradas de Formularios */
+.form-input, .form-select {
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  background-color: #ffffff;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.8125rem;
+  color: var(--deep-space-blue);
+  outline: none;
+  font-family: inherit;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+
+  &:focus {
+    border-color: var(--forest-green);
+    box-shadow: 0 0 0 3px rgba(0, 146, 61, 0.15);
+  }
+}
+
+/* Clases de Utilidad Tipográfica y de Color */
+.text-forest { color: var(--forest-green-text); }
+.text-brand { color: var(--space-indigo); }
+.text-warning { color: var(--tuscan-sun-text); }
+.text-danger { color: var(--rosewood); }
+.text-muted { color: var(--color-text-muted); }
+.text-secondary { color: var(--color-text-secondary); }
+.font-bold { font-weight: 700; }
+.font-medium { font-weight: 600; }
+.font-mono { font-family: 'JetBrains Mono', monospace; }
+

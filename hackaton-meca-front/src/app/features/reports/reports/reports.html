@@ -8,7 +8,7 @@
     </div>
     <div class="header-right">
       <button type="button" class="btn-action" (click)="imprimirReporte()">
-        <app-icon name="printer" size="18px" color="#1b2a49"></app-icon>
+        <app-icon name="printer" size="18px" color="#0d2439"></app-icon>
         <span>Imprimir / PDF</span>
       </button>
       <button type="button" class="btn-primary" (click)="exportarReporteActual()">
@@ -135,7 +135,7 @@
             <tbody>
               @for (f of reportePorFinanciador(); track f.nombre) {
                 <tr>
-                  <td class="font-bold text-cerulean">{{ f.nombre }}</td>
+                  <td class="font-bold text-forest">{{ f.nombre }}</td>
                   <td class="tabular-nums">{{ f.inicial | number:'1.2-2' }}</td>
                   <td class="tabular-nums">{{ f.modif | number:'1.2-2' }}</td>
                   <td class="tabular-nums font-bold">{{ f.vigente | number:'1.2-2' }}</td>
@@ -242,7 +242,7 @@
               @for (item of techos(); track item.id) {
                 <tr>
                   <td>
-                    <span class="font-mono text-cerulean font-bold">{{ item.codigoCuenta }}</span>
+                    <span class="font-mono text-forest font-bold">{{ item.codigoCuenta }}</span>
                     {{ item.nombreCuenta }}
                   </td>
                   <td class="tabular-nums">{{ (item.montoEjecutadoBob * 0.3) | number:'1.2-2' }}</td>
@@ -325,7 +325,7 @@
                   <td><span class="badge-fin">{{ log.accion }}</span></td>
                   <td>{{ log.entidadId }}</td>
                   <td><code class="text-xs font-mono">{{ log.hashPrevio.substring(0, 12) }}...</code></td>
-                  <td><code class="text-xs font-mono text-cerulean">{{ log.hashActual.substring(0, 12) }}...</code></td>
+                  <td><code class="text-xs font-mono text-forest">{{ log.hashActual.substring(0, 12) }}...</code></td>
                   <td>
                     <span class="status-pill ok">
                       <app-icon name="check" size="12px" color="#00923d"></app-icon>

@@ -23,7 +23,7 @@
   <section class="kpi-grid">
     <div class="kpi-card">
       <div class="kpi-icon-wrap bg-indigo-subtle">
-        <app-icon name="wallet" size="24px" color="#1b2a49"></app-icon>
+        <app-icon name="wallet" size="24px" color="#232046"></app-icon>
       </div>
       <div class="kpi-content">
         <span class="kpi-label">Presupuesto Vigente</span>
@@ -33,7 +33,7 @@
     </div>
 
     <div class="kpi-card">
-      <div class="kpi-icon-wrap bg-cerulean-subtle">
+      <div class="kpi-icon-wrap bg-forest-subtle">
         <app-icon name="line-chart" size="24px" color="#00923d"></app-icon>
       </div>
       <div class="kpi-content">
@@ -55,11 +55,11 @@
     </div>
 
     <div class="kpi-card">
-      <div class="kpi-icon-wrap" [class.bg-mint-subtle]="kpis().saldoDisponibleBob >= 0" [class.bg-rose-subtle]="kpis().saldoDisponibleBob < 0">
+      <div class="kpi-icon-wrap" [class.bg-forest-subtle]="kpis().saldoDisponibleBob >= 0" [class.bg-rose-subtle]="kpis().saldoDisponibleBob < 0">
         <app-icon
           [name]="kpis().saldoDisponibleBob >= 0 ? 'check-circle' : 'error-circle'"
           size="24px"
-          [color]="kpis().saldoDisponibleBob >= 0 ? '#00923d' : '#b24c63'"
+          [color]="kpis().saldoDisponibleBob >= 0 ? '#00923d' : '#e11d48'"
         ></app-icon>
       </div>
       <div class="kpi-content">
@@ -73,7 +73,7 @@
 
     <div class="kpi-card">
       <div class="kpi-icon-wrap bg-rose-subtle">
-        <app-icon name="bell" size="24px" color="#b24c63"></app-icon>
+        <app-icon name="bell" size="24px" color="#e11d48"></app-icon>
       </div>
       <div class="kpi-content">
         <span class="kpi-label">Alertas de Presupuesto</span>
@@ -101,7 +101,7 @@
     <div class="chart-card">
       <div class="card-header">
         <div class="card-title-group">
-          <app-icon name="bar-chart-alt-2" size="20px" color="#1b2a49"></app-icon>
+          <app-icon name="bar-chart-alt-2" size="20px" color="#232046"></app-icon>
           <h3>Presupuesto vs Ejecución por Región</h3>
         </div>
         <span class="card-badge">Consolidado Geográfico</span>
@@ -117,7 +117,7 @@
     <div class="section-card">
       <div class="card-header">
         <div class="card-title-group">
-          <app-icon name="error-circle" size="20px" color="#b24c63"></app-icon>
+          <app-icon name="error-circle" size="20px" color="#e11d48"></app-icon>
           <h3>Partidas con sobregiro o próximas al límite</h3>
         </div>
         <a routerLink="/presupuestos/techos" class="btn-link">Ver todas las partidas →</a>
@@ -172,7 +172,7 @@
                 </td>
                 <td>
                   <a routerLink="/presupuestos/modificaciones" class="btn-action-sm" title="Solicitar Modificación / Traspaso">
-                    <app-icon name="transfer" size="16px" color="#00923d"></app-icon>
+                    <app-icon name="transfer" size="14px" color="currentColor"></app-icon>
                     <span>Traspasar</span>
                   </a>
                 </td>

@@ -15,6 +15,7 @@
     font-size: 1.5rem;
     font-weight: 700;
     color: var(--space-indigo);
+    letter-spacing: -0.02em;
   }
 
   .page-subtitle {
@@ -28,7 +29,7 @@
       display: inline-flex;
       align-items: center;
       gap: 0.5rem;
-      background-color: var(--cerulean);
+      background-color: var(--forest-green);
       color: #ffffff;
       border: none;
       padding: 0.5rem 1rem;
@@ -36,10 +37,15 @@
       font-size: 0.875rem;
       font-weight: 600;
       cursor: pointer;
-      transition: background-color 0.15s ease;
+      box-shadow: var(--shadow-sm);
+      transition: background-color 0.15s ease, transform 0.1s ease;
 
       &:hover {
-        background-color: #006c94;
+        background-color: var(--forest-green-hover);
+      }
+
+      &:active {
+        transform: translateY(1px);
       }
     }
   }
@@ -50,7 +56,7 @@
   border: 1px solid var(--color-border);
   border-radius: 8px;
   overflow-x: auto;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+  box-shadow: var(--shadow-sm);
 }
 
 .data-table {
@@ -61,17 +67,20 @@
   th {
     background-color: #f8fafc;
     color: var(--color-text-secondary);
-    font-weight: 600;
+    font-weight: 700;
     text-align: left;
     padding: 0.75rem 0.875rem;
     border-bottom: 1px solid var(--color-border);
     white-space: nowrap;
+    text-transform: uppercase;
+    font-size: 0.725rem;
+    letter-spacing: 0.05em;
   }
 
   td {
     padding: 0.75rem 0.875rem;
-    border-bottom: 1px solid #f1f5f9;
-    color: var(--space-indigo);
+    border-bottom: 1px solid var(--color-border-subtle);
+    color: var(--deep-space-blue);
     vertical-align: middle;
   }
 
@@ -82,7 +91,7 @@
   .ref-cell {
     font-family: 'JetBrains Mono', monospace;
     font-weight: 700;
-    color: var(--cerulean);
+    color: var(--forest-green-text);
   }
 
   .date-cell {
@@ -99,13 +108,15 @@
     font-weight: 700;
 
     &.tipo-traspaso {
-      background-color: #eff6ff;
-      color: var(--cerulean);
+      background-color: rgba(35, 32, 70, 0.08);
+      color: var(--space-indigo);
+      border: 1px solid rgba(35, 32, 70, 0.18);
     }
 
     &.tipo-incremento {
-      background-color: #ecfdf5;
-      color: var(--mint-leaf);
+      background-color: var(--forest-green-subtle);
+      color: var(--forest-green-text);
+      border: 1px solid var(--forest-green-border);
     }
   }
 
@@ -126,7 +137,7 @@
       }
       .acc {
         font-weight: 600;
-        color: var(--space-indigo);
+        color: var(--deep-space-blue);
       }
     }
   }
@@ -138,7 +149,7 @@
 
   .user-text {
     font-size: 0.75rem;
-    color: var(--space-indigo);
+    color: var(--deep-space-blue);
   }
 
   .status-badge {
@@ -147,17 +158,30 @@
     border-radius: 4px;
     font-size: 0.6875rem;
     font-weight: 700;
+    letter-spacing: 0.03em;
 
-    &.status-approved { background-color: #ecfdf5; color: var(--mint-leaf); }
-    &.status-draft { background-color: #fffbeb; color: #b45309; }
-    &.status-rejected { background-color: #fdf2f2; color: var(--rosewood); }
+    &.status-approved {
+      background-color: var(--forest-green-subtle);
+      color: var(--forest-green-text);
+      border: 1px solid var(--forest-green-border);
+    }
+    &.status-draft {
+      background-color: var(--tuscan-sun-subtle);
+      color: var(--tuscan-sun-text);
+      border: 1px solid var(--tuscan-sun-border);
+    }
+    &.status-rejected {
+      background-color: var(--rosewood-subtle);
+      color: var(--rosewood-text);
+      border: 1px solid var(--rosewood-border);
+    }
   }
 
   .btn-approve {
     display: inline-flex;
     align-items: center;
-    gap: 0.25rem;
-    background-color: var(--mint-leaf);
+    gap: 0.35rem;
+    background-color: var(--forest-green);
     color: #ffffff;
     border: none;
     border-radius: 6px;
@@ -165,10 +189,11 @@
     font-size: 0.75rem;
     font-weight: 600;
     cursor: pointer;
+    box-shadow: var(--shadow-sm);
     transition: background-color 0.15s ease;
 
     &:hover {
-      background-color: #059669;
+      background-color: var(--forest-green-hover);
     }
   }
 }
@@ -177,7 +202,7 @@
 .modal-backdrop {
   position: fixed;
   inset: 0;
-  background-color: rgba(27, 42, 73, 0.4);
+  background-color: rgba(13, 36, 57, 0.45);
   backdrop-filter: blur(2px);
   display: flex;
   align-items: center;
@@ -191,8 +216,9 @@
   border-radius: 12px;
   width: 100%;
   max-width: 540px;
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-lg);
   overflow: hidden;
+  border: 1px solid var(--color-border);
 }
 
 .modal-header {
@@ -201,6 +227,7 @@
   justify-content: space-between;
   padding: 1.25rem 1.5rem;
   border-bottom: 1px solid var(--color-border);
+  background-color: #f8fafc;
 
   .modal-title-group {
     display: flex;
@@ -221,9 +248,10 @@
     line-height: 1;
     color: var(--color-text-muted);
     cursor: pointer;
+    transition: color 0.15s;
 
     &:hover {
-      color: var(--space-indigo);
+      color: var(--deep-space-blue);
     }
   }
 }
@@ -242,7 +270,7 @@
     label {
       font-size: 0.8125rem;
       font-weight: 600;
-      color: var(--space-indigo);
+      color: var(--deep-space-blue);
     }
 
     input, select, textarea {
@@ -250,97 +278,68 @@
       border: 1px solid var(--color-border);
       border-radius: 6px;
       font-size: 0.875rem;
-      color: var(--space-indigo);
+      color: var(--deep-space-blue);
       outline: none;
       font-family: inherit;
+      transition: border-color 0.15s, box-shadow 0.15s;
 
       &:focus {
-        border-color: var(--cerulean);
-      }
-    }
-
-    .radio-cards {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 0.75rem;
-
-      .radio-option {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        padding: 0.6rem 0.75rem;
-        border: 1px solid var(--color-border);
-        border-radius: 6px;
-        font-size: 0.8125rem;
-        font-weight: 500;
-        cursor: pointer;
-
-        &.selected {
-          border-color: var(--cerulean);
-          background-color: #f0f9ff;
-          color: var(--cerulean);
-          font-weight: 600;
-        }
-
-        input {
-          cursor: pointer;
-        }
+        border-color: var(--forest-green);
+        box-shadow: 0 0 0 3px rgba(0, 146, 61, 0.12);
       }
     }
   }
 
-  .alert-error {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.6rem 0.75rem;
-    background-color: rgba(178, 76, 99, 0.1);
-    border-radius: 6px;
-    color: var(--rosewood);
-    font-size: 0.8125rem;
-    font-weight: 500;
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
   }
 }
 
 .modal-footer {
+  padding: 1rem 1.5rem;
+  border-top: 1px solid var(--color-border);
+  background-color: #f8fafc;
   display: flex;
   align-items: center;
   justify-content: flex-end;
   gap: 0.75rem;
-  padding: 1rem 1.5rem;
-  border-top: 1px solid var(--color-border);
-  background-color: #f8fafc;
 
   .btn-cancel {
     padding: 0.5rem 1rem;
-    background: transparent;
-    border: 1px solid var(--color-border);
-    border-radius: 6px;
+    border: 1px solid #cbd5e1;
+    background-color: #ffffff;
+    border-radius: 8px;
     font-size: 0.875rem;
     font-weight: 600;
-    color: var(--color-text-secondary);
+    color: var(--deep-space-blue);
     cursor: pointer;
+    transition: all 0.15s;
 
     &:hover {
-      background-color: #ffffff;
+      background-color: #f1f5f9;
+      border-color: #94a3b8;
     }
   }
 
-  .btn-primary {
+  .btn-submit {
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
-    padding: 0.5rem 1rem;
-    background-color: var(--cerulean);
+    padding: 0.5rem 1.25rem;
     border: none;
-    border-radius: 6px;
+    background-color: var(--forest-green);
+    border-radius: 8px;
     font-size: 0.875rem;
     font-weight: 600;
     color: #ffffff;
     cursor: pointer;
+    box-shadow: var(--shadow-sm);
+    transition: background-color 0.15s;
 
     &:hover {
-      background-color: #006c94;
+      background-color: var(--forest-green-hover);
     }
   }
 }

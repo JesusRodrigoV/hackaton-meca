@@ -76,7 +76,7 @@
 
       @if (previewStats().filasError > 0) {
         <div class="error-notice">
-          <app-icon name="error-circle" size="20px" color="#b24c63"></app-icon>
+          <app-icon name="error-circle" size="20px" color="#e11d48"></app-icon>
           <div class="error-text">
             <strong>Atención: Se detectaron {{ previewStats().filasError }} observaciones:</strong>
             <ul>
@@ -94,7 +94,7 @@
   <section class="history-section">
     <div class="section-header">
       <div class="title-wrap">
-        <app-icon name="history" size="20px" color="#1b2a49"></app-icon>
+        <app-icon name="history" size="20px" color="#232046"></app-icon>
         <h3>Archivos cargados anteriormente</h3>
       </div>
       <span class="sub-badge">{{ importaciones().length }} lotes</span>
@@ -158,7 +158,7 @@
                     (click)="revertir(lote.id)"
                     title="Revertir Lote Completo"
                   >
-                    <app-icon name="undo" size="14px" color="#b24c63"></app-icon>
+                    <app-icon name="undo" size="14px" color="#e11d48"></app-icon>
                     <span>Revertir</span>
                   </button>
                 } @else {

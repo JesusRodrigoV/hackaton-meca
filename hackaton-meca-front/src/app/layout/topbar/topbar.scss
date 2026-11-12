@@ -1,12 +1,12 @@
 .topbar {
   height: 64px;
-  background-color: #FFFFFF;
+  background-color: #ffffff;
   border-bottom: 1px solid var(--color-border);
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 0 24px;
-  box-shadow: 0 1px 3px rgba(27, 42, 73, 0.04);
+  box-shadow: 0 1px 3px rgba(13, 36, 57, 0.04);
 }
 
 .topbar-left {
@@ -39,6 +39,7 @@
 
       &:focus {
         border-color: var(--forest-green);
+        box-shadow: 0 0 0 3px rgba(0, 146, 61, 0.12);
       }
     }
   }
@@ -56,9 +57,10 @@
     color: var(--color-text-secondary);
 
     &.scoped {
-      background-color: rgba(0, 146, 61, 0.08);
-      border-color: rgba(0, 146, 61, 0.25);
-      color: var(--forest-green);
+      background-color: var(--forest-green-subtle);
+      border-color: var(--forest-green-border);
+      color: var(--forest-green-text);
+      font-weight: 700;
     }
   }
 }
@@ -72,8 +74,8 @@
     display: flex;
     align-items: center;
     gap: 8px;
-    background-color: rgba(0, 146, 61, 0.08);
-    border: 1px solid rgba(0, 146, 61, 0.3);
+    background-color: var(--forest-green-subtle);
+    border: 1px solid var(--forest-green-border);
     padding: 4px 10px;
     border-radius: 8px;
 
@@ -83,7 +85,7 @@
       gap: 4px;
       font-size: 0.75rem;
       font-weight: 700;
-      color: var(--forest-green);
+      color: var(--forest-green-text);
     }
 
     .role-select {
@@ -176,8 +178,9 @@
         .count-tag {
           font-size: 0.6875rem;
           font-weight: 600;
-          background-color: #fee2e2;
-          color: var(--rosewood);
+          background-color: var(--rosewood-subtle);
+          color: var(--rosewood-text);
+          border: 1px solid var(--rosewood-border);
           padding: 0.15rem 0.4rem;
           border-radius: 4px;
         }
@@ -188,7 +191,7 @@
         border: none;
         font-size: 0.75rem;
         font-weight: 600;
-        color: var(--forest-green);
+        color: var(--forest-green-text);
         cursor: pointer;
 
         &:hover {
@@ -216,7 +219,7 @@
         }
 
         &.unread {
-          background-color: #f0fdf4;
+          background-color: rgba(0, 146, 61, 0.04);
         }
 
         .item-icon {
@@ -228,9 +231,15 @@
           justify-content: center;
           flex-shrink: 0;
 
-          &.icon-danger { background-color: #fee2e2; }
-          &.icon-warning { background-color: #fef3c7; }
-          &.icon-info { background-color: #d1fae5; }
+          &.icon-danger {
+            background-color: var(--rosewood-subtle);
+          }
+          &.icon-warning {
+            background-color: var(--tuscan-sun-subtle);
+          }
+          &.icon-info {
+            background-color: var(--forest-green-subtle);
+          }
         }
 
         .item-content {

@@ -15,6 +15,7 @@
     font-size: 1.5rem;
     font-weight: 700;
     color: var(--space-indigo);
+    letter-spacing: -0.02em;
   }
 
   .page-subtitle {
@@ -35,10 +36,15 @@
     font-size: 0.875rem;
     font-weight: 600;
     cursor: pointer;
-    transition: background-color 0.15s ease;
+    box-shadow: var(--shadow-sm);
+    transition: background-color 0.15s ease, transform 0.1s ease;
 
     &:hover:not(:disabled) {
-      background-color: #2a3f6d;
+      background-color: #1a1738;
+    }
+
+    &:active:not(:disabled) {
+      transform: translateY(1px);
     }
 
     &:disabled {
@@ -53,12 +59,13 @@
   align-items: center;
   gap: 0.75rem;
   padding: 0.875rem 1rem;
-  background-color: #ecfdf5;
-  border: 1px solid #a7f3d0;
+  background-color: var(--forest-green-subtle);
+  border: 1px solid var(--forest-green-border);
   border-radius: 8px;
-  color: #065f46;
+  color: var(--forest-green-text);
   font-size: 0.875rem;
   font-weight: 600;
+  box-shadow: var(--shadow-sm);
 }
 
 .table-container {
@@ -66,7 +73,7 @@
   border: 1px solid var(--color-border);
   border-radius: 8px;
   overflow-x: auto;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+  box-shadow: var(--shadow-sm);
 }
 
 .data-table {
@@ -77,17 +84,20 @@
   th {
     background-color: #f8fafc;
     color: var(--color-text-secondary);
-    font-weight: 600;
+    font-weight: 700;
     text-align: left;
     padding: 0.75rem 1rem;
     border-bottom: 1px solid var(--color-border);
     white-space: nowrap;
+    text-transform: uppercase;
+    font-size: 0.725rem;
+    letter-spacing: 0.05em;
   }
 
   td {
     padding: 0.75rem 1rem;
-    border-bottom: 1px solid #f1f5f9;
-    color: var(--space-indigo);
+    border-bottom: 1px solid var(--color-border-subtle);
+    color: var(--deep-space-blue);
     vertical-align: middle;
   }
 
@@ -110,15 +120,18 @@
     font-size: 0.6875rem;
     font-weight: 700;
     color: var(--space-indigo);
+    border: 1px solid var(--color-border);
 
     &.action-import {
-      background-color: #eff6ff;
-      color: var(--cerulean);
+      background-color: rgba(35, 32, 70, 0.08);
+      color: var(--space-indigo);
+      border-color: rgba(35, 32, 70, 0.2);
     }
 
     &.action-approve {
-      background-color: #ecfdf5;
-      color: var(--mint-leaf);
+      background-color: var(--forest-green-subtle);
+      color: var(--forest-green-text);
+      border-color: var(--forest-green-border);
     }
   }
 
@@ -126,6 +139,7 @@
     font-family: 'JetBrains Mono', monospace;
     font-size: 0.75rem;
     color: var(--space-indigo);
+    font-weight: 600;
   }
 
   .detail-cell {
@@ -149,8 +163,9 @@
     font-weight: 700;
 
     &.status-ok {
-      background-color: #ecfdf5;
-      color: var(--mint-leaf);
+      background-color: var(--forest-green-subtle);
+      color: var(--forest-green-text);
+      border: 1px solid var(--forest-green-border);
     }
   }
 }
