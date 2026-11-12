@@ -160,19 +160,37 @@ export class AuthService {
             );
 
             if (profile) {
-              const roleName = profile.roles?.[0]?.name ?? 'Administrador General';
-              const roleCode = (profile.roles?.[0]?.code as any) ?? 'ADMIN';
+              const rawRoleName = profile.roles?.[0]?.name ?? 'Administrador General';
+              let roleCode: 'ADMIN' | 'FINANCE' | 'COORDINATOR' | 'AUDITOR' = 'ADMIN';
+              let scopeType: 'global' | 'region' | 'financier' = 'global';
+              let scopeLabel = 'Nivel Nacional (Consolidado)';
+
+              if (rawRoleName.toLowerCase().includes('finanz')) {
+                roleCode = 'FINANCE';
+                scopeLabel = 'Operativo Contable Nacional';
+              } else if (rawRoleName.toLowerCase().includes('coord') || profile.email.includes('scz') || profile.email.includes('santacruz')) {
+                roleCode = 'COORDINATOR';
+                scopeType = 'region';
+                scopeLabel = 'Región: Santa Cruz (SC)';
+              } else if (rawRoleName.toLowerCase().includes('audit') || profile.email.includes('catalyst')) {
+                roleCode = 'AUDITOR';
+                scopeType = 'financier';
+                scopeLabel = 'Financiador: CATALYST 18';
+              }
+
               const fullName = profile.full_name || `${profile.first_name ?? ''} ${profile.last_name ?? ''}`.trim() || profile.email;
 
               const user: UserProfile = {
                 id: profile.id,
                 email: profile.email,
                 fullName,
-                roleName,
-                roleCode: roleCode in PRESET_USERS ? roleCode : 'ADMIN',
-                scopeType: 'global',
-                scopeLabel: 'Nivel Nacional (Consolidado)',
-                permissions: profile.permissions ?? PRESET_USERS['ADMIN'].permissions
+                roleName: rawRoleName,
+                roleCode,
+                scopeType,
+                scopeLabel,
+                permissions: profile.permissions && profile.permissions.length > 0 
+                  ? profile.permissions 
+                  : (PRESET_USERS[roleCode]?.permissions ?? PRESET_USERS['ADMIN'].permissions)
               };
               this.currentUser.set(user);
               this.persistSession(user, tokenResp.access_token);

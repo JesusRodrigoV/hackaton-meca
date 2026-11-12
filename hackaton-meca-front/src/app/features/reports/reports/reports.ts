@@ -1,4 +1,4 @@
-import { Component, inject, signal, computed } from '@angular/core';
+import { Component, inject, signal, computed, OnInit } from '@angular/core';
 import { CommonModule, DecimalPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { FinancialService } from '../../../core/services/financial';
@@ -14,7 +14,7 @@ export type TipoReporte = 'REP-01' | 'REP-02' | 'REP-03' | 'REP-04' | 'REP-05' |
   templateUrl: './reports.html',
   styleUrl: './reports.scss'
 })
-export class Reports {
+export class Reports implements OnInit {
   readonly financialService = inject(FinancialService);
   readonly authService = inject(AuthService);
 
@@ -26,6 +26,12 @@ export class Reports {
   readonly techos = this.financialService.techos;
   readonly movimientos = this.financialService.movimientos;
   readonly auditLogs = this.financialService.auditLogs;
+
+  ngOnInit(): void {
+    this.financialService.cargarTechosApi();
+    this.financialService.cargarMovimientosApi();
+    this.financialService.cargarAuditoriaApi();
+  }
 
   readonly reportTabs = [
     { id: 'REP-01' as const, code: 'REP-01', title: 'Ejecución General vs Techos', icon: 'file-blank' },

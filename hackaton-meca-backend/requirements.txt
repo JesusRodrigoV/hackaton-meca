@@ -43,6 +43,8 @@ ecdsa==0.19.2
     # via python-jose
 email-validator==2.3.0
     # via fastapi-mail
+et-xmlfile==2.0.0
+    # via openpyxl
 fastapi==0.162.5
     # via
     #   fastapi-pagination
@@ -76,6 +78,8 @@ markupsafe==3.0.4
     # via
     #   jinja2
     #   mako
+openpyxl==3.1.5
+    # via hackaton-meca-backend
 opentelemetry-api==1.45.2
     # via fastapi
 packaging==26.3

@@ -5,6 +5,7 @@ import {
   afterNextRender,
   ElementRef,
   viewChild,
+  OnInit,
   OnDestroy
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
@@ -20,7 +21,7 @@ import Chart from 'chart.js/auto';
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.scss'
 })
-export class Dashboard implements OnDestroy {
+export class Dashboard implements OnInit, OnDestroy {
   readonly financialService = inject(FinancialService);
   readonly authService = inject(AuthService);
 
@@ -44,6 +45,10 @@ export class Dashboard implements OnDestroy {
     afterNextRender(() => {
       this.initCharts();
     });
+  }
+
+  ngOnInit(): void {
+    this.financialService.cargarTechosApi();
   }
 
   private initCharts(): void {
