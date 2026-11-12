@@ -55,7 +55,7 @@ class Settings(BaseSettings):
     MAIL_PORT: int = 587
     MAIL_STARTTLS: bool = True
     MAIL_SSL_TLS: bool = False
-    MAIL_FROM: EmailStr = "no-reply@meca.local"
+    MAIL_FROM: EmailStr = "no-reply@ensenaporbolivia.org"
     MAIL_FROM_NAME: str = "MECA"
     FRONTEND_RESET_PASSWORD_URL: str = "http://localhost:4200/reset-password"
 
