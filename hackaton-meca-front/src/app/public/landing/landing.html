@@ -1,0 +1,372 @@
+<header class="nav nav--centre" aria-label="Principal">
+  <div class="wrap nav__bar">
+    <a class="skip-link" href="#main">Saltar al contenido</a>
+    <a class="nav__logo" href="/" aria-label="Enseña por Bolivia, inicio">
+      <span class="mark mark--initial" aria-hidden="true">EB</span>Enseña por Bolivia
+    </a>
+    <nav class="nav__links" aria-label="Secciones">
+      <div class="nav__item"><a class="nav__link" href="#reports">Reportes</a></div>
+      <div class="nav__item"><a class="nav__link" href="#capabilities">Capacidades</a></div>
+      <div class="nav__item"><a class="nav__link" href="#flow">Flujo</a></div>
+      <div class="nav__item"><a class="nav__link" href="#security">Seguridad</a></div>
+    </nav>
+    <div class="nav__actions">
+      <a class="btn btn--primary" href="/login">Ingresar al sistema</a>
+    </div>
+    <button class="nav__toggle" type="button" aria-expanded="false" aria-label="Abrir menú">
+      <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path d="M2 5h14M2 13h14" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+    </button>
+  </div>
+</header>
+
+<main id="main">
+  <section class="hero hero--centred" data-enter aria-labelledby="hero-h">
+    <div class="wrap">
+      <div class="hero-text">
+        <div class="hero__c">
+          <a class="pill" href="#reports"><span>Gestión 2026</span><span class="muted">Siete reportes oficiales</span></a>
+          <h1 id="hero-h">Presupuestos de Enseña por Bolivia</h1>
+          <p class="hero__lead">Techos, modificaciones, movimientos y reportes en un solo sistema. Cada rol ve solo lo que le corresponde: región, área o financiador.</p>
+          <div class="btn-row">
+            <a class="btn btn--primary" href="/login">Ingresar al sistema</a>
+            <a class="btn btn--secondary" href="#reports">Ver los reportes</a>
+          </div>
+        </div>
+
+        <div class="hero__window" data-visual data-fx="fluted-glass" data-fx-seed="4" data-fx-params='{"ribWidth":34,"angle":0,"distortion":0.42,"highlight":0.18,"shadow":0.2,"background":1,"blur":0.14,"speed":0.02,"clear":0.08,"calm":0.55,"calmX":0.5,"calmY":0.62}' role="img" aria-label="Panel del sistema con el resumen de la gestión 2026 y los siete reportes oficiales">
+          <div class="ly-piece exb-dash" aria-hidden="true">
+            <div class="exb-dash__bar">
+              <span class="exb-dots"><i></i><i></i><i></i></span>
+              <span class="exb-dash__crumb"><b>Enseña por Bolivia</b><span>/</span>Panel de gestión</span>
+              <span class="exb-dash__sp"></span>
+              <span class="exb-dash__chip">Gestión 2026</span>
+            </div>
+            <div class="exb-dash__body">
+              <aside class="exb-dash__side">
+                <span class="is-on">Panel</span>
+                <span>Presupuestos</span>
+                <span>Ejecución</span>
+                <span>Reportes</span>
+                <span>Seguridad</span>
+              </aside>
+              <div class="exb-dash__main">
+                <div class="exb-dash__head">
+                  <div>
+                    <p class="exb-kicker">Control presupuestario</p>
+                    <h3>Panel de la gestión</h3>
+                  </div>
+                  <span class="exb-dash__scope">Consolidado nacional</span>
+                </div>
+                <div class="exb-kpis">
+                  <div><span>Reportes oficiales</span><strong>07</strong></div>
+                  <div><span>Roles con permisos</span><strong>04</strong></div>
+                  <div><span>Alcances de datos</span><strong>03</strong></div>
+                </div>
+                <div class="exb-table">
+                  <div class="exb-table__head"><span>Reporte</span><span>Alcance</span><span>Estado</span></div>
+                  <div class="exb-row"><span><b>Ejecución por rubro y cuenta</b><small>R01</small></span><span>Nacional</span><span class="is-ok">Oficial</span></div>
+                  <div class="exb-row"><span><b>Ejecución por financiador</b><small>R02</small></span><span>Financiador</span><span class="is-ok">Oficial</span></div>
+                  <div class="exb-row"><span><b>Ejecución por área y financiador</b><small>R03</small></span><span>Área</span><span class="is-ok">Oficial</span></div>
+                  <div class="exb-row"><span><b>Ejecución por región</b><small>R04</small></span><span>Región</span><span class="is-ok">Oficial</span></div>
+                  <div class="exb-row"><span><b>Ejecución por mes</b><small>R05</small></span><span>Gestión</span><span class="is-ok">Oficial</span></div>
+                  <div class="exb-row"><span><b>Detalle de movimientos</b><small>R06</small></span><span>Movimiento</span><span class="is-ok">Oficial</span></div>
+                  <div class="exb-row"><span><b>Resumen general consolidado</b><small>R07</small></span><span>Nacional</span><span class="is-ok">Oficial</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="reports" aria-labelledby="reports-h" style="--h: 1">
+    <div class="wrap">
+      <div class="grid reports-head">
+        <div class="span-5">
+          <h2 id="reports-h">Siete reportes oficiales. <span class="muted">Una sola fuente.</span></h2>
+        </div>
+        <div class="span-6 start-7">
+          <p class="muted">Cada reporte se genera con los movimientos confirmados y las modificaciones aprobadas. El alcance se aplica antes de mostrar la primera fila.</p>
+          <a class="link" href="/login">Abrir el panel</a>
+        </div>
+      </div>
+
+      <div class="ui app fill" role="img" aria-label="Catálogo de reportes con el detalle del reporte de ejecución por rubro y cuenta">
+        <div class="app__pane app__pane--list">
+          <div class="ui ui-panel ui-win exb-reports-win">
+            <div class="ui-win__bar">
+              <span class="ui-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+              <span class="ui-win__crumb"><b>Enseña por Bolivia</b><i>/</i>Reportes</span>
+              <span class="ui-spacer"></span>
+              <span class="exb-win-chip">7 oficiales</span>
+            </div>
+            <div class="ui-win__body">
+              <nav class="ui-win__side" aria-hidden="true">
+                <span class="ui-win__nav is-on">Todos<em>7</em></span>
+                <span class="ui-win__nav">Dirección</span>
+                <span class="ui-win__nav">Finanzas</span>
+                <span class="ui-win__nav">Donantes</span>
+                <span class="ui-win__label">Alcance</span>
+                <span class="ui-win__nav">Nacional</span>
+                <span class="ui-win__nav">Región</span>
+                <span class="ui-win__nav">Financiador</span>
+              </nav>
+              <div class="ui-win__main">
+                <div class="exb-report-cols"><span>Reporte</span><span>Alcance</span><span>Estado</span></div>
+                <ul class="exb-report-list">
+                  <li class="exb-report-row is-sel">
+                    <span class="exb-report-code">R01</span>
+                    <span class="exb-report-name"><b>Ejecución por rubro y cuenta</b><small>Rubro · cuenta · partida</small></span>
+                    <span class="exb-report-chip">Oficial</span>
+                  </li>
+                  <li class="exb-report-row">
+                    <span class="exb-report-code">R02</span>
+                    <span class="exb-report-name"><b>Ejecución por financiador</b><small>CATALYST · CEL · KJCF</small></span>
+                    <span class="exb-report-chip">Oficial</span>
+                  </li>
+                  <li class="exb-report-row">
+                    <span class="exb-report-code">R03</span>
+                    <span class="exb-report-name"><b>Ejecución por área y financiador</b><small>Alumni · Formación · Operaciones</small></span>
+                    <span class="exb-report-chip">Oficial</span>
+                  </li>
+                  <li class="exb-report-row">
+                    <span class="exb-report-code">R04</span>
+                    <span class="exb-report-name"><b>Ejecución por región</b><small>La Paz · Santa Cruz · nacional</small></span>
+                    <span class="exb-report-chip">Oficial</span>
+                  </li>
+                  <li class="exb-report-row">
+                    <span class="exb-report-code">R05</span>
+                    <span class="exb-report-name"><b>Ejecución por mes</b><small>Gestión 2026</small></span>
+                    <span class="exb-report-chip">Oficial</span>
+                  </li>
+                  <li class="exb-report-row">
+                    <span class="exb-report-code">R06</span>
+                    <span class="exb-report-name"><b>Detalle de movimientos</b><small>Comprobante · lote · estado</small></span>
+                    <span class="exb-report-chip">Oficial</span>
+                  </li>
+                  <li class="exb-report-row">
+                    <span class="exb-report-code">R07</span>
+                    <span class="exb-report-name"><b>Resumen general consolidado</b><small>Dirección · donantes</small></span>
+                    <span class="exb-report-chip">Oficial</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="app__pane app__pane--open">
+          <div class="exb-report-detail">
+            <div class="exb-report-detail__head">
+              <div>
+                <span class="exb-code">R01</span>
+                <h3>Ejecución por rubro y cuenta</h3>
+                <p>Compara el techo vigente con la ejecución confirmada, por rubro, cuenta y partida.</p>
+              </div>
+              <span class="exb-chip">Oficial</span>
+            </div>
+            <div class="exb-report-filters" aria-hidden="true">
+              <span>Gestión 2026</span>
+              <span>Consolidado nacional</span>
+              <span>Moneda Bs</span>
+            </div>
+            <ul class="exb-report-def">
+              <li><b>Agrupa</b><span>Rubro, cuenta y partida</span></li>
+              <li><b>Compara</b><span>Techo vigente, modificaciones y ejecución</span></li>
+              <li><b>Filtra</b><span>Gestión, región, área y financiador</span></li>
+              <li><b>Exporta</b><span>Excel y PDF</span></li>
+            </ul>
+            <div class="exb-report-columns">
+              <span class="exb-report-columns__label">Columnas del reporte</span>
+              <span>Rubro</span><span>Cuenta</span><span>Partida</span><span>Techo vigente</span><span>Ejecución</span><span>Saldo</span>
+            </div>
+            <div class="exb-report-note"><span class="exb-dot"></span> Se calcula con los movimientos confirmados y las modificaciones aprobadas.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="capabilities" aria-labelledby="capabilities-h" style="--h: 1">
+    <div class="wrap">
+      <div class="section-head">
+        <h2 id="capabilities-h">Del techo al reporte. <span class="muted">Sin planillas paralelas.</span></h2>
+      </div>
+      <div class="grid feature-grid">
+        <article class="card card--row span-6">
+          <h3>Fija techos por partida</h3>
+          <p>Cada partida tiene un techo anual. Las reformulaciones validan el saldo disponible antes de aprobarse.</p>
+          <div class="panel panel--inset exb-mini exb-mini--ceiling" role="img" aria-label="Composición de un techo presupuestario entre techo inicial, modificaciones y ejecución">
+            <div class="exb-ceiling">
+              <div class="exb-ceiling__row"><span>Techo inicial</span><i style="--w: 68%"></i></div>
+              <div class="exb-ceiling__row"><span>Modificaciones</span><i style="--w: 22%"></i></div>
+              <div class="exb-ceiling__row"><span>Techo vigente</span><i style="--w: 90%"></i></div>
+              <div class="exb-ceiling__row is-exec"><span>Ejecución</span><i style="--w: 54%"></i></div>
+            </div>
+            <div class="exb-ceiling__legend"><span class="exb-dot"></span> El saldo disponible se recalcula en cada reformulación.</div>
+          </div>
+        </article>
+
+        <article class="card card--row span-6">
+          <h3>Importa movimientos en lote</h3>
+          <p>Sube el Excel del sistema contable. El lote se valida, se confirma o se revierte de forma atómica.</p>
+          <div class="panel panel--inset exb-mini exb-mini--batch" role="img" aria-label="Un lote de movimientos pasa por validación, confirmación y reversión atómica">
+            <div class="exb-batch">
+              <div class="exb-batch__file"><span class="exb-file-icon">XLS</span><span><b>movimientos_2026.xlsx</b><small>Lote contable</small></span><span class="exb-batch__state">Validado</span></div>
+              <div class="exb-batch__steps"><span class="is-done">Validar</span><span class="is-done">Confirmar</span><span>Revertir</span></div>
+            </div>
+            <div class="exb-batch__legend"><span class="exb-dot"></span> Una reversión devuelve el lote completo, no una fila.</div>
+          </div>
+        </article>
+
+        <article class="card card--row span-6">
+          <h3>Reporta a cada financiador</h3>
+          <p>CATALYST, CEL y KJCF ven solo sus fondos. Dirección ve el consolidado nacional.</p>
+          <div class="panel panel--inset exb-mini exb-mini--donors" role="img" aria-label="Tres financiadores con su alcance y el consolidado nacional">
+            <div class="exb-donors">
+              <div><span class="exb-donor">CATALYST</span><small>Fondos CATALYST 18</small></div>
+              <div><span class="exb-donor">CEL</span><small>Fondos CEL</small></div>
+              <div><span class="exb-donor">KJCF</span><small>Fondos KJCF</small></div>
+            </div>
+            <div class="exb-donors__consolidated"><span>Consolidado</span><b>Dirección General</b></div>
+          </div>
+        </article>
+
+        <article class="card card--row span-6">
+          <h3>Deja rastro de cada cambio</h3>
+          <p>Cada operación sensible guarda el estado anterior y el nuevo en la bitácora de auditoría.</p>
+          <div class="panel panel--inset exb-mini exb-mini--audit" role="img" aria-label="Bitácora de auditoría con el estado anterior y el nuevo de cada operación">
+            <div class="exb-audit">
+              <div class="exb-audit__row"><span class="exb-audit__dot"></span><span><b>Techo actualizado</b><small>Antes: sin modificación · Después: reformulación aprobada</small></span></div>
+              <div class="exb-audit__row"><span class="exb-audit__dot"></span><span><b>Lote revertido</b><small>Antes: confirmado · Después: revertido</small></span></div>
+              <div class="exb-audit__row"><span class="exb-audit__dot"></span><span><b>Rol asignado</b><small>Antes: consulta · Después: edición</small></span></div>
+            </div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="flow" aria-labelledby="flow-h" style="--h: 1">
+    <div class="wrap">
+      <div class="grid flow-head">
+        <div class="span-5">
+          <h2 id="flow-h">Del Excel al reporte. <span class="muted">Sin saltos.</span></h2>
+          <p class="flow-lead">El recorrido es el mismo para cada gestión: cargar, validar, confirmar y reportar. La bitácora guarda cada paso.</p>
+        </div>
+        <div class="span-7 flow-steps">
+          <div class="flow-step">
+            <span class="flow-step__n">01</span>
+            <h3>Carga el Excel</h3>
+            <p>Sube la hoja del sistema contable con sus comprobantes y partidas.</p>
+          </div>
+          <div class="flow-step">
+            <span class="flow-step__n">02</span>
+            <h3>Valida el lote</h3>
+            <p>El sistema revisa cuentas, partidas y saldos antes de tocar el mayor.</p>
+          </div>
+          <div class="flow-step">
+            <span class="flow-step__n">03</span>
+            <h3>Confirma movimientos</h3>
+            <p>El lote entra completo o se revierte completo. No hay estados a medias.</p>
+          </div>
+          <div class="flow-step">
+            <span class="flow-step__n">04</span>
+            <h3>Genera el reporte</h3>
+            <p>Los siete reportes leen la misma ejecución y aplican el alcance del rol.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section statement" data-moment="letters-assemble" aria-labelledby="statement-h" style="--h: 1">
+    <div class="wrap">
+      <h2 id="statement-h" class="mo-la__type">Todo gasto, trazable.</h2>
+      <p class="mo-la__sub">Cada movimiento queda en el mayor con su partida, su financiador y su comprobante. La bitácora guarda el estado anterior y el nuevo.</p>
+    </div>
+  </section>
+
+  <section class="section" id="security" aria-labelledby="security-h" style="--h: 1">
+    <div class="wrap">
+      <div class="grid security-grid">
+        <div class="span-5">
+          <h2 id="security-h">Cada rol ve solo su parte.</h2>
+          <p class="security-lead">El alcance se aplica antes de la consulta: región, área o financiador. Dirección ve el consolidado; auditoría ve solo sus fondos y no edita.</p>
+          <dl class="security-facts">
+            <div><dt>04</dt><dd>roles con permisos distintos</dd></div>
+            <div><dt>03</dt><dd>alcances de datos automáticos</dd></div>
+            <div><dt>01</dt><dd>bitácora inmutable por operación</dd></div>
+          </dl>
+        </div>
+        <div class="span-6 start-7">
+          <div class="permission-matrix" role="img" aria-label="Matriz de permisos por rol y capacidad: dirección, finanzas, coordinación y auditoría">
+            <div class="permission-matrix__head"><span>Capacidad</span><span>Dirección</span><span>Finanzas</span><span>Coordinación</span><span>Auditoría</span></div>
+            <div class="permission-matrix__row"><span>Panel ejecutivo</span><span class="is-full">●</span><span class="is-full">●</span><span class="is-scope">◐</span><span class="is-scope">◐</span></div>
+            <div class="permission-matrix__row"><span>Presupuestos</span><span class="is-full">●</span><span class="is-full">●</span><span class="is-read">○</span><span class="is-read">○</span></div>
+            <div class="permission-matrix__row"><span>Movimientos</span><span class="is-full">●</span><span class="is-full">●</span><span class="is-none">—</span><span class="is-read">○</span></div>
+            <div class="permission-matrix__row"><span>Reportes</span><span class="is-full">●</span><span class="is-full">●</span><span class="is-scope">◐</span><span class="is-scope">◐</span></div>
+            <div class="permission-matrix__row"><span>Auditoría</span><span class="is-full">●</span><span class="is-none">—</span><span class="is-none">—</span><span class="is-full">●</span></div>
+            <div class="permission-matrix__legend">
+              <span><i class="is-full">●</i> Total</span>
+              <span><i class="is-scope">◐</i> Con alcance</span>
+              <span><i class="is-read">○</i> Solo lectura</span>
+              <span><i class="is-none">—</i> Sin acceso</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="footer closing footer--dark" aria-labelledby="close-h">
+  <div class="wrap">
+    <div class="closing__cta close--type">
+      <div class="section-head">
+        <h2 id="close-h">Abre la gestión con el presupuesto en orden.</h2>
+        <p class="t-small muted">Siete reportes, cuatro roles y un rastro de auditoría desde el primer movimiento.</p>
+      </div>
+      <a class="btn btn--primary btn--xl btn--wide" href="/login">
+        Ingresar al sistema
+        <svg class="m-arrow" viewBox="0 0 12 12" aria-hidden="true"><path class="m-arrow__stem" d="M1 6h8"/><path class="m-arrow__head" d="M4.5 2.5 8 6l-3.5 3.5"/></svg>
+      </a>
+    </div>
+    <div class="closing__links">
+      <div class="grid">
+        <div class="span-5 stack-5">
+          <a class="footer__mark" href="/"><span class="mark mark--initial" aria-hidden="true">EB</span>Enseña por Bolivia</a>
+          <p class="footer__lede">Presupuesto y ejecución con evidencia.</p>
+        </div>
+        <div class="span-2 start-7 footer__col">
+          <h4>Sistema</h4>
+          <ul>
+            <li><a href="#reports">Reportes</a></li>
+            <li><a href="#capabilities">Capacidades</a></li>
+            <li><a href="#flow">Flujo</a></li>
+            <li><a href="#security">Seguridad</a></li>
+          </ul>
+        </div>
+        <div class="span-2 footer__col">
+          <h4>Acceso</h4>
+          <ul>
+            <li><a href="/login">Ingresar</a></li>
+            <li><a href="#security">Roles y alcance</a></li>
+          </ul>
+        </div>
+        <div class="span-2 footer__col">
+          <h4>Gestión</h4>
+          <ul>
+            <li><a href="#reports">Gestión 2026</a></li>
+            <li><a href="#reports">Reportes oficiales</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer__legal">
+        <span>&copy; 2026 Enseña por Bolivia</span>
+        <span>Sistema de control presupuestario</span>
+      </div>
+    </div>
+  </div>
+</footer>

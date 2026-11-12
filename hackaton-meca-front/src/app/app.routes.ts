@@ -1,9 +1,17 @@
 import { Routes } from '@angular/router';
 import { Shell } from './layout/shell/shell';
+import { publicCssResolver } from './public/public-css';
 
 export const routes: Routes = [
   {
+    path: '',
+    pathMatch: 'full',
+    resolve: { publicCss: publicCssResolver },
+    loadComponent: () => import('./public/landing/landing').then(m => m.Landing)
+  },
+  {
     path: 'login',
+    resolve: { publicCss: publicCssResolver },
     loadComponent: () => import('./features/auth/login/login').then(m => m.Login)
   },
   {

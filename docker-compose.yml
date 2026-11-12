@@ -70,6 +70,11 @@ services:
       - DEFAULT_ADMIN_PASSWORD=${DEFAULT_ADMIN_PASSWORD:-AdminExB2026!}
       - DEFAULT_ADMIN_PHONE=+59170000000
       - TOTP_ENCRYPTION_KEY=${TOTP_ENCRYPTION_KEY:-meca_totp_secret_key_32bytes_len!}
+      # En local el widget queda desactivado para que el login real funcione sin
+      # llaves de Google. En producción: REQUIRE_RECAPTCHA=true y ambas llaves.
+      - RECAPTCHA_SECRET_KEY=${RECAPTCHA_SECRET_KEY:-dummy_recaptcha_secret}
+      - RECAPTCHA_SITE_KEY=${RECAPTCHA_SITE_KEY:-}
+      - REQUIRE_RECAPTCHA=${REQUIRE_RECAPTCHA:-false}
       - CLOUDINARY_CLOUD_NAME=${CLOUDINARY_CLOUD_NAME:-dummy_cloud}
       - CLOUDINARY_API_KEY=${CLOUDINARY_API_KEY:-1234567890}
       - CLOUDINARY_API_SECRET=${CLOUDINARY_API_SECRET:-dummy_secret}

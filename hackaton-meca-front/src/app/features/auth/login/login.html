@@ -1,88 +1,158 @@
-<div class="login-container">
-  <div class="login-card">
-    <!-- Header Institucional -->
-    <div class="login-header">
-      <img src="logos/logo-ensena-nuevo-01-311.webp" alt="Enseña por Bolivia" class="brand-logo" />
-      <h1 class="system-title">Presupuesto y Ejecución Financiera</h1>
-      <p class="system-subtitle">Sistema contable y rendición de cuentas para donantes</p>
-    </div>
+<div class="login-page">
+  <div class="login-shell">
+    <aside class="login-brand" aria-label="Enseña por Bolivia">
+      <a class="login-brand__logo" href="/" aria-label="Enseña por Bolivia, inicio">
+        <span class="mark mark--initial" aria-hidden="true">EB</span>
+        <span>Enseña por Bolivia</span>
+      </a>
 
-    <!-- Formulario de Acceso -->
-    <form (ngSubmit)="onSubmit()" class="login-form">
-      <div class="form-group">
-        <label for="email">Correo Institucional</label>
-        <div class="input-wrapper">
-          <app-icon name="envelope" size="20px" color="#718096"></app-icon>
-          <input
-            id="email"
-            type="email"
-            name="email"
-            [ngModel]="email()"
-            (ngModelChange)="email.set($event)"
-            placeholder="usuario@ensenaporbolivia.org"
-            required
-          />
-        </div>
+      <div class="login-brand__copy">
+        <p class="t-label">Acceso institucional</p>
+        <h1>Presupuestos y ejecución, en orden.</h1>
+        <p class="login-brand__lead">
+          Siete reportes oficiales, cuatro roles y alcances por región, área y
+          financiador. Cada consulta respeta el alcance antes de mostrar la
+          primera fila.
+        </p>
+        <dl class="login-facts">
+          <div><dt>07</dt><dd>reportes oficiales</dd></div>
+          <div><dt>04</dt><dd>roles con permisos</dd></div>
+          <div><dt>03</dt><dd>alcances de datos</dd></div>
+        </dl>
       </div>
 
-      <div class="form-group">
-        <label for="password">Contraseña</label>
-        <div class="input-wrapper">
-          <app-icon name="lock-alt" size="20px" color="#718096"></app-icon>
-          <input
-            id="password"
-            type="password"
-            name="password"
-            [ngModel]="password()"
-            (ngModelChange)="password.set($event)"
-            placeholder="••••••••••••"
-            required
-          />
+      <div class="login-window" aria-hidden="true">
+        <div class="login-window__bar">
+          <span class="exb-dots"><i></i><i></i><i></i></span>
+          <span class="login-window__crumb">Enseña por Bolivia / Reportes</span>
+          <span class="exb-win-chip">7 oficiales</span>
         </div>
+        <ul class="login-window__list">
+          <li><span>R01</span><b>Ejecución por rubro y cuenta</b><i>Oficial</i></li>
+          <li><span>R02</span><b>Ejecución por financiador</b><i>Oficial</i></li>
+          <li><span>R03</span><b>Ejecución por área y financiador</b><i>Oficial</i></li>
+          <li><span>R07</span><b>Resumen general consolidado</b><i>Oficial</i></li>
+        </ul>
       </div>
 
-      @if (errorMessage()) {
-        <div class="alert-error">
-          <app-icon name="error-circle" size="18px" color="#e11d48"></app-icon>
-          <span>{{ errorMessage() }}</span>
+      <p class="login-brand__foot">Enseña por Bolivia · Gestión 2026</p>
+    </aside>
+
+    <main class="login-main">
+      <div class="login-card">
+        <div class="login-card__head">
+          <p class="t-label">Sistema de control presupuestario</p>
+          @if (step() === '2fa') {
+            <h2>Verifica tu identidad</h2>
+            <p>Ingresa el código de seis dígitos de tu dispositivo de autenticación.</p>
+          } @else {
+            <h2>Ingresar al sistema</h2>
+            <p>Usa tu correo o usuario institucional.</p>
+          }
         </div>
-      }
 
-      <button type="submit" class="btn-submit" [disabled]="isSubmitting()">
-        @if (isSubmitting()) {
-          <span>Ingresando...</span>
-        } @else {
-          <app-icon name="log-in" size="20px" color="#ffffff"></app-icon>
-          <span>Iniciar Sesión</span>
-        }
-      </button>
-    </form>
+        <form class="login-form" [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+          @if (step() === 'credentials') {
+            <label class="field">
+              <span>Correo o usuario</span>
+              <input
+                formControlName="identifier"
+                type="text"
+                autocomplete="username"
+                placeholder="usuario@ensenaporbolivia.org"
+                [attr.aria-invalid]="showError('identifier') ? 'true' : null"
+              />
+              @if (showError('identifier')) {
+                <small class="field__error">Ingresa tu correo o usuario.</small>
+              }
+            </label>
 
-    <!-- Roles Demo para Hackatón / Evaluación -->
-    <div class="demo-section">
-      <div class="demo-divider">
-        <span>USUARIOS DE PRUEBA</span>
-      </div>
+            <label class="field">
+              <span>Contraseña</span>
+              <div class="field__password">
+                <input
+                  formControlName="password"
+                  [type]="showPassword() ? 'text' : 'password'"
+                  autocomplete="current-password"
+                  placeholder="••••••••"
+                  [attr.aria-invalid]="showError('password') ? 'true' : null"
+                />
+                <button
+                  type="button"
+                  class="field__toggle"
+                  (click)="showPassword.set(!showPassword())"
+                  [attr.aria-label]="showPassword() ? 'Ocultar contraseña' : 'Mostrar contraseña'"
+                >
+                  {{ showPassword() ? 'Ocultar' : 'Ver' }}
+                </button>
+              </div>
+              @if (showError('password')) {
+                <small class="field__error">Ingresa tu contraseña.</small>
+              }
+            </label>
 
-      <div class="demo-grid">
-        @for (demo of demoRoles; track demo.key) {
-          <button type="button" class="demo-card" (click)="loginAsDemo(demo.key)">
-            <div class="demo-icon" [style.background-color]="demo.color + '1a'">
-              <app-icon [name]="demo.icon" size="22px" [color]="demo.color"></app-icon>
-            </div>
-            <div class="demo-info">
-              <span class="demo-name">{{ demo.name }}</span>
-              <span class="demo-role">{{ demo.role }}</span>
-              <span class="demo-scope">{{ demo.scope }}</span>
-            </div>
+            <div
+              id="recaptcha-container"
+              class="login-recaptcha"
+              [hidden]="!recaptchaSiteKey"
+            ></div>
+          } @else {
+            <label class="field">
+              <span>Código de verificación</span>
+              <input
+                formControlName="code"
+                type="text"
+                inputmode="numeric"
+                autocomplete="one-time-code"
+                maxlength="10"
+                placeholder="000000"
+                [attr.aria-invalid]="form.controls.code.touched && !form.controls.code.value ? 'true' : null"
+              />
+              @if (form.controls.code.touched && !form.controls.code.value) {
+                <small class="field__error">Ingresa el código de verificación.</small>
+              }
+            </label>
+          }
+
+          @if (infoMessage()) {
+            <div class="form-info" role="status">{{ infoMessage() }}</div>
+          }
+
+          @if (errorMessage()) {
+            <div class="form-alert" role="alert">{{ errorMessage() }}</div>
+          }
+
+          <button
+            class="btn btn--primary login-submit"
+            type="submit"
+            [disabled]="isSubmitting()"
+          >
+            @if (isSubmitting()) {
+              <span>Verificando…</span>
+            } @else if (step() === '2fa') {
+              <span>Verificar código</span>
+            } @else {
+              <span>Ingresar al sistema</span>
+            }
           </button>
-        }
-      </div>
-    </div>
+        </form>
 
-    <!-- Footer -->
-    <div class="login-footer">
-      <span>Enseña por Bolivia • Gestión 2026</span>
-    </div>
+        <div class="login-links">
+          <a class="link" href="/">Volver al inicio</a>
+          @if (step() === '2fa') {
+            <button type="button" class="link link--button" (click)="backToCredentials()">
+              Usar otra cuenta
+            </button>
+          } @else {
+            <span class="login-links__hint">¿Problemas para ingresar? Contacta al administrador.</span>
+          }
+        </div>
+
+        <p class="login-legal">
+          Acceso restringido a personal autorizado y auditores de fondos. Cada
+          consulta respeta el alcance del rol.
+        </p>
+      </div>
+    </main>
   </div>
 </div>

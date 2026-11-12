@@ -1,226 +1,568 @@
-.login-container {
+:host {
+  display: block;
+}
+
+.login-page {
   min-height: 100vh;
+  min-height: 100svh;
+  display: grid;
+  place-items: center;
+  padding: 28px;
+  background:
+    radial-gradient(90% 70% at 8% 0%, color-mix(in oklab, var(--p-accent) 16%, transparent), transparent 58%),
+    radial-gradient(70% 60% at 100% 100%, color-mix(in oklab, #90aade 12%, transparent), transparent 62%),
+    var(--p-bg);
+  color: var(--p-ink);
+  font-family: var(--font-text);
+}
+
+.login-shell {
+  width: min(1160px, 100%);
+  display: grid;
+  grid-template-columns: minmax(0, 1.04fr) minmax(0, 0.96fr);
+  border: 1px solid color-mix(in oklab, var(--p-ink) 12%, transparent);
+  border-radius: 24px;
+  overflow: hidden;
+  background: var(--p-surface);
+  box-shadow: 0 40px 120px -50px rgb(0 0 0 / 0.95);
+}
+
+/* ------------------------------------------------------------------ brand side */
+.login-brand {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-height: 660px;
+  padding: 42px 44px 30px;
+  overflow: hidden;
+  background:
+    linear-gradient(180deg, color-mix(in oklab, #0a0e18 84%, var(--p-accent)) 0%, #0a0e18 64%),
+    #0a0e18;
+  border-right: 1px solid color-mix(in oklab, var(--p-ink) 9%, transparent);
+}
+
+.login-brand::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(color-mix(in oklab, var(--p-ink) 4%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in oklab, var(--p-ink) 4%, transparent) 1px, transparent 1px);
+  background-size: 44px 44px;
+  mask-image: linear-gradient(to bottom, #000, transparent 72%);
+  opacity: 0.7;
+}
+
+.login-brand::after {
+  content: "";
+  position: absolute;
+  width: 420px;
+  height: 420px;
+  right: -150px;
+  top: -160px;
+  border-radius: 50%;
+  background: radial-gradient(circle, color-mix(in oklab, var(--p-accent) 30%, transparent), transparent 68%);
+  filter: blur(10px);
+  pointer-events: none;
+}
+
+.login-brand__logo {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  align-self: start;
+  color: var(--p-ink);
+  font: 500 20px/1 var(--font-display);
+  letter-spacing: -0.02em;
+}
+
+.login-brand__logo .mark--initial {
+  width: 28px;
+  height: 28px;
+  font-size: 10px;
+  border-radius: 7px;
+  background: var(--p-accent);
+  color: var(--p-accent-ink);
+}
+
+.login-brand__copy {
+  position: relative;
+  z-index: 1;
+  margin-top: clamp(52px, 8vh, 92px);
+  max-width: 430px;
+}
+
+.login-brand__copy .t-label {
+  color: var(--p-accent);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.login-brand__copy h1 {
+  margin-top: 16px;
+  color: var(--p-ink);
+  font: 500 clamp(34px, 3.1vw, 48px)/1.04 var(--font-display);
+  letter-spacing: -0.036em;
+  max-width: 12ch;
+}
+
+.login-brand__lead {
+  margin-top: 18px;
+  color: var(--p-muted);
+  font-size: 16px;
+  line-height: 1.55;
+  max-width: 40ch;
+}
+
+.login-facts {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  margin: 30px 0 0;
+  padding-top: 18px;
+  border-top: 1px solid color-mix(in oklab, var(--p-ink) 11%, transparent);
+}
+
+.login-facts dt {
+  color: var(--p-ink);
+  font: 500 26px/1 var(--font-display);
+  letter-spacing: -0.03em;
+}
+
+.login-facts dd {
+  margin: 5px 0 0;
+  color: var(--p-muted);
+  font-size: 11px;
+  line-height: 1.35;
+}
+
+/* a small report window at the foot of the brand side */
+.login-window {
+  position: relative;
+  z-index: 1;
+  margin-top: auto;
+  border: 1px solid color-mix(in oklab, var(--p-ink) 11%, transparent);
+  border-radius: 12px;
+  overflow: hidden;
+  background: #0d1220;
+  box-shadow: 0 24px 50px -32px rgb(0 0 0 / 0.9);
+}
+
+.login-window__bar {
   display: flex;
   align-items: center;
-  justify-content: center;
-  background-color: var(--bright-snow);
-  padding: 2rem 1rem;
+  gap: 10px;
+  height: 36px;
+  padding: 0 11px;
+  border-bottom: 1px solid color-mix(in oklab, var(--p-ink) 8%, transparent);
+  background: #111827;
+  color: var(--p-muted);
+  font: 400 10px/1 var(--font-mono);
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.login-window__crumb {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.login-window .exb-win-chip {
+  margin-left: auto;
+  flex: none;
+  height: 20px;
+  padding: 0 7px;
+  font-size: 8px;
+}
+
+.login-window__list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.login-window__list li {
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 9px;
+  min-height: 34px;
+  padding: 0 11px;
+  border-bottom: 1px solid color-mix(in oklab, var(--p-ink) 6%, transparent);
+  color: var(--p-muted);
+  font-size: 10px;
+}
+
+.login-window__list li:last-child {
+  border-bottom: 0;
+}
+
+.login-window__list span {
+  color: var(--p-muted);
+  font: 400 8px/1 var(--font-mono);
+}
+
+.login-window__list b {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--p-ink);
+  font-weight: 500;
+  font-size: 10px;
+}
+
+.login-window__list i {
+  color: var(--exb-mint);
+  font: 500 7px/1 var(--font-mono);
+  font-style: normal;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.login-brand__foot {
+  position: relative;
+  z-index: 1;
+  margin-top: 18px;
+  color: color-mix(in oklab, var(--p-muted) 70%, transparent);
+  font: 400 9px/1 var(--font-mono);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+/* ------------------------------------------------------------------ form side */
+.login-main {
+  display: grid;
+  place-items: center;
+  padding: 42px 44px;
+  background:
+    radial-gradient(80% 70% at 100% 0%, color-mix(in oklab, var(--p-accent) 9%, transparent), transparent 60%),
+    var(--p-bg);
 }
 
 .login-card {
-  width: 100%;
-  max-width: 520px;
-  background-color: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: 12px;
-  box-shadow: var(--shadow-lg);
-  padding: 2.5rem;
+  width: min(400px, 100%);
 }
 
-.login-header {
-  text-align: center;
-  margin-bottom: 2rem;
+.login-card__head .t-label {
+  color: var(--p-muted);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
 
-  .brand-logo {
-    max-height: 52px;
-    margin-bottom: 1rem;
-    object-fit: contain;
-  }
+.login-card__head h2 {
+  margin-top: 12px;
+  color: var(--p-ink);
+  font: 500 34px/1.08 var(--font-display);
+  letter-spacing: -0.032em;
+}
 
-  .system-title {
-    font-size: 1.25rem;
-    font-weight: 700;
-    color: var(--space-indigo);
-    margin-bottom: 0.25rem;
-    letter-spacing: -0.02em;
-  }
-
-  .system-subtitle {
-    font-size: 0.875rem;
-    color: var(--color-text-muted);
-  }
+.login-card__head p:not(.t-label) {
+  margin-top: 10px;
+  color: var(--p-muted);
+  font-size: 14px;
+  line-height: 1.5;
 }
 
 .login-form {
+  display: grid;
+  gap: 16px;
+  margin-top: 28px;
+}
+
+.login-form .field {
+  gap: 7px;
+}
+
+.login-form .field > span {
+  color: var(--p-muted);
+  font: 500 10px/1.2 var(--font-mono);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.login-form .field input {
+  height: 48px;
+  border: 1px solid color-mix(in oklab, var(--p-ink) 15%, transparent);
+  border-radius: 8px;
+  background: color-mix(in oklab, var(--p-ink) 4%, var(--p-bg));
+  color: var(--p-ink);
+  font: 400 15px/1.4 var(--font-text);
+  padding: 0 13px;
+  outline: none;
+  transition: border-color 160ms var(--ease), box-shadow 160ms var(--ease), background-color 160ms var(--ease);
+}
+
+.login-form .field input::placeholder {
+  color: color-mix(in oklab, var(--p-muted) 62%, transparent);
+}
+
+.login-form .field input:focus {
+  border-color: color-mix(in oklab, var(--p-accent) 72%, transparent);
+  background: color-mix(in oklab, var(--p-ink) 6%, var(--p-bg));
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--p-accent) 18%, transparent);
+}
+
+.login-form .field input[aria-invalid="true"] {
+  border: 1px solid color-mix(in oklab, var(--exb-rose) 70%, transparent);
+}
+
+.field__password {
+  position: relative;
+}
+
+.field__password input {
+  width: 100%;
+  padding-right: 58px;
+}
+
+.field__toggle {
+  position: absolute;
+  right: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 34px;
+  padding: 0 8px;
+  border: 0;
+  border-radius: 5px;
+  background: transparent;
+  color: var(--p-muted);
+  font: 500 9px/1 var(--font-mono);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.field__toggle:hover {
+  color: var(--p-ink);
+  background: color-mix(in oklab, var(--p-ink) 7%, transparent);
+}
+
+.login-form .field__error {
+  color: var(--exb-rose);
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.login-form .field__error::before {
+  background: var(--exb-rose);
+  color: var(--p-bg);
+}
+
+.login-recaptcha {
+  min-height: 0;
+}
+
+.login-recaptcha:not([hidden]) {
+  min-height: 78px;
+}
+
+.form-info,
+.form-alert {
   display: flex;
-  flex-direction: column;
-  gap: 1.25rem;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 11px 12px;
+  border-radius: 7px;
+  font-size: 13px;
+  line-height: 1.45;
+}
 
-  .form-group {
-    display: flex;
-    flex-direction: column;
-    gap: 0.375rem;
+.form-info {
+  border: 1px solid color-mix(in oklab, var(--p-accent) 30%, transparent);
+  background: color-mix(in oklab, var(--p-accent) 10%, transparent);
+  color: var(--p-ink);
+}
 
-    label {
-      font-size: 0.8125rem;
-      font-weight: 600;
-      color: var(--deep-space-blue);
-    }
+.form-alert {
+  border: 1px solid color-mix(in oklab, var(--exb-rose) 34%, transparent);
+  background: color-mix(in oklab, var(--exb-rose) 11%, transparent);
+  color: var(--exb-rose);
+}
 
-    .input-wrapper {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      background-color: #f8fafc;
-      border: 1px solid var(--color-border);
-      border-radius: 8px;
-      padding: 0.625rem 0.875rem;
-      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+.form-alert::before {
+  content: "!";
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+  width: 16px;
+  height: 16px;
+  margin-top: 1px;
+  border-radius: 50%;
+  background: var(--exb-rose);
+  color: var(--p-bg);
+  font: 600 10px/1 var(--font-text);
+}
 
-      &:focus-within {
-        border-color: var(--forest-green);
-        background-color: #ffffff;
-        box-shadow: 0 0 0 3px rgba(0, 146, 61, 0.12);
-      }
+.login-submit {
+  width: 100%;
+  height: 52px;
+  margin-top: 2px;
+  font-size: 15px;
+}
 
-      input {
-        width: 100%;
-        border: none;
-        outline: none;
-        background: transparent;
-        font-size: 0.875rem;
-        color: var(--deep-space-blue);
+.login-submit:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
 
-        &::placeholder {
-          color: #94a3b8;
-        }
-      }
-    }
+.login-links {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.login-links .link,
+.login-links .link--button {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--p-muted);
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+}
+
+.login-links .link:hover,
+.login-links .link--button:hover {
+  color: var(--p-ink);
+}
+
+.login-links__hint {
+  max-width: 21ch;
+  color: color-mix(in oklab, var(--p-muted) 76%, transparent);
+  font-size: 11px;
+  line-height: 1.4;
+  text-align: right;
+}
+
+.login-links .link::after {
+  color: var(--p-muted);
+}
+
+.login-legal {
+  margin-top: 26px;
+  padding-top: 16px;
+  border-top: 1px solid color-mix(in oklab, var(--p-ink) 9%, transparent);
+  color: color-mix(in oklab, var(--p-muted) 78%, transparent);
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+/* ------------------------------------------------------------------ responsive */
+@media (max-width: 960px) {
+  .login-page {
+    padding: 18px;
   }
 
-  .alert-error {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.625rem 0.875rem;
-    background-color: var(--rosewood-subtle);
-    border: 1px solid var(--rosewood-border);
-    border-radius: 6px;
-    color: var(--rosewood-text);
-    font-size: 0.8125rem;
-    font-weight: 600;
+  .login-shell {
+    grid-template-columns: minmax(0, 1fr);
+    max-width: 620px;
   }
 
-  .btn-submit {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-    width: 100%;
-    padding: 0.75rem 1rem;
-    background-color: var(--forest-green);
-    color: #ffffff;
-    border: none;
-    border-radius: 8px;
-    font-size: 0.9375rem;
-    font-weight: 600;
-    cursor: pointer;
-    box-shadow: var(--shadow-sm);
-    transition: background-color 0.15s ease, transform 0.1s ease;
+  .login-brand {
+    min-height: 0;
+    padding: 30px 32px 26px;
+    border-right: 0;
+    border-bottom: 1px solid color-mix(in oklab, var(--p-ink) 9%, transparent);
+  }
 
-    &:hover:not(:disabled) {
-      background-color: var(--forest-green-hover);
-    }
+  .login-brand__copy {
+    margin-top: 32px;
+  }
 
-    &:active:not(:disabled) {
-      transform: scale(0.99);
-    }
+  .login-brand__copy h1 {
+    font-size: clamp(30px, 5.6vw, 40px);
+    max-width: 16ch;
+  }
 
-    &:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-    }
+  .login-brand__lead {
+    font-size: 15px;
+    max-width: 52ch;
+  }
+
+  .login-facts {
+    max-width: 420px;
+  }
+
+  .login-window {
+    display: none;
+  }
+
+  .login-brand__foot {
+    margin-top: 20px;
+  }
+
+  .login-main {
+    padding: 32px;
+  }
+
+  .login-card {
+    width: min(440px, 100%);
   }
 }
 
-.demo-section {
-  margin-top: 2rem;
-
-  .demo-divider {
-    position: relative;
-    text-align: center;
-    margin-bottom: 1.25rem;
-
-    &::before {
-      content: '';
-      position: absolute;
-      top: 50%;
-      left: 0;
-      right: 0;
-      height: 1px;
-      background-color: var(--color-border);
-      z-index: 1;
-    }
-
-    span {
-      position: relative;
-      z-index: 2;
-      background-color: var(--color-surface);
-      padding: 0 0.75rem;
-      font-size: 0.6875rem;
-      font-weight: 700;
-      letter-spacing: 0.05em;
-      color: var(--color-text-muted);
-      text-transform: uppercase;
-    }
+@media (max-width: 560px) {
+  .login-page {
+    padding: 10px;
+    place-items: start center;
   }
 
-  .demo-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 0.75rem;
+  .login-shell {
+    border-radius: 18px;
+    margin-top: 10px;
+  }
 
-    .demo-card {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      padding: 0.75rem;
-      background-color: #f8fafc;
-      border: 1px solid var(--color-border);
-      border-radius: 8px;
-      cursor: pointer;
-      text-align: left;
-      transition: all 0.15s ease;
+  .login-brand {
+    padding: 24px 22px 22px;
+  }
 
-      &:hover {
-        border-color: var(--forest-green);
-        background-color: #ffffff;
-        box-shadow: var(--shadow-sm);
-        transform: translateY(-1px);
-      }
+  .login-brand__copy {
+    margin-top: 26px;
+  }
 
-      .demo-icon {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 36px;
-        height: 36px;
-        border-radius: 6px;
-        flex-shrink: 0;
-      }
+  .login-brand__copy h1 {
+    font-size: 30px;
+    max-width: 15ch;
+  }
 
-      .demo-info {
-        display: flex;
-        flex-direction: column;
+  .login-brand__lead {
+    font-size: 14px;
+  }
 
-        .demo-name {
-          font-size: 0.8125rem;
-          font-weight: 600;
-          color: var(--deep-space-blue);
-        }
+  .login-facts {
+    gap: 10px;
+    margin-top: 22px;
+    padding-top: 14px;
+  }
 
-        .demo-role {
-          font-size: 0.6875rem;
-          color: var(--color-text-muted);
-        }
+  .login-facts dt {
+    font-size: 22px;
+  }
 
-        .demo-scope {
-          font-size: 0.625rem;
-          font-weight: 600;
-          color: var(--forest-green-text);
-          margin-top: 0.1rem;
-        }
-      }
-    }
+  .login-facts dd {
+    font-size: 10px;
+  }
+
+  .login-main {
+    padding: 24px 20px 26px;
+  }
+
+  .login-card__head h2 {
+    font-size: 28px;
+  }
+
+  .login-links {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 10px;
   }
 }

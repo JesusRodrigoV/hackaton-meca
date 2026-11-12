@@ -1,17 +1,32 @@
 <!doctype html>
-<html lang="en">
+<html lang="es" data-type="software" data-radius="soft" data-ground="sky" data-buttons="solid" data-tone="dark" data-motion>
 <head>
   <meta charset="utf-8">
-  <title>HackatonMecaFront</title>
+  <title>Enseña por Bolivia · Control presupuestario</title>
   <base href="/">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Presupuestos, ejecución y reportes de Enseña por Bolivia en un solo sistema. Techos por partida, modificaciones, importación de movimientos y siete reportes para donantes y dirección.">
+  <meta name="site-kind" content="software">
+  <meta name="page-type" content="landing">
+  <meta name="theme-color" content="#101421">
+  <!-- Deja vacío para desactivar el widget. El backend exige reCAPTCHA si REQUIRE_RECAPTCHA=true. -->
+  <meta name="recaptcha-site-key" content="">
   <link rel="icon" type="image/x-icon" href="favicon.ico">
-  <!-- Google Fonts: Inter & JetBrains Mono -->
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+  <link rel="manifest" href="site.webmanifest">
+  <!-- La aplicación operativa conserva Inter y JetBrains Mono. -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <!-- Boxicons Web Component -->
   <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
+  <script>
+    document.documentElement.classList.add('m-enter', 'mo-js');
+    setTimeout(function () { document.documentElement.classList.add('m-enter-done'); }, 700);
+    setTimeout(function () { document.documentElement.classList.add('mo-safe'); }, 2500);
+  </script>
 </head>
 <body>
   <app-root></app-root>

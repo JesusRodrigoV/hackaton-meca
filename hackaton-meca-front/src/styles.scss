@@ -3,6 +3,31 @@
    Paleta Oficial: Bright Snow, Midnight Indigo, Forest Green, Tuscan Sun, Deep Space Blue, Rosewood
    ========================================================================== */
 
+/* Tipografía de la landing y el acceso. La aplicación operativa sigue usando Inter. */
+@font-face {
+  font-family: 'Instrument Sans';
+  src: url('/assets/fonts/instrument-sans-latin.woff2') format('woff2');
+  font-weight: 400 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'DM Mono';
+  src: url('/assets/fonts/dm-mono-400-latin.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'DM Mono';
+  src: url('/assets/fonts/dm-mono-500-latin.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
 :root {
   /* Paleta Base Oficial */
   --bright-snow: #f8f9fa;
