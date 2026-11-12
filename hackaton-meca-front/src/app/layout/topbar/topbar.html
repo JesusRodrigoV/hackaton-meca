@@ -1,0 +1,44 @@
+<header class="topbar">
+  <!-- Izquierda: Contexto de Trabajo -->
+  <div class="topbar-left">
+    <div class="gestion-selector">
+      <span class="label">Gestión Fiscal:</span>
+      <select [value]="auth.currentGestion()" (change)="onGestionChange($event)" class="select-clean">
+        @for (year of auth.availableGestiones(); track year) {
+          <option [value]="year">{{ year }}</option>
+        }
+      </select>
+    </div>
+
+    <!-- Badge de Jurisdicción (Data Scoping Activo) -->
+    <div class="scope-badge" [class.scoped]="auth.currentUser().scopeType !== 'global'">
+      <app-icon name="map-pin" size="xs" [color]="auth.currentUser().scopeType !== 'global' ? 'var(--cerulean)' : '#718096'"></app-icon>
+      <span>{{ auth.scopeBadge() }}</span>
+    </div>
+  </div>
+
+  <!-- Derecha: Simulador de Roles para Jurado + Perfil -->
+  <div class="topbar-right">
+    <!-- Switcher de Perfil para Demo -->
+    <div class="role-switcher">
+      <label class="switcher-label">
+        <app-icon name="user-check" size="xs" color="var(--mint-leaf)"></app-icon>
+        <span>Simular Rol:</span>
+      </label>
+      <select [value]="auth.currentUser().roleCode" (change)="onRoleChange($event)" class="role-select">
+        <option value="ADMIN">Super Admin (Nacional)</option>
+        <option value="FINANCE">Finanzas / Contador</option>
+        <option value="COORDINATOR">Coord. Santa Cruz (Regional)</option>
+        <option value="AUDITOR">Auditor CATALYST (Donante)</option>
+      </select>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Notificaciones / Alertas -->
+    <button class="btn-icon" title="Alertas de Ejecución">
+      <app-icon name="bell" size="sm" color="var(--space-indigo)"></app-icon>
+      <span class="notification-dot"></span>
+    </button>
+  </div>
+</header>

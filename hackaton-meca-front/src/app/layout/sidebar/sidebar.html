@@ -1,0 +1,64 @@
+<aside class="sidebar" [class.collapsed]="isCollapsed()">
+  <!-- Header de Marca -->
+  <div class="sidebar-header">
+    <div class="brand">
+      <div class="brand-logo">
+        <app-icon name="building-house" size="md" color="#FFFFFF"></app-icon>
+      </div>
+      @if (!isCollapsed()) {
+        <div class="brand-text">
+          <span class="brand-name">ENSEÑA</span>
+          <span class="brand-sub">POR BOLIVIA</span>
+        </div>
+      }
+    </div>
+    <button class="btn-toggle" (click)="toggleCollapse()" [title]="isCollapsed() ? 'Expandir' : 'Colapsar'">
+      <app-icon [name]="isCollapsed() ? 'chevron-right' : 'chevron-left'" size="sm" color="#A0AEC0"></app-icon>
+    </button>
+  </div>
+
+  <!-- Navegación Dinámica -->
+  <nav class="sidebar-nav">
+    @for (section of sections; track section.title) {
+      <div class="nav-group">
+        @if (!isCollapsed()) {
+          <div class="group-title">{{ section.title }}</div>
+        }
+        <ul class="nav-list">
+          @for (item of section.items; track item.route) {
+            <li *appHasPermission="item.permission ?? null">
+              <a
+                [routerLink]="item.route"
+                routerLinkActive="active"
+                class="nav-link"
+                [title]="isCollapsed() ? item.label : ''"
+              >
+                <span class="link-icon">
+                  <app-icon [name]="item.icon" size="sm"></app-icon>
+                </span>
+                @if (!isCollapsed()) {
+                  <span class="link-label">{{ item.label }}</span>
+                }
+              </a>
+            </li>
+          }
+        </ul>
+      </div>
+    }
+  </nav>
+
+  <!-- Footer con Perfil y Rol Activo -->
+  <div class="sidebar-footer">
+    <div class="user-pill">
+      <div class="avatar">
+        {{ auth.currentUser().fullName.charAt(0) }}
+      </div>
+      @if (!isCollapsed()) {
+        <div class="user-info">
+          <div class="user-name">{{ auth.currentUser().fullName }}</div>
+          <div class="user-role">{{ auth.currentUser().roleName }}</div>
+        </div>
+      }
+    </div>
+  </div>
+</aside>
