@@ -1,5 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { AuthService } from '../../core/auth/auth';
 import { BoxIconComponent } from '../../shared/components/box-icon/box-icon';
 
@@ -12,6 +13,7 @@ import { BoxIconComponent } from '../../shared/components/box-icon/box-icon';
 })
 export class Topbar {
   readonly auth = inject(AuthService);
+  private readonly router = inject(Router);
 
   onRoleChange(event: Event): void {
     const target = event.target as HTMLSelectElement;
@@ -22,5 +24,10 @@ export class Topbar {
   onGestionChange(event: Event): void {
     const target = event.target as HTMLSelectElement;
     this.auth.setGestion(Number(target.value));
+  }
+
+  async onLogout(): Promise<void> {
+    await this.auth.logout();
+    this.router.navigate(['/login']);
   }
 }

@@ -13,7 +13,16 @@ describe('Auth Guards', () => {
     router = TestBed.inject(Router);
   });
 
+  it('authGuard should redirect to login when user is unauthenticated', () => {
+    authService.logout();
+    const route = {} as ActivatedRouteSnapshot;
+    const state = { url: '/dashboard' } as RouterStateSnapshot;
+    const result = TestBed.runInInjectionContext(() => authGuard(route, state));
+    expect(result).not.toBe(true);
+  });
+
   it('authGuard should allow access when user is authenticated', () => {
+    authService.switchUser('ADMIN');
     const route = {} as ActivatedRouteSnapshot;
     const state = { url: '/dashboard' } as RouterStateSnapshot;
     const result = TestBed.runInInjectionContext(() => authGuard(route, state));
@@ -21,6 +30,7 @@ describe('Auth Guards', () => {
   });
 
   it('guestGuard should redirect to dashboard if already authenticated', () => {
+    authService.switchUser('ADMIN');
     const route = {} as ActivatedRouteSnapshot;
     const state = { url: '/login' } as RouterStateSnapshot;
     const result = TestBed.runInInjectionContext(() => guestGuard(route, state));
@@ -28,6 +38,7 @@ describe('Auth Guards', () => {
   });
 
   it('permissionGuard should allow access for ADMIN role without restrictions', () => {
+    authService.switchUser('ADMIN');
     const route = {
       data: { permissions: ['usuarios.admin'] }
     } as unknown as ActivatedRouteSnapshot;

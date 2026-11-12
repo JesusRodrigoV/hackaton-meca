@@ -72,15 +72,36 @@ export const PRESET_USERS: Record<string, UserProfile> = {
   }
 };
 
+function getStoredUser(): UserProfile | null {
+  if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
+    const raw = localStorage.getItem('meca_user');
+    if (raw) {
+      try {
+        return JSON.parse(raw);
+      } catch {
+        return null;
+      }
+    }
+  }
+  return null;
+}
+
+function getStoredToken(): string | null {
+  if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
+    return localStorage.getItem('meca_token');
+  }
+  return null;
+}
+
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
   private readonly http = inject(HttpClient, { optional: true });
 
-  // Estado reactivo de usuario y autenticación
-  readonly currentUser = signal<UserProfile | null>(PRESET_USERS['ADMIN']);
-  readonly token = signal<string | null>('jwt-demo-token-exb-2026');
+  // Estado reactivo de usuario y autenticación con persistencia en localStorage
+  readonly currentUser = signal<UserProfile | null>(getStoredUser());
+  readonly token = signal<string | null>(getStoredToken());
   readonly isApiAuthenticated = signal<boolean>(false);
 
   // Gestión fiscal activa y gestiones disponibles
@@ -89,17 +110,20 @@ export class AuthService {
 
   // Propiedades calculadas (Computed Signals)
   readonly isAuthenticated = computed(() => this.currentUser() !== null);
-  readonly userRole = computed(() => this.currentUser()?.roleName ?? '');
-  readonly scopeBadge = computed(() => this.currentUser()?.scopeLabel ?? '');
+  readonly userRole = computed(() => this.currentUser()?.roleName ?? 'Invitado');
+  readonly scopeBadge = computed(() => this.currentUser()?.scopeLabel ?? 'Sin alcance');
 
   /**
    * Conmuta el perfil activo entre los roles prestablecidos (ideal para pruebas y auditoría).
    */
   switchUser(roleKey: 'ADMIN' | 'FINANCE' | 'COORDINATOR' | 'AUDITOR'): void {
     if (PRESET_USERS[roleKey]) {
-      this.currentUser.set(PRESET_USERS[roleKey]);
-      this.token.set(`jwt-token-${roleKey.toLowerCase()}-exb`);
+      const user = PRESET_USERS[roleKey];
+      const token = `jwt-token-${roleKey.toLowerCase()}-exb`;
+      this.currentUser.set(user);
+      this.token.set(token);
       this.isApiAuthenticated.set(false);
+      this.persistSession(user, token);
     }
   }
 
@@ -140,7 +164,7 @@ export class AuthService {
               const roleCode = (profile.roles?.[0]?.code as any) ?? 'ADMIN';
               const fullName = profile.full_name || `${profile.first_name ?? ''} ${profile.last_name ?? ''}`.trim() || profile.email;
 
-              this.currentUser.set({
+              const user: UserProfile = {
                 id: profile.id,
                 email: profile.email,
                 fullName,
@@ -149,7 +173,9 @@ export class AuthService {
                 scopeType: 'global',
                 scopeLabel: 'Nivel Nacional (Consolidado)',
                 permissions: profile.permissions ?? PRESET_USERS['ADMIN'].permissions
-              });
+              };
+              this.currentUser.set(user);
+              this.persistSession(user, tokenResp.access_token);
               return true;
             }
           } catch {
@@ -164,14 +190,19 @@ export class AuthService {
 
     const foundUser = Object.values(PRESET_USERS).find(u => u.email.toLowerCase() === email.toLowerCase());
     if (foundUser) {
+      const token = `jwt-token-${foundUser.roleCode.toLowerCase()}-exb`;
       this.currentUser.set(foundUser);
-      this.token.set(`jwt-token-${foundUser.roleCode.toLowerCase()}-exb`);
+      this.token.set(token);
+      this.persistSession(foundUser, token);
       return true;
     }
 
     // Usuario por defecto si no coincide exactamente
-    this.currentUser.set(PRESET_USERS['ADMIN']);
-    this.token.set('jwt-demo-token-exb-2026');
+    const fallbackUser = PRESET_USERS['ADMIN'];
+    const fallbackToken = 'jwt-demo-token-exb-2026';
+    this.currentUser.set(fallbackUser);
+    this.token.set(fallbackToken);
+    this.persistSession(fallbackUser, fallbackToken);
     return true;
   }
 
@@ -194,6 +225,29 @@ export class AuthService {
     this.currentUser.set(null);
     this.token.set(null);
     this.isApiAuthenticated.set(false);
+    this.clearSession();
+  }
+
+  private persistSession(user: UserProfile, token: string): void {
+    if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
+      try {
+        localStorage.setItem('meca_user', JSON.stringify(user));
+        localStorage.setItem('meca_token', token);
+      } catch {
+        // Ignorar si el almacenamiento local está restringido
+      }
+    }
+  }
+
+  private clearSession(): void {
+    if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
+      try {
+        localStorage.removeItem('meca_user');
+        localStorage.removeItem('meca_token');
+      } catch {
+        // Ignorar
+      }
+    }
   }
 
   /**

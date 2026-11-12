@@ -13,12 +13,20 @@ describe('AuthService', () => {
     expect(service).toBeTruthy();
   });
 
-  it('should authenticate default admin user', () => {
+  it('should start unauthenticated when no stored session exists', () => {
+    service.logout();
+    expect(service.isAuthenticated()).toBe(false);
+    expect(service.currentUser()).toBeNull();
+  });
+
+  it('should authenticate admin user when switching user or logging in', () => {
+    service.switchUser('ADMIN');
     expect(service.isAuthenticated()).toBe(true);
     expect(service.currentUser()?.roleCode).toBe('ADMIN');
   });
 
   it('should verify permissions correctly', () => {
+    service.switchUser('ADMIN');
     expect(service.hasPermission('usuarios.admin')).toBe(true);
   });
 });
