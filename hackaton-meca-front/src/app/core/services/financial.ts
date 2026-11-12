@@ -378,10 +378,42 @@ export class FinancialService {
     if (!this.http) return;
     try {
       await firstValueFrom(
-        this.http.post(API_CONFIG.endpoints.presupuestos.modificaciones, mod)
+        this.http.post(API_CONFIG.endpoints.presupuestos.modificaciones, {
+          tipo: mod.tipo,
+          montoBob: mod.montoBob,
+          descripcion: mod.descripcion,
+          partida: mod.cuentaDestino
+        })
       );
+      await this.cargarModificacionesApi();
     } catch {
       // Operación encolada o reflejada localmente
+    }
+  }
+
+  async cargarModificacionesApi(): Promise<void> {
+    if (!this.http) return;
+    try {
+      const data = await firstValueFrom(
+        this.http.get<any[]>(API_CONFIG.endpoints.presupuestos.modificaciones)
+      );
+      if (Array.isArray(data) && data.length > 0) {
+        const formatted: ModificacionPresupuestaria[] = data.map((m: any) => ({
+          id: m.id,
+          fecha: m.fecha || m.created_at || new Date().toISOString().split('T')[0],
+          tipo: (m.tipo || 'TRASPASO').toUpperCase() as any,
+          descripcion: m.motivo || m.descripcion || m.reason || 'Modificación presupuestaria',
+          cuentaOrigen: m.financiadorOrigen ? `${m.partida || ''} (${m.financiadorOrigen})` : undefined,
+          cuentaDestino: `${m.partida || ''} (${m.financiadorDestino || 'General'})`,
+          montoBob: Number(m.montoBob || m.amount_bob || 0),
+          estado: (m.estado || 'BORRADOR').toUpperCase() as any,
+          solicitante: m.solicitante || 'Coordinador de Proyecto',
+          aprobador: m.aprobador
+        }));
+        this._modificaciones.set(formatted);
+      }
+    } catch {
+      // Mantiene lista reactiva local
     }
   }
 
@@ -392,8 +424,112 @@ export class FinancialService {
       await firstValueFrom(
         this.http.put(API_CONFIG.endpoints.presupuestos.aprobarModificacion(id), { aprobador: aprobadorNombre })
       );
+      await this.cargarModificacionesApi();
     } catch {
       // Modificación aprobada localmente
+    }
+  }
+
+  async cargarLotesApi(): Promise<void> {
+    if (!this.http) return;
+    try {
+      const data = await firstValueFrom(
+        this.http.get<any[]>(API_CONFIG.endpoints.ejecucion.lotes)
+      );
+      if (Array.isArray(data) && data.length > 0) {
+        const formatted: ImportacionLote[] = data.map((b: any) => ({
+          id: b.id,
+          nombreArchivo: b.filename || b.nombreArchivo || `Lote_${b.id}.xlsx`,
+          fecha: b.created_at ? b.created_at.replace('T', ' ').substring(0, 16) : new Date().toISOString(),
+          registrosTotal: b.total_records ?? b.registrosTotal ?? 0,
+          registrosExitosos: b.successful_records ?? b.registrosExitosos ?? 0,
+          registrosError: b.failed_records ?? b.registrosError ?? 0,
+          montoTotalBob: Number(b.total_amount_bob ?? b.montoTotalBob ?? 0),
+          estado: (b.status || 'CONFIRMADO').toUpperCase() as any,
+          usuario: b.user_email || b.usuario || 'Sistema',
+          checksumSha256: b.checksum_sha256 || 'hash-sha256'
+        }));
+        this._importaciones.set(formatted);
+      }
+    } catch {
+      // Mantiene lotes reactivos locales
+    }
+  }
+
+  async cargarDashboardKpisApi(): Promise<KpiSummary | null> {
+    if (!this.http) return null;
+    try {
+      return await firstValueFrom(
+        this.http.get<KpiSummary>(API_CONFIG.endpoints.dashboard.kpis)
+      );
+    } catch {
+      return null;
+    }
+  }
+
+  async cargarChartFinanciadorApi(): Promise<{ labels: string[]; datasets: Array<{ label: string; data: number[] }> } | null> {
+    if (!this.http) return null;
+    try {
+      return await firstValueFrom(
+        this.http.get<any>(API_CONFIG.endpoints.dashboard.chartsFinanciador)
+      );
+    } catch {
+      return null;
+    }
+  }
+
+  async cargarChartRegionesApi(): Promise<{ labels: string[]; datasets: Array<{ label: string; data: number[] }> } | null> {
+    if (!this.http) return null;
+    try {
+      return await firstValueFrom(
+        this.http.get<any>(API_CONFIG.endpoints.dashboard.chartsRegiones)
+      );
+    } catch {
+      return null;
+    }
+  }
+
+  async cargarReporteFinanciadoresApi(): Promise<any[] | null> {
+    if (!this.http) return null;
+    try {
+      return await firstValueFrom(
+        this.http.get<any[]>(API_CONFIG.endpoints.reportes.porFinanciador)
+      );
+    } catch {
+      return null;
+    }
+  }
+
+  async cargarReporteRegionesApi(): Promise<any[] | null> {
+    if (!this.http) return null;
+    try {
+      return await firstValueFrom(
+        this.http.get<any[]>(API_CONFIG.endpoints.reportes.porRegion)
+      );
+    } catch {
+      return null;
+    }
+  }
+
+  async cargarReporteAreasApi(): Promise<any[] | null> {
+    if (!this.http) return null;
+    try {
+      return await firstValueFrom(
+        this.http.get<any[]>(API_CONFIG.endpoints.reportes.porArea)
+      );
+    } catch {
+      return null;
+    }
+  }
+
+  async cargarReporteVariacionesApi(): Promise<any[] | null> {
+    if (!this.http) return null;
+    try {
+      return await firstValueFrom(
+        this.http.get<any[]>(API_CONFIG.endpoints.reportes.partidasDesviacion)
+      );
+    } catch {
+      return null;
     }
   }
 

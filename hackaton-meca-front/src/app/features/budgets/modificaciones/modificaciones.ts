@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, OnInit } from '@angular/core';
 import { CommonModule, DecimalPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { FinancialService } from '../../../core/services/financial';
@@ -12,7 +12,7 @@ import { HasPermissionDirective } from '../../../core/permissions/has-permission
   templateUrl: './modificaciones.html',
   styleUrl: './modificaciones.scss'
 })
-export class Modificaciones {
+export class Modificaciones implements OnInit {
   readonly financialService = inject(FinancialService);
   readonly authService = inject(AuthService);
 
@@ -27,6 +27,11 @@ export class Modificaciones {
   readonly descripcion = signal<string>('');
   readonly errorValidacion = signal<string>('');
 
+  ngOnInit(): void {
+    this.financialService.cargarModificacionesApi();
+    this.financialService.cargarTechosApi();
+  }
+
   abrirModal(): void {
     this.showModal.set(true);
     this.errorValidacion.set('');
@@ -38,7 +43,7 @@ export class Modificaciones {
     this.showModal.set(false);
   }
 
-  guardarSolicitud(): void {
+  async guardarSolicitud(): Promise<void> {
     if (this.montoBob() <= 0) {
       this.errorValidacion.set('El monto debe ser superior a 0 BOB.');
       return;
@@ -50,7 +55,7 @@ export class Modificaciones {
 
     const solicitante = this.authService.currentUser()?.fullName ?? 'Usuario Operativo';
 
-    this.financialService.solicitarModificacionApi({
+    await this.financialService.solicitarModificacionApi({
       tipo: this.tipoModificacion(),
       descripcion: this.descripcion(),
       cuentaOrigen: this.tipoModificacion() === 'TRASPASO' ? this.cuentaOrigen() : undefined,
@@ -62,8 +67,8 @@ export class Modificaciones {
     this.cerrarModal();
   }
 
-  aprobar(id: number): void {
+  async aprobar(id: number): Promise<void> {
     const aprobador = this.authService.currentUser()?.fullName ?? 'Aprobador Autorizado';
-    this.financialService.aprobarModificacionApi(id, aprobador);
+    await this.financialService.aprobarModificacionApi(id, aprobador);
   }
 }
