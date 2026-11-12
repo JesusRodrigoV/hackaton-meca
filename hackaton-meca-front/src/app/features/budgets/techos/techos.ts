@@ -5,26 +5,11 @@ import { RouterLink } from '@angular/router';
 import { FinancialService } from '../../../core/services/financial';
 import { AuthService } from '../../../core/auth/auth';
 import { BoxIconComponent } from '../../../shared/components/box-icon/box-icon';
-import { TableModule } from 'primeng/table';
-import { TagModule } from 'primeng/tag';
-import { ButtonModule } from 'primeng/button';
-import { InputTextModule } from 'primeng/inputtext';
-import { SelectModule } from 'primeng/select';
+import { PresupuestoTecho } from '../../../core/models/financial';
 
 @Component({
   selector: 'app-techos',
-  imports: [
-    CommonModule,
-    FormsModule,
-    RouterLink,
-    DecimalPipe,
-    BoxIconComponent,
-    TableModule,
-    TagModule,
-    ButtonModule,
-    InputTextModule,
-    SelectModule
-  ],
+  imports: [CommonModule, FormsModule, RouterLink, DecimalPipe, BoxIconComponent],
   templateUrl: './techos.html',
   styleUrl: './techos.scss'
 })
@@ -37,29 +22,6 @@ export class Techos {
   readonly selectedFinanciador = signal<string>('TODOS');
   readonly selectedEstado = signal<string>('TODOS');
 
-  readonly regionOptions = [
-    { label: 'Todas las Regiones', value: 'TODAS' },
-    { label: 'La Paz', value: 'La Paz' },
-    { label: 'Santa Cruz', value: 'Santa Cruz' },
-    { label: 'Cochabamba', value: 'Cochabamba' },
-    { label: 'Nacional', value: 'Nacional' }
-  ];
-
-  readonly financiadorOptions = [
-    { label: 'Todos los Donantes', value: 'TODOS' },
-    { label: 'CATALYST 18', value: 'CATALYST 18' },
-    { label: 'CEL (Comunidad)', value: 'CEL (Comunidad)' },
-    { label: 'KJCF (Fundación)', value: 'KJCF (Fundación)' }
-  ];
-
-  readonly estadoOptions = [
-    { label: 'Todos los Estados', value: 'TODOS' },
-    { label: 'OK (En norma)', value: 'OK' },
-    { label: 'Sobreejecución', value: 'SOBREEJECUCION' },
-    { label: 'Sin Ejecución', value: 'SIN_EJECUCION' },
-    { label: 'Sin Techo Previo', value: 'EJEC_SIN_PRESUP' }
-  ];
-
   readonly techos = this.financialService.techos;
 
   readonly techosFiltrados = computed(() => {
@@ -69,6 +31,7 @@ export class Techos {
     const fin = this.selectedFinanciador();
     const est = this.selectedEstado();
 
+    // Filtro por Scope de usuario si no es ADMIN ni FINANCE
     const currentUser = this.authService.currentUser();
     if (currentUser && currentUser.scopeType === 'region') {
       list = list.filter(t => currentUser.scopeLabel.toLowerCase().includes(t.region.toLowerCase()));
@@ -98,6 +61,7 @@ export class Techos {
     return list;
   });
 
+  // Totales de la selección actual
   readonly totalVigente = computed(() =>
     this.techosFiltrados().reduce((acc, t) => acc + t.montoVigenteBob, 0)
   );
@@ -114,16 +78,6 @@ export class Techos {
     const vig = this.totalVigente();
     return vig > 0 ? Number(((this.totalEjecutado() / vig) * 100).toFixed(1)) : 0;
   });
-
-  getEstadoSeverity(estado: string): 'success' | 'danger' | 'secondary' | 'warn' {
-    switch (estado) {
-      case 'OK': return 'success';
-      case 'SOBREEJECUCION':
-      case 'EJEC_SIN_PRESUP': return 'danger';
-      case 'SIN_EJECUCION': return 'secondary';
-      default: return 'warn';
-    }
-  }
 
   exportarCsv(): void {
     const data = this.techosFiltrados();
@@ -166,7 +120,7 @@ export class Techos {
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement('a');
     link.setAttribute('href', encodedUri);
-    link.setAttribute('download', `Presupuesto_Anual_${this.authService.currentGestion()}.csv`);
+    link.setAttribute('download', `Techos_Presupuestarios_${this.authService.currentGestion()}.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);

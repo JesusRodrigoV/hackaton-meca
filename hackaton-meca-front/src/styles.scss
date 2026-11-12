@@ -1,39 +1,82 @@
 /* ==========================================================================
-   PALETA Y SISTEMA VISUAL - ENSEÑA POR BOLIVIA (PRIMENG AURA)
+   PALETA OFICIAL MEJORADA - ENSEÑA POR BOLIVIA (WEB PÚBLICA)
    ========================================================================== */
 
+/* CSS HEX Variables */
 :root {
-  /* Paleta Base Oficial */
-  --bright-snow: #f8f9fa;
-  --space-indigo: #232046;
-  --forest-green: #00923d;
-  --forest-green-hover: #007c33;
-  --tuscan-sun: #ecc562;
-  --tuscan-sun-dark: #b88610;
-  --deep-space-blue: #0d2439;
+  --bright-snow: #f8f9faff;
+  --space-indigo: #2b255cff;
+  --forest-green: #00923dff;
+  --tuscan-sun: #ecc562ff;
+  --deep-space-blue: #0d2439ff;
+
+  /* Aliases para compatibilidad y semántica */
+  --cerulean: var(--forest-green);
+  --mint-leaf: var(--forest-green);
   --rosewood: #e11d48;
 
-  /* Aliases Semánticos */
+  /* Semántica de Aplicación */
   --color-bg: var(--bright-snow);
   --color-surface: #ffffff;
   --color-text-primary: var(--deep-space-blue);
-  --color-text-secondary: #475569;
-  --color-text-muted: #64748b;
-  --color-border: #e2e8f0;
-  --color-border-subtle: #f1f5f9;
-
-  --color-primary: var(--forest-green);
-  --color-primary-hover: var(--forest-green-hover);
+  --color-text-secondary: #4a5568;
+  --color-text-muted: #718096;
+  --color-primary: var(--space-indigo);
+  --color-accent: var(--forest-green);
+  --color-success: var(--forest-green);
   --color-warning: var(--tuscan-sun);
   --color-danger: var(--rosewood);
-  --color-success: var(--forest-green);
-
-  /* Compatibilidad con código previo */
-  --cerulean: var(--forest-green);
-  --mint-leaf: var(--forest-green);
+  --color-border: #e2e8f0;
 }
 
-/* Tipografía y Reset Base */
+/* CSS HSL Variables */
+:root {
+  --bright-snow-hsl: hsla(210, 17%, 98%, 1);
+  --space-indigo-hsl: hsla(247, 43%, 25%, 1);
+  --forest-green-hsl: hsla(145, 100%, 29%, 1);
+  --tuscan-sun-hsl: hsla(43, 78%, 65%, 1);
+  --deep-space-blue-hsl: hsla(209, 63%, 14%, 1);
+}
+
+/* SCSS Variables (Hex) */
+$bright-snow: #f8f9faff;
+$space-indigo: #2b255cff;
+$forest-green: #00923dff;
+$tuscan-sun: #ecc562ff;
+$deep-space-blue: #0d2439ff;
+$cerulean: #00923dff;
+$mint-leaf: #00923dff;
+$rosewood: #e11d48;
+
+/* SCSS Variables (HSL) */
+$bright-snow-hsl: hsla(210, 17%, 98%, 1);
+$space-indigo-hsl: hsla(247, 43%, 25%, 1);
+$forest-green-hsl: hsla(145, 100%, 29%, 1);
+$tuscan-sun-hsl: hsla(43, 78%, 65%, 1);
+$deep-space-blue-hsl: hsla(209, 63%, 14%, 1);
+
+/* SCSS Variables (RGB) */
+$bright-snow-rgb: rgba(248, 249, 250, 1);
+$space-indigo-rgb: rgba(43, 37, 92, 1);
+$forest-green-rgb: rgba(0, 146, 61, 1);
+$tuscan-sun-rgb: rgba(236, 197, 98, 1);
+$deep-space-blue-rgb: rgba(13, 36, 57, 1);
+
+/* SCSS Gradients */
+$gradient-top: linear-gradient(0deg, #f8f9faff, #2b255cff, #00923dff, #ecc562ff, #0d2439ff);
+$gradient-right: linear-gradient(90deg, #f8f9faff, #2b255cff, #00923dff, #ecc562ff, #0d2439ff);
+$gradient-bottom: linear-gradient(180deg, #f8f9faff, #2b255cff, #00923dff, #ecc562ff, #0d2439ff);
+$gradient-left: linear-gradient(270deg, #f8f9faff, #2b255cff, #00923dff, #ecc562ff, #0d2439ff);
+$gradient-top-right: linear-gradient(45deg, #f8f9faff, #2b255cff, #00923dff, #ecc562ff, #0d2439ff);
+$gradient-bottom-right: linear-gradient(135deg, #f8f9faff, #2b255cff, #00923dff, #ecc562ff, #0d2439ff);
+$gradient-top-left: linear-gradient(225deg, #f8f9faff, #2b255cff, #00923dff, #ecc562ff, #0d2439ff);
+$gradient-bottom-left: linear-gradient(315deg, #f8f9faff, #2b255cff, #00923dff, #ecc562ff, #0d2439ff);
+$gradient-radial: radial-gradient(#f8f9faff, #2b255cff, #00923dff, #ecc562ff, #0d2439ff);
+
+/* ==========================================================================
+   ESTILOS GLOBALES BASE
+   ========================================================================== */
+
 * {
   box-sizing: border-box;
   margin: 0;
@@ -53,42 +96,4 @@ body {
   font-family: 'JetBrains Mono', 'Roboto Mono', monospace;
   font-variant-numeric: tabular-nums;
   text-align: right;
-}
-
-/* Ajustes de integración para PrimeNG en modo institucional */
-.p-component {
-  font-family: inherit;
-  font-size: 0.875rem;
-}
-
-.p-button {
-  font-weight: 600;
-  border-radius: 8px;
-}
-
-.p-datatable {
-  .p-datatable-thead > tr > th {
-    background-color: #f8fafc;
-    color: var(--color-text-secondary);
-    font-size: 0.775rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-    border-color: var(--color-border);
-    padding: 0.75rem 1rem;
-  }
-
-  .p-datatable-tbody > tr > td {
-    padding: 0.75rem 1rem;
-    border-color: #f1f5f9;
-    font-size: 0.8125rem;
-  }
-}
-
-.p-tag {
-  font-weight: 700;
-  font-size: 0.6875rem;
-  letter-spacing: 0.03em;
-  padding: 0.2rem 0.5rem;
-  border-radius: 4px;
 }

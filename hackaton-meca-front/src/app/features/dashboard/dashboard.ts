@@ -12,24 +12,11 @@ import { CommonModule, DecimalPipe } from '@angular/common';
 import { FinancialService } from '../../core/services/financial';
 import { AuthService } from '../../core/auth/auth';
 import { BoxIconComponent } from '../../shared/components/box-icon/box-icon';
-import { ProgressBarModule } from 'primeng/progressbar';
-import { TagModule } from 'primeng/tag';
-import { ButtonModule } from 'primeng/button';
-import { TableModule } from 'primeng/table';
 import Chart from 'chart.js/auto';
 
 @Component({
   selector: 'app-dashboard',
-  imports: [
-    CommonModule,
-    RouterLink,
-    DecimalPipe,
-    BoxIconComponent,
-    ProgressBarModule,
-    TagModule,
-    ButtonModule,
-    TableModule
-  ],
+  imports: [CommonModule, RouterLink, DecimalPipe, BoxIconComponent],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.scss'
 })
@@ -46,6 +33,7 @@ export class Dashboard implements OnDestroy {
   readonly kpis = this.financialService.kpis;
   readonly techos = this.financialService.techos;
 
+  // Filtrado de partidas críticas
   readonly partidasCriticas = computed(() => {
     return this.techos().filter(
       t => t.estado === 'SOBREEJECUCION' || t.estado === 'EJEC_SIN_PRESUP' || t.porcentajeEjecucion > 90
@@ -68,7 +56,7 @@ export class Dashboard implements OnDestroy {
           datasets: [
             {
               data: [345000, 145000, 90000],
-              backgroundColor: ['#232046', '#00923d', '#ecc562'],
+              backgroundColor: ['#2b255c', '#00923d', '#ecc562'],
               borderWidth: 2,
               borderColor: '#ffffff'
             }
@@ -102,7 +90,7 @@ export class Dashboard implements OnDestroy {
             {
               label: 'Vigente (BOB)',
               data: [300000, 105000, 90000, 85000],
-              backgroundColor: '#232046',
+              backgroundColor: '#2b255c',
               borderRadius: 4
             },
             {
@@ -144,15 +132,6 @@ export class Dashboard implements OnDestroy {
           }
         }
       });
-    }
-  }
-
-  getEstadoSeverity(estado: string): 'success' | 'danger' | 'warn' | 'secondary' {
-    switch (estado) {
-      case 'OK': return 'success';
-      case 'SOBREEJECUCION':
-      case 'EJEC_SIN_PRESUP': return 'danger';
-      default: return 'warn';
     }
   }
 

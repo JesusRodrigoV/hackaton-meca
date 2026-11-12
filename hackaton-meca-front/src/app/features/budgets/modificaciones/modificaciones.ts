@@ -5,28 +5,10 @@ import { FinancialService } from '../../../core/services/financial';
 import { AuthService } from '../../../core/auth/auth';
 import { BoxIconComponent } from '../../../shared/components/box-icon/box-icon';
 import { HasPermissionDirective } from '../../../core/permissions/has-permission';
-import { TableModule } from 'primeng/table';
-import { TagModule } from 'primeng/tag';
-import { ButtonModule } from 'primeng/button';
-import { DialogModule } from 'primeng/dialog';
-import { InputTextModule } from 'primeng/inputtext';
-import { SelectModule } from 'primeng/select';
 
 @Component({
   selector: 'app-modificaciones',
-  imports: [
-    CommonModule,
-    FormsModule,
-    DecimalPipe,
-    BoxIconComponent,
-    HasPermissionDirective,
-    TableModule,
-    TagModule,
-    ButtonModule,
-    DialogModule,
-    InputTextModule,
-    SelectModule
-  ],
+  imports: [CommonModule, FormsModule, DecimalPipe, BoxIconComponent, HasPermissionDirective],
   templateUrl: './modificaciones.html',
   styleUrl: './modificaciones.scss'
 })
@@ -62,7 +44,7 @@ export class Modificaciones {
       return;
     }
     if (!this.descripcion().trim()) {
-      this.errorValidacion.set('Debe ingresar un motivo para el traspaso.');
+      this.errorValidacion.set('Debe ingresar una justificación técnica o legal.');
       return;
     }
 
@@ -83,14 +65,5 @@ export class Modificaciones {
   aprobar(id: number): void {
     const aprobador = this.authService.currentUser()?.fullName ?? 'Aprobador Autorizado';
     this.financialService.aprobarModificacion(id, aprobador);
-  }
-
-  getEstadoSeverity(estado: string): 'success' | 'warn' | 'danger' | 'secondary' {
-    switch (estado) {
-      case 'APROBADO': return 'success';
-      case 'BORRADOR': return 'warn';
-      case 'RECHAZADO': return 'danger';
-      default: return 'secondary';
-    }
   }
 }

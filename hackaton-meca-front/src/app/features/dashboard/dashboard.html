@@ -12,12 +12,9 @@
         <app-icon name="layer" size="16px" color="#00923d"></app-icon>
         <span>Alcance: <strong>{{ authService.scopeBadge() }}</strong></span>
       </div>
-      <a routerLink="/reportes">
-        <p-button
-          label="Ver Reportes"
-          icon="pi pi-file"
-          size="small"
-        ></p-button>
+      <a routerLink="/reportes" class="btn-quick-report">
+        <app-icon name="file-blank" size="18px" color="#ffffff"></app-icon>
+        <span>Ver Reportes</span>
       </a>
     </div>
   </header>
@@ -26,7 +23,7 @@
   <section class="kpi-grid">
     <div class="kpi-card">
       <div class="kpi-icon-wrap bg-indigo-subtle">
-        <app-icon name="wallet" size="24px" color="#232046"></app-icon>
+        <app-icon name="wallet" size="24px" color="#1b2a49"></app-icon>
       </div>
       <div class="kpi-content">
         <span class="kpi-label">Presupuesto Vigente</span>
@@ -42,12 +39,14 @@
       <div class="kpi-content">
         <span class="kpi-label">Ejecución Acumulada</span>
         <div class="kpi-value tabular-nums">{{ kpis().ejecutadoBob | number:'1.2-2' }} <small>BOB</small></div>
-        <div class="progressbar-wrap">
-          <p-progressbar
-            [value]="kpis().porcentajeEjecucion > 100 ? 100 : kpis().porcentajeEjecucion"
-            [showValue]="false"
-            [style]="{ height: '6px' }"
-          ></p-progressbar>
+        <div class="progress-bar-wrap">
+          <div
+            class="progress-bar-fill"
+            [style.width.%]="kpis().porcentajeEjecucion > 100 ? 100 : kpis().porcentajeEjecucion"
+            [class.progress-danger]="kpis().porcentajeEjecucion > 100"
+            [class.progress-warning]="kpis().porcentajeEjecucion >= 90 && kpis().porcentajeEjecucion <= 100"
+            [class.progress-success]="kpis().porcentajeEjecucion < 90"
+          ></div>
         </div>
         <div class="progress-stats">
           <span class="progress-pct tabular-nums">{{ kpis().porcentajeEjecucion }}% ejecutado</span>
@@ -60,7 +59,7 @@
         <app-icon
           [name]="kpis().saldoDisponibleBob >= 0 ? 'check-circle' : 'error-circle'"
           size="24px"
-          [color]="kpis().saldoDisponibleBob >= 0 ? '#00923d' : '#e11d48'"
+          [color]="kpis().saldoDisponibleBob >= 0 ? '#00923d' : '#b24c63'"
         ></app-icon>
       </div>
       <div class="kpi-content">
@@ -74,7 +73,7 @@
 
     <div class="kpi-card">
       <div class="kpi-icon-wrap bg-rose-subtle">
-        <app-icon name="bell" size="24px" color="#e11d48"></app-icon>
+        <app-icon name="bell" size="24px" color="#b24c63"></app-icon>
       </div>
       <div class="kpi-content">
         <span class="kpi-label">Alertas de Presupuesto</span>
@@ -84,7 +83,7 @@
     </div>
   </section>
 
-  <!-- Gráficos Visuales -->
+  <!-- Gráficos Visuales (Chart.js) -->
   <section class="charts-grid">
     <div class="chart-card">
       <div class="card-header">
@@ -102,7 +101,7 @@
     <div class="chart-card">
       <div class="card-header">
         <div class="card-title-group">
-          <app-icon name="bar-chart-alt-2" size="20px" color="#232046"></app-icon>
+          <app-icon name="bar-chart-alt-2" size="20px" color="#1b2a49"></app-icon>
           <h3>Presupuesto vs Ejecución por Región</h3>
         </div>
         <span class="card-badge">Consolidado Geográfico</span>
@@ -113,72 +112,75 @@
     </div>
   </section>
 
-  <!-- Partidas Críticas con PrimeNG Table -->
+  <!-- Partidas Críticas y Alertas de Gobernanza -->
   <section class="critical-section">
     <div class="section-card">
       <div class="card-header">
         <div class="card-title-group">
-          <app-icon name="error-circle" size="20px" color="#e11d48"></app-icon>
+          <app-icon name="error-circle" size="20px" color="#b24c63"></app-icon>
           <h3>Partidas con sobregiro o próximas al límite</h3>
         </div>
         <a routerLink="/presupuestos/techos" class="btn-link">Ver todas las partidas →</a>
       </div>
 
-      <p-table
-        [value]="partidasCriticas()"
-        [tableStyle]="{ 'min-width': '50rem' }"
-        styleClass="p-datatable-sm p-datatable-striped"
-      >
-        <ng-template #header>
-          <tr>
-            <th>Partida / Cuenta</th>
-            <th>Región</th>
-            <th>Financiador</th>
-            <th class="tabular-nums">Presupuesto Vigente</th>
-            <th class="tabular-nums">Ejecutado</th>
-            <th class="tabular-nums">Saldo</th>
-            <th class="tabular-nums">% Ejec.</th>
-            <th>Estado</th>
-            <th>Acción</th>
-          </tr>
-        </ng-template>
-        <ng-template #body let-item>
-          <tr [class.row-alert]="item.estado === 'SOBREEJECUCION' || item.estado === 'EJEC_SIN_PRESUP'">
-            <td class="font-medium">
-              <div class="account-cell">
-                <span class="account-code">{{ item.codigoCuenta }}</span>
-                <span class="account-name">{{ item.nombreCuenta }}</span>
-              </div>
-            </td>
-            <td>{{ item.region }}</td>
-            <td><span class="badge-fin">{{ item.financiador }}</span></td>
-            <td class="tabular-nums">{{ item.montoVigenteBob | number:'1.2-2' }}</td>
-            <td class="tabular-nums font-medium">{{ item.montoEjecutadoBob | number:'1.2-2' }}</td>
-            <td class="tabular-nums font-bold" [class.text-danger]="item.saldoDisponibleBob < 0">
-              {{ item.saldoDisponibleBob | number:'1.2-2' }}
-            </td>
-            <td class="tabular-nums font-bold">
-              {{ item.porcentajeEjecucion }}%
-            </td>
-            <td>
-              <p-tag
-                [value]="item.estado"
-                [severity]="getEstadoSeverity(item.estado)"
-              ></p-tag>
-            </td>
-            <td>
-              <a routerLink="/presupuestos/modificaciones">
-                <p-button
-                  label="Traspasar"
-                  icon="pi pi-arrows-h"
-                  [outlined]="true"
-                  size="small"
-                ></p-button>
-              </a>
-            </td>
-          </tr>
-        </ng-template>
-      </p-table>
+      <div class="table-responsive">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Partida / Cuenta</th>
+              <th>Región</th>
+              <th>Financiador</th>
+              <th class="tabular-nums">Presupuesto Vigente</th>
+              <th class="tabular-nums">Ejecutado</th>
+              <th class="tabular-nums">Saldo</th>
+              <th class="tabular-nums">% Ejec.</th>
+              <th>Estado</th>
+              <th>Acción</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (item of partidasCriticas(); track item.id) {
+              <tr [class.row-alert]="item.estado === 'SOBREEJECUCION' || item.estado === 'EJEC_SIN_PRESUP'">
+                <td class="font-medium">
+                  <div class="account-cell">
+                    <span class="account-code">{{ item.codigoCuenta }}</span>
+                    <span class="account-name">{{ item.nombreCuenta }}</span>
+                  </div>
+                </td>
+                <td>{{ item.region }}</td>
+                <td><span class="badge-fin">{{ item.financiador }}</span></td>
+                <td class="tabular-nums">{{ item.montoVigenteBob | number:'1.2-2' }}</td>
+                <td class="tabular-nums font-medium">{{ item.montoEjecutadoBob | number:'1.2-2' }}</td>
+                <td class="tabular-nums font-bold" [class.text-danger]="item.saldoDisponibleBob < 0">
+                  {{ item.saldoDisponibleBob | number:'1.2-2' }}
+                </td>
+                <td class="tabular-nums">
+                  <span class="pct-pill" [class.pct-danger]="item.porcentajeEjecucion > 100" [class.pct-warning]="item.porcentajeEjecucion >= 90">
+                    {{ item.porcentajeEjecucion }}%
+                  </span>
+                </td>
+                <td>
+                  @if (item.estado === 'SOBREEJECUCION') {
+                    <span class="status-badge status-danger">SOBREEJECUCIÓN</span>
+                  } @else if (item.estado === 'EJEC_SIN_PRESUP') {
+                    <span class="status-badge status-danger">SIN PRESUPUESTO</span>
+                  } @else if (item.porcentajeEjecucion >= 90) {
+                    <span class="status-badge status-warning">ALERTA 90%</span>
+                  } @else {
+                    <span class="status-badge status-ok">OK</span>
+                  }
+                </td>
+                <td>
+                  <a routerLink="/presupuestos/modificaciones" class="btn-action-sm" title="Solicitar Modificación / Traspaso">
+                    <app-icon name="transfer" size="16px" color="#00923d"></app-icon>
+                    <span>Traspasar</span>
+                  </a>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
     </div>
   </section>
 </div>
