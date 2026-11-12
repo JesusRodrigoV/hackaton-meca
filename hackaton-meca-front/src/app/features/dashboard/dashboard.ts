@@ -44,11 +44,50 @@ export class Dashboard implements OnInit, OnDestroy {
   constructor() {
     afterNextRender(() => {
       this.initCharts();
+      this.cargarGraficosReales();
     });
   }
 
   ngOnInit(): void {
     this.financialService.cargarTechosApi();
+  }
+
+  private async cargarGraficosReales(): Promise<void> {
+    try {
+      const dataFin = await this.financialService.cargarChartFinanciadorApi();
+      if (dataFin && this.chartFinanciadorInstance) {
+        this.chartFinanciadorInstance.data.labels = dataFin.labels;
+        // dataset 0 vigente, dataset 1 ejecutado
+        const dataVals = dataFin.datasets?.[1]?.data || dataFin.datasets?.[0]?.data;
+        if (dataVals && dataVals.length > 0) {
+          this.chartFinanciadorInstance.data.datasets = [
+            {
+              data: dataVals,
+              backgroundColor: ['#2b255c', '#00923d', '#ecc562', '#0d2439', '#e11d48'],
+              borderWidth: 2,
+              borderColor: '#ffffff'
+            }
+          ];
+          this.chartFinanciadorInstance.update();
+        }
+      }
+
+      const dataReg = await this.financialService.cargarChartRegionesApi();
+      if (dataReg && this.chartRegionesInstance) {
+        this.chartRegionesInstance.data.labels = dataReg.labels;
+        if (dataReg.datasets && dataReg.datasets.length > 0) {
+          this.chartRegionesInstance.data.datasets = dataReg.datasets.map((ds, idx) => ({
+            label: ds.label,
+            data: ds.data,
+            backgroundColor: idx === 0 ? '#00923d' : '#2b255c',
+            borderRadius: 4
+          }));
+          this.chartRegionesInstance.update();
+        }
+      }
+    } catch {
+      // Mantiene datos locales de gráfico
+    }
   }
 
   private initCharts(): void {

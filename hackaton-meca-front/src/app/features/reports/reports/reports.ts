@@ -27,10 +27,31 @@ export class Reports implements OnInit {
   readonly movimientos = this.financialService.movimientos;
   readonly auditLogs = this.financialService.auditLogs;
 
-  ngOnInit(): void {
-    this.financialService.cargarTechosApi();
-    this.financialService.cargarMovimientosApi();
-    this.financialService.cargarAuditoriaApi();
+  // Datos directos de API
+  readonly reportesApiFinanciador = signal<any[] | null>(null);
+  readonly reportesApiRegion = signal<any[] | null>(null);
+  readonly reportesApiArea = signal<any[] | null>(null);
+  readonly reportesApiVariaciones = signal<any[] | null>(null);
+
+  async ngOnInit(): Promise<void> {
+    await this.financialService.cargarTechosApi();
+    await this.financialService.cargarMovimientosApi();
+    await this.financialService.cargarAuditoriaApi();
+
+    try {
+      const [fin, reg, area, vars] = await Promise.all([
+        this.financialService.cargarReporteFinanciadoresApi(),
+        this.financialService.cargarReporteRegionesApi(),
+        this.financialService.cargarReporteAreasApi(),
+        this.financialService.cargarReporteVariacionesApi()
+      ]);
+      if (fin) this.reportesApiFinanciador.set(fin);
+      if (reg) this.reportesApiRegion.set(reg);
+      if (area) this.reportesApiArea.set(area);
+      if (vars) this.reportesApiVariaciones.set(vars);
+    } catch {
+      // Computa sobre techos locales
+    }
   }
 
   readonly reportTabs = [
@@ -45,6 +66,19 @@ export class Reports implements OnInit {
 
   // Reporte 2: Agrupado por Financiador
   readonly reportePorFinanciador = computed(() => {
+    const apiData = this.reportesApiFinanciador();
+    if (apiData && apiData.length > 0) {
+      return apiData.map(r => ({
+        nombre: r.financiador,
+        inicial: r.inicialBob ?? r.inicial ?? 0,
+        modif: r.modificacionesBob ?? r.modificaciones ?? 0,
+        vigente: r.vigenteBob ?? r.vigente ?? 0,
+        ejecutado: r.ejecutadoBob ?? r.ejecutado ?? 0,
+        saldo: r.saldoBob ?? r.saldo ?? 0,
+        pct: r.porcentaje ?? 0
+      }));
+    }
+
     const map = new Map<string, { inicial: number; modif: number; vigente: number; ejecutado: number; saldo: number }>();
     for (const t of this.techos()) {
       const cur = map.get(t.financiador) || { inicial: 0, modif: 0, vigente: 0, ejecutado: 0, saldo: 0 };
@@ -64,6 +98,18 @@ export class Reports implements OnInit {
 
   // Reporte 3: Agrupado por Región
   readonly reportePorRegion = computed(() => {
+    const apiData = this.reportesApiRegion();
+    if (apiData && apiData.length > 0) {
+      return apiData.map(r => ({
+        nombre: r.region,
+        inicial: r.inicialBob ?? r.vigenteBob ?? 0,
+        vigente: r.vigenteBob ?? r.vigente ?? 0,
+        ejecutado: r.ejecutadoBob ?? r.ejecutado ?? 0,
+        saldo: r.saldoBob ?? r.saldo ?? 0,
+        pct: r.porcentaje ?? 0
+      }));
+    }
+
     const map = new Map<string, { inicial: number; vigente: number; ejecutado: number; saldo: number }>();
     for (const t of this.techos()) {
       const cur = map.get(t.region) || { inicial: 0, vigente: 0, ejecutado: 0, saldo: 0 };
@@ -82,6 +128,17 @@ export class Reports implements OnInit {
 
   // Reporte 4: Agrupado por Área
   readonly reportePorArea = computed(() => {
+    const apiData = this.reportesApiArea();
+    if (apiData && apiData.length > 0) {
+      return apiData.map(r => ({
+        nombre: r.area,
+        vigente: r.vigenteBob ?? r.vigente ?? 0,
+        ejecutado: r.ejecutadoBob ?? r.ejecutado ?? 0,
+        saldo: r.saldoBob ?? r.saldo ?? 0,
+        pct: r.porcentaje ?? 0
+      }));
+    }
+
     const map = new Map<string, { vigente: number; ejecutado: number; saldo: number }>();
     for (const t of this.techos()) {
       const cur = map.get(t.area) || { vigente: 0, ejecutado: 0, saldo: 0 };
@@ -99,6 +156,25 @@ export class Reports implements OnInit {
 
   // Reporte 6: Desviaciones y Sobreejecuciones
   readonly reporteDesviaciones = computed(() => {
+    const apiData = this.reportesApiVariaciones();
+    if (apiData && apiData.length > 0) {
+      return apiData.map((v, i) => ({
+        id: i + 1,
+        codigoCuenta: v.codigo || '5.0.00',
+        nombreCuenta: v.partida || 'Partida Presupuestaria',
+        rubro: v.rubro || 'General',
+        region: 'Nacional',
+        area: 'Institucional',
+        financiador: v.financiador || 'Todos',
+        montoInicialBob: v.vigenteBob,
+        modificacionesBob: 0,
+        montoVigenteBob: v.vigenteBob,
+        montoEjecutadoBob: v.ejecutadoBob,
+        saldoDisponibleBob: v.saldoBob,
+        porcentajeEjecucion: v.vigenteBob > 0 ? Number(((v.ejecutadoBob / v.vigenteBob) * 100).toFixed(1)) : 0,
+        estado: v.alerta || 'SOBREEJECUCION'
+      }));
+    }
     return this.techos().filter(t => t.estado === 'SOBREEJECUCION' || t.estado === 'EJEC_SIN_PRESUP' || t.porcentajeEjecucion >= 90);
   });
 

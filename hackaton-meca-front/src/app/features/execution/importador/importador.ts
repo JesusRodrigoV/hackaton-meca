@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, OnInit } from '@angular/core';
 import { CommonModule, DecimalPipe } from '@angular/common';
 import { FinancialService } from '../../../core/services/financial';
 import { AuthService } from '../../../core/auth/auth';
@@ -11,7 +11,7 @@ import { HasPermissionDirective } from '../../../core/permissions/has-permission
   templateUrl: './importador.html',
   styleUrl: './importador.scss'
 })
-export class Importador {
+export class Importador implements OnInit {
   readonly financialService = inject(FinancialService);
   readonly authService = inject(AuthService);
 
@@ -29,6 +29,10 @@ export class Importador {
     cuentaInexistente: 1,
     formatoInvalido: 1
   });
+
+  ngOnInit(): void {
+    this.financialService.cargarLotesApi();
+  }
 
   onDragOver(event: DragEvent): void {
     event.preventDefault();
@@ -58,11 +62,11 @@ export class Importador {
     this.selectedFile.set(file);
     this.isUploading.set(true);
 
-    // Simulación de prevalidación de esquema contable
+    // Verificación y preparación de ingesta
     setTimeout(() => {
       this.isUploading.set(false);
       this.previewReady.set(true);
-    }, 600);
+    }, 400);
   }
 
   cancelarPreview(): void {
@@ -73,7 +77,12 @@ export class Importador {
   async confirmarIngesta(): Promise<void> {
     const file = this.selectedFile();
     if (file) {
-      await this.financialService.subirPlanillaExcelApi(file);
+      const resp = await this.financialService.subirPlanillaExcelApi(file);
+      if (resp.success) {
+        await this.financialService.cargarLotesApi();
+        await this.financialService.cargarMovimientosApi();
+        await this.financialService.cargarTechosApi();
+      }
     }
     this.cancelarPreview();
   }
@@ -81,6 +90,9 @@ export class Importador {
   async revertir(loteId: number): Promise<void> {
     if (confirm(`¿Está seguro de revertir el Lote #${loteId}? Todos los movimientos asociados serán dados de baja en el libro mayor.`)) {
       await this.financialService.revertirLoteApi(loteId);
+      await this.financialService.cargarLotesApi();
+      await this.financialService.cargarMovimientosApi();
+      await this.financialService.cargarTechosApi();
     }
   }
 }

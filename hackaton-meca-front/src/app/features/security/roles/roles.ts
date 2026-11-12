@@ -44,13 +44,50 @@ export class Roles implements OnInit {
   async ngOnInit(): Promise<void> {
     if (!this.http) return;
     try {
-      const catalog = await firstValueFrom(
-        this.http.get<Array<{ code: string; name: string; module?: string }>>(
-          API_CONFIG.endpoints.seguridad.permisosCatalogo
+      const [catalog, rolesData] = await Promise.all([
+        firstValueFrom(
+          this.http.get<Array<{ code: string; name: string; module?: string }>>(
+            API_CONFIG.endpoints.seguridad.permisosCatalogo
+          )
+        ),
+        firstValueFrom(
+          this.http.get<{ items: Array<{ id: number; name: string }> }>(
+            API_CONFIG.endpoints.seguridad.roles
+          )
         )
-      );
+      ]);
+
       if (Array.isArray(catalog) && catalog.length > 0) {
-        // Enriquecer permisos existentes con el catálogo del backend
+        const rolePermissionsMap: Record<string, Set<string>> = {
+          admin: new Set<string>(),
+          finance: new Set<string>(),
+          coordinator: new Set<string>(),
+          auditor: new Set<string>()
+        };
+
+        if (rolesData?.items && Array.isArray(rolesData.items)) {
+          await Promise.all(
+            rolesData.items.map(async r => {
+              try {
+                const detail = await firstValueFrom(
+                  this.http!.get<any>(`${API_CONFIG.endpoints.seguridad.roles}/${r.id}`)
+                );
+                const rName = r.name.toLowerCase();
+                let key: 'admin' | 'finance' | 'coordinator' | 'auditor' = 'admin';
+                if (rName.includes('finanz')) key = 'finance';
+                else if (rName.includes('coord')) key = 'coordinator';
+                else if (rName.includes('audit')) key = 'auditor';
+
+                if (Array.isArray(detail?.permissions)) {
+                  detail.permissions.forEach((p: any) => rolePermissionsMap[key].add(p.code));
+                }
+              } catch {
+                // Silenciado
+              }
+            })
+          );
+        }
+
         const current = this.permisos();
         const merged: PermisoFila[] = catalog.map(p => {
           const match = current.find(c => c.codigo === p.code);
@@ -58,10 +95,10 @@ export class Roles implements OnInit {
             codigo: p.code,
             nombre: p.name,
             modulo: p.module || 'Seguridad',
-            admin: match ? match.admin : true,
-            finance: match ? match.finance : false,
-            coordinator: match ? match.coordinator : false,
-            auditor: match ? match.auditor : false
+            admin: rolePermissionsMap['admin'].size > 0 ? rolePermissionsMap['admin'].has(p.code) : (match ? match.admin : true),
+            finance: rolePermissionsMap['finance'].size > 0 ? rolePermissionsMap['finance'].has(p.code) : (match ? match.finance : false),
+            coordinator: rolePermissionsMap['coordinator'].size > 0 ? rolePermissionsMap['coordinator'].has(p.code) : (match ? match.coordinator : false),
+            auditor: rolePermissionsMap['auditor'].size > 0 ? rolePermissionsMap['auditor'].has(p.code) : (match ? match.auditor : false)
           };
         });
         this.permisos.set(merged);
@@ -75,11 +112,21 @@ export class Roles implements OnInit {
     this.isSaving.set(true);
     if (this.http) {
       try {
-        await firstValueFrom(
-          this.http.put(`${API_CONFIG.endpoints.seguridad.roles}/1/permissions`, {
-            permissions: this.permisos().filter(p => p.admin).map(p => p.codigo)
-          })
-        );
+        const list = this.permisos();
+        await Promise.all([
+          firstValueFrom(this.http.put(`${API_CONFIG.endpoints.seguridad.roles}/1/permissions`, {
+            permissions: list.filter(p => p.admin).map(p => p.codigo)
+          })),
+          firstValueFrom(this.http.put(`${API_CONFIG.endpoints.seguridad.roles}/3/permissions`, {
+            permissions: list.filter(p => p.finance).map(p => p.codigo)
+          })),
+          firstValueFrom(this.http.put(`${API_CONFIG.endpoints.seguridad.roles}/4/permissions`, {
+            permissions: list.filter(p => p.coordinator).map(p => p.codigo)
+          })),
+          firstValueFrom(this.http.put(`${API_CONFIG.endpoints.seguridad.roles}/2/permissions`, {
+            permissions: list.filter(p => p.auditor).map(p => p.codigo)
+          }))
+        ]);
       } catch {
         // Silenciado para mantener fluidez
       }
