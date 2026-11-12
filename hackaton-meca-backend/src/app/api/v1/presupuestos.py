@@ -4,6 +4,7 @@ from sqlalchemy.orm import Session
 
 from app.db.session import get_db
 from app.core.dependencies import get_current_active_user, require_permission
+from app.models.catalogs import Financiador
 from app.models.security import User
 from app.crud import presupuestos as crud_presupuestos
 from app.schemas.presupuestos import (
@@ -56,9 +57,19 @@ def get_modificaciones(
     items = crud_presupuestos.list_modificaciones(db)
     output = []
     for m in items:
-        # Extraer nombres descriptivos
-        fin_orig = m.origen_presupuesto.financiador.name if m.origen_presupuesto else "Sin Asignar"
-        fin_dest = m.destino_presupuesto.financiador.name if m.destino_presupuesto else "Sin Asignar"
+        # Extraer nombres descriptivos de forma segura mediante ID
+        fin_orig = "Sin Asignar"
+        if m.origen_presupuesto and m.origen_presupuesto.financiador_id:
+            fin_obj = db.get(Financiador, m.origen_presupuesto.financiador_id)
+            if fin_obj:
+                fin_orig = fin_obj.name
+
+        fin_dest = "Sin Asignar"
+        if m.destino_presupuesto and m.destino_presupuesto.financiador_id:
+            fin_obj = db.get(Financiador, m.destino_presupuesto.financiador_id)
+            if fin_obj:
+                fin_dest = fin_obj.name
+
         partida = m.reason.split("]")[0].replace("[", "") if "]" in m.reason else "Partida General"
         motivo = m.reason.split("]")[-1].strip() if "]" in m.reason else m.reason
 
