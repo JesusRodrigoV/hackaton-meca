@@ -1,0 +1,115 @@
+services:
+  # ==========================================
+  # 1. Base de Datos: PostgreSQL 17 (Alpine)
+  # ==========================================
+  db:
+    image: postgres:17-alpine
+    container_name: meca_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-meca_db}
+      POSTGRES_USER: ${POSTGRES_USER:-meca_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-meca_password_secure_2026}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./HACKATON2_create.sql:/docker-entrypoint-initdb.d/01_init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-meca_user} -d ${POSTGRES_DB:-meca_db}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - meca_network
+
+  # ==========================================
+  # 2. Caché y Rate Limiting: Redis 7 (Alpine)
+  # ==========================================
+  redis:
+    image: redis:7-alpine
+    container_name: meca_redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - meca_network
+
+  # ==========================================
+  # 3. Backend: FastAPI + UV (Python 3.13)
+  # ==========================================
+  backend:
+    build:
+      context: ./hackaton-meca-backend
+      dockerfile: Dockerfile
+    container_name: meca_backend
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      - DATABASE_URL=postgresql://${POSTGRES_USER:-meca_user}:${POSTGRES_PASSWORD:-meca_password_secure_2026}@db:5432/${POSTGRES_DB:-meca_db}
+      - SECRET_KEY=${SECRET_KEY:-super_secret_jwt_key_hackaton_meca_2026_xyz789}
+      - ALGORITHM=HS256
+      - ACCESS_TOKEN_EXPIRE_MINUTES=60
+      - REFRESH_TOKEN_EXPIRE_DAYS=30
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - REDIS_DB=0
+      - REDIS_URL=redis://redis:6379/0
+      - DEFAULT_ADMIN_EMAIL=${DEFAULT_ADMIN_EMAIL:-admin@ensenaporbolivia.org}
+      - DEFAULT_ADMIN_PASSWORD=${DEFAULT_ADMIN_PASSWORD:-AdminExB2026!}
+      - DEFAULT_ADMIN_PHONE=+59170000000
+      - TOTP_ENCRYPTION_KEY=${TOTP_ENCRYPTION_KEY:-meca_totp_secret_key_32bytes_len!}
+      - CLOUDINARY_CLOUD_NAME=${CLOUDINARY_CLOUD_NAME:-dummy_cloud}
+      - CLOUDINARY_API_KEY=${CLOUDINARY_API_KEY:-1234567890}
+      - CLOUDINARY_API_SECRET=${CLOUDINARY_API_SECRET:-dummy_secret}
+      - POSTMARK_SERVER_TOKEN=${POSTMARK_SERVER_TOKEN:-dummy_postmark}
+      - MAIL_USERNAME=${MAIL_USERNAME:-noreply@ensenaporbolivia.org}
+      - MAIL_PASSWORD=${MAIL_PASSWORD:-dummy_mail_pass}
+      - MAIL_SERVER=${MAIL_SERVER:-smtp.gmail.com}
+      - MAIL_PORT=587
+      - MAIL_FROM=${MAIL_FROM:-noreply@ensenaporbolivia.org}
+      - MAIL_FROM_NAME="Enseña por Bolivia"
+    ports:
+      - "8000:8000"
+    networks:
+      - meca_network
+
+  # ==========================================
+  # 4. Frontend: Angular 22 (Bun build + Nginx)
+  # ==========================================
+  frontend:
+    build:
+      context: ./hackaton-meca-front
+      dockerfile: Dockerfile
+    container_name: meca_frontend
+    restart: unless-stopped
+    depends_on:
+      - backend
+    ports:
+      - "80:80"
+    networks:
+      - meca_network
+
+# ==========================================
+# Volúmenes y Redes
+# ==========================================
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+
+networks:
+  meca_network:
+    driver: bridge
