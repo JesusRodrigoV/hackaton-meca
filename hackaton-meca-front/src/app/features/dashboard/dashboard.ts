@@ -56,7 +56,7 @@ export class Dashboard implements OnDestroy {
           datasets: [
             {
               data: [345000, 145000, 90000],
-              backgroundColor: ['#0081af', '#10b981', '#1b2a49'],
+              backgroundColor: ['#2b255c', '#00923d', '#ecc562'],
               borderWidth: 2,
               borderColor: '#ffffff'
             }
@@ -90,13 +90,13 @@ export class Dashboard implements OnDestroy {
             {
               label: 'Vigente (BOB)',
               data: [300000, 105000, 90000, 85000],
-              backgroundColor: '#1b2a49',
+              backgroundColor: '#2b255c',
               borderRadius: 4
             },
             {
               label: 'Ejecutado (BOB)',
               data: [220300, 112300, 68400, 38900],
-              backgroundColor: '#0081af',
+              backgroundColor: '#00923d',
               borderRadius: 4
             }
           ]

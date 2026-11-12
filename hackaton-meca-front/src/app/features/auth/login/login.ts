@@ -26,7 +26,7 @@ export class Login {
       role: 'Admin General',
       scope: 'Consolidado Nacional',
       icon: 'shield-quarter',
-      color: '#0081af'
+      color: '#2b255c'
     },
     {
       key: 'FINANCE' as const,
@@ -34,7 +34,7 @@ export class Login {
       role: 'Contabilidad',
       scope: 'Operaciones y Mayor',
       icon: 'calculator',
-      color: '#10b981'
+      color: '#00923d'
     },
     {
       key: 'COORDINATOR' as const,
@@ -42,7 +42,7 @@ export class Login {
       role: 'Coordinador Regional',
       scope: 'Región: Santa Cruz',
       icon: 'map-pin',
-      color: '#f59e0b'
+      color: '#ecc562'
     },
     {
       key: 'AUDITOR' as const,
@@ -50,7 +50,7 @@ export class Login {
       role: 'Auditor Donante',
       scope: 'Financiador: CATALYST 18',
       icon: 'file-find',
-      color: '#8b5cf6'
+      color: '#0d2439'
     }
   ];
 

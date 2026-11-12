@@ -9,7 +9,7 @@
     </div>
     <div class="header-right">
       <div class="scope-pill">
-        <app-icon name="layer" size="16px" color="#0081af"></app-icon>
+        <app-icon name="layer" size="16px" color="#00923d"></app-icon>
         <span>Alcance: <strong>{{ authService.scopeBadge() }}</strong></span>
       </div>
       <a routerLink="/reportes" class="btn-quick-report">
@@ -34,7 +34,7 @@
 
     <div class="kpi-card">
       <div class="kpi-icon-wrap bg-cerulean-subtle">
-        <app-icon name="line-chart" size="24px" color="#0081af"></app-icon>
+        <app-icon name="line-chart" size="24px" color="#00923d"></app-icon>
       </div>
       <div class="kpi-content">
         <span class="kpi-label">Ejecución Acumulada</span>
@@ -59,7 +59,7 @@
         <app-icon
           [name]="kpis().saldoDisponibleBob >= 0 ? 'check-circle' : 'error-circle'"
           size="24px"
-          [color]="kpis().saldoDisponibleBob >= 0 ? '#10b981' : '#b24c63'"
+          [color]="kpis().saldoDisponibleBob >= 0 ? '#00923d' : '#b24c63'"
         ></app-icon>
       </div>
       <div class="kpi-content">
@@ -88,7 +88,7 @@
     <div class="chart-card">
       <div class="card-header">
         <div class="card-title-group">
-          <app-icon name="pie-chart-alt-2" size="20px" color="#0081af"></app-icon>
+          <app-icon name="pie-chart-alt-2" size="20px" color="#00923d"></app-icon>
           <h3>Distribución por Financiador</h3>
         </div>
         <span class="card-badge">Fondos Donantes</span>
@@ -172,7 +172,7 @@
                 </td>
                 <td>
                   <a routerLink="/presupuestos/modificaciones" class="btn-action-sm" title="Solicitar Modificación / Traspaso">
-                    <app-icon name="transfer" size="16px" color="#0081af"></app-icon>
+                    <app-icon name="transfer" size="16px" color="#00923d"></app-icon>
                     <span>Traspasar</span>
                   </a>
                 </td>

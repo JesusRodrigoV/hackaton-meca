@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthService } from '../../core/auth/auth';
 import { HasPermissionDirective } from '../../core/permissions/has-permission';
@@ -18,14 +18,12 @@ interface NavSection {
 
 @Component({
   selector: 'app-sidebar',
-  standalone: true,
   imports: [RouterLink, RouterLinkActive, HasPermissionDirective, BoxIconComponent],
   templateUrl: './sidebar.html',
   styleUrl: './sidebar.scss'
 })
 export class Sidebar {
   readonly auth = inject(AuthService);
-  readonly isCollapsed = signal(false);
 
   readonly sections: NavSection[] = [
     {
@@ -63,8 +61,4 @@ export class Sidebar {
       ]
     }
   ];
-
-  toggleCollapse(): void {
-    this.isCollapsed.update(v => !v);
-  }
 }

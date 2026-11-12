@@ -12,7 +12,7 @@
 
     <!-- Badge de Jurisdicción (Data Scoping Activo) -->
     <div class="scope-badge" [class.scoped]="auth.currentUser().scopeType !== 'global'">
-      <app-icon name="map-pin" size="xs" [color]="auth.currentUser().scopeType !== 'global' ? 'var(--cerulean)' : '#718096'"></app-icon>
+      <app-icon name="map-pin" size="xs" [color]="auth.currentUser().scopeType !== 'global' ? 'var(--forest-green)' : '#718096'"></app-icon>
       <span>{{ auth.scopeBadge() }}</span>
     </div>
   </div>
@@ -22,7 +22,7 @@
     <!-- Switcher de Perfil para Demo -->
     <div class="role-switcher">
       <label class="switcher-label">
-        <app-icon name="user-check" size="xs" color="var(--mint-leaf)"></app-icon>
+        <app-icon name="user-check" size="xs" color="var(--forest-green)"></app-icon>
         <span>Simular Rol:</span>
       </label>
       <select [value]="auth.currentUser().roleCode" (change)="onRoleChange($event)" class="role-select">
