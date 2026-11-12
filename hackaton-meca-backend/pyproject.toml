@@ -5,6 +5,7 @@ description = "Backend para Control Presupuestario - Enseña por Bolivia"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
+    "alembic>=1.20.1",
     "bcrypt>=5.0.0",
     "cryptography>=50.0.2",
     "fastapi>=0.162.5",
