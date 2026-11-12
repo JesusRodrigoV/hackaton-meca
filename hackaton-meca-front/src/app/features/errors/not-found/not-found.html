@@ -1,0 +1,26 @@
+<div class="not-found-page">
+  <div class="not-found-card">
+    <div class="badge-code">ERROR 404</div>
+
+    <div class="icon-wrap">
+      <app-icon name="compass" size="48px" color="#232046"></app-icon>
+    </div>
+
+    <h1 class="not-found-title">Página no encontrada</h1>
+    <p class="not-found-desc">
+      La dirección solicitada no existe, ha sido trasladada o el enlace ingresado no corresponde a un módulo del sistema de Enseña por Bolivia.
+    </p>
+
+    <div class="actions-group">
+      <a routerLink="/dashboard" class="btn btn-primary">
+        <app-icon name="home" size="18px" color="#ffffff"></app-icon>
+        <span>Ir al Dashboard</span>
+      </a>
+
+      <button type="button" class="btn btn-secondary" (click)="goBack()">
+        <app-icon name="arrow-back" size="18px" color="#0d2439"></app-icon>
+        <span>Volver a la pantalla anterior</span>
+      </button>
+    </div>
+  </div>
+</div>
