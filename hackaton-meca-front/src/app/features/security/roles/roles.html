@@ -1,1 +1,53 @@
-<p>roles works!</p>
+<div class="roles-page">
+  <header class="page-header">
+    <div class="header-left">
+      <h1 class="page-title">Matriz Dinámica de Gobernanza y Permisos (RBAC)</h1>
+      <p class="page-subtitle">
+        Control granular de privilegios asignados a cada rol del sistema con aplicación en tiempo real
+      </p>
+    </div>
+    <div class="header-right">
+      <button type="button" class="btn-primary" (click)="guardarMatriz()">
+        <app-icon name="save" size="18px" color="#ffffff"></app-icon>
+        <span>Guardar Cambios</span>
+      </button>
+    </div>
+  </header>
+
+  <section class="table-container">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Código de Permiso</th>
+          <th>Descripción de la Operación</th>
+          <th>Módulo</th>
+          <th class="text-center">ADMIN</th>
+          <th class="text-center">FINANZAS</th>
+          <th class="text-center">COORDINADOR</th>
+          <th class="text-center">AUDITOR</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (p of permisos(); track p.codigo) {
+          <tr>
+            <td class="code-cell">{{ p.codigo }}</td>
+            <td class="font-medium">{{ p.nombre }}</td>
+            <td><span class="badge-module">{{ p.modulo }}</span></td>
+            <td class="text-center">
+              <input type="checkbox" [(ngModel)]="p.admin" [disabled]="p.codigo === 'usuarios.admin'" />
+            </td>
+            <td class="text-center">
+              <input type="checkbox" [(ngModel)]="p.finance" />
+            </td>
+            <td class="text-center">
+              <input type="checkbox" [(ngModel)]="p.coordinator" />
+            </td>
+            <td class="text-center">
+              <input type="checkbox" [(ngModel)]="p.auditor" />
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </section>
+</div>

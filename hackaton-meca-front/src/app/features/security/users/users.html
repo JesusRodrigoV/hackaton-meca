@@ -1,1 +1,71 @@
-<p>users works!</p>
+<div class="users-page">
+  <header class="page-header">
+    <div class="header-left">
+      <h1 class="page-title">Directorio de Usuarios y Alcances de Datos</h1>
+      <p class="page-subtitle">
+        Asignación de roles y delimitación de alcance multidimensional (Nacional, Regional, Financiador)
+      </p>
+    </div>
+    <div class="header-right">
+      <button type="button" class="btn-primary">
+        <app-icon name="user-plus" size="18px" color="#ffffff"></app-icon>
+        <span>Nuevo Usuario</span>
+      </button>
+    </div>
+  </header>
+
+  <section class="table-container">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Usuario</th>
+          <th>Correo Electrónico</th>
+          <th>Rol Asignado</th>
+          <th>Tipo de Alcance</th>
+          <th>Delimitación de Datos</th>
+          <th>Estado</th>
+          <th>Acción</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (u of usuarios(); track u.id) {
+          <tr>
+            <td>
+              <div class="user-cell">
+                <div class="avatar">{{ u.nombreCompleto.substring(0, 2).toUpperCase() }}</div>
+                <span class="user-name">{{ u.nombreCompleto }}</span>
+              </div>
+            </td>
+            <td class="email-cell">{{ u.email }}</td>
+            <td>
+              <span class="role-badge" [class.badge-admin]="u.rolCodigo === 'ADMIN'">
+                {{ u.rol }}
+              </span>
+            </td>
+            <td>
+              <span class="scope-type-pill">{{ u.alcanceTipo }}</span>
+            </td>
+            <td>
+              <span class="scope-val font-medium">{{ u.alcanceValor }}</span>
+            </td>
+            <td>
+              <button
+                type="button"
+                class="status-toggle"
+                [class.active]="u.activo"
+                (click)="toggleActivo(u)"
+              >
+                {{ u.activo ? 'ACTIVO' : 'INACTIVO' }}
+              </button>
+            </td>
+            <td>
+              <button type="button" class="btn-icon" title="Editar Permisos">
+                <app-icon name="edit-alt" size="16px" color="#0081af"></app-icon>
+              </button>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </section>
+</div>

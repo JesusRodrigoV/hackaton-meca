@@ -1,9 +1,90 @@
-import { Component } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
+import { Router } from '@angular/router';
+import { FormsModule } from '@angular/forms';
+import { AuthService, PRESET_USERS } from '../../../core/auth/auth';
+import { BoxIconComponent } from '../../../shared/components/box-icon/box-icon';
 
 @Component({
-  imports: [],
   selector: 'app-login',
-  styleUrl: './login.scss',
+  imports: [FormsModule, BoxIconComponent],
   templateUrl: './login.html',
+  styleUrl: './login.scss'
 })
-export class Login {}
+export class Login {
+  private readonly router = inject(Router);
+  private readonly authService = inject(AuthService);
+
+  readonly email = signal<string>('admin@ensenaporbolivia.org');
+  readonly password = signal<string>('••••••••••••');
+  readonly errorMessage = signal<string>('');
+  readonly isSubmitting = signal<boolean>(false);
+
+  readonly demoRoles = [
+    {
+      key: 'ADMIN' as const,
+      name: 'Director General',
+      role: 'Admin General',
+      scope: 'Consolidado Nacional',
+      icon: 'shield-quarter',
+      color: '#0081af'
+    },
+    {
+      key: 'FINANCE' as const,
+      name: 'Técnico Finanzas',
+      role: 'Contabilidad',
+      scope: 'Operaciones y Mayor',
+      icon: 'calculator',
+      color: '#10b981'
+    },
+    {
+      key: 'COORDINATOR' as const,
+      name: 'Coord. Santa Cruz',
+      role: 'Coordinador Regional',
+      scope: 'Región: Santa Cruz',
+      icon: 'map-pin',
+      color: '#f59e0b'
+    },
+    {
+      key: 'AUDITOR' as const,
+      name: 'Auditor CATALYST',
+      role: 'Auditor Donante',
+      scope: 'Financiador: CATALYST 18',
+      icon: 'file-find',
+      color: '#8b5cf6'
+    }
+  ];
+
+  loginAsDemo(roleKey: 'ADMIN' | 'FINANCE' | 'COORDINATOR' | 'AUDITOR'): void {
+    const preset = PRESET_USERS[roleKey];
+    if (preset) {
+      this.email.set(preset.email);
+      this.authService.switchUser(roleKey);
+      this.router.navigate(['/dashboard']);
+    }
+  }
+
+  onSubmit(): void {
+    this.errorMessage.set('');
+    this.isSubmitting.set(true);
+
+    // Verificación de credenciales simulada
+    setTimeout(() => {
+      this.isSubmitting.set(false);
+      const emailVal = this.email().toLowerCase().trim();
+
+      if (emailVal.includes('admin')) {
+        this.authService.switchUser('ADMIN');
+      } else if (emailVal.includes('finanz')) {
+        this.authService.switchUser('FINANCE');
+      } else if (emailVal.includes('coord') || emailVal.includes('scz')) {
+        this.authService.switchUser('COORDINATOR');
+      } else if (emailVal.includes('audit')) {
+        this.authService.switchUser('AUDITOR');
+      } else {
+        this.authService.switchUser('ADMIN');
+      }
+
+      this.router.navigate(['/dashboard']);
+    }, 400);
+  }
+}

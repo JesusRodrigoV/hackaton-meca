@@ -1,1 +1,63 @@
-<p>audit works!</p>
+<div class="audit-page">
+  <header class="page-header">
+    <div class="header-left">
+      <h1 class="page-title">Pistas de Auditoría y Trazabilidad Criptográfica</h1>
+      <p class="page-subtitle">
+        Registro inmutable encadenado mediante SHA-256 para verificación formal de transacciones
+      </p>
+    </div>
+    <div class="header-right">
+      <button type="button" class="btn-verify" [disabled]="isVerifying()" (click)="verificarCadena()">
+        <app-icon name="shield-quarter" size="18px" color="#ffffff"></app-icon>
+        <span>{{ isVerifying() ? 'Verificando Cadena...' : 'Verificar Integridad SHA-256' }}</span>
+      </button>
+    </div>
+  </header>
+
+  @if (verifiedStatus()) {
+    <div class="integrity-banner">
+      <app-icon name="check-double" size="20px" color="#10b981"></app-icon>
+      <span>{{ verifiedStatus() }}</span>
+    </div>
+  }
+
+  <section class="table-container">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Timestamp</th>
+          <th>Usuario</th>
+          <th>Acción</th>
+          <th>Tabla / Entidad</th>
+          <th>Detalle de Operación</th>
+          <th>Hash Previo</th>
+          <th>Hash Actual (SHA-256)</th>
+          <th>Estado</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (log of auditLogs(); track log.id) {
+          <tr>
+            <td class="time-cell">{{ log.timestamp }}</td>
+            <td class="font-bold">{{ log.usuario }}</td>
+            <td>
+              <span class="action-pill" [class.action-import]="log.accion === 'IMPORT'" [class.action-approve]="log.accion === 'APPROVE'">
+                {{ log.accion }}
+              </span>
+            </td>
+            <td><code class="entity-code">{{ log.tabla }}: {{ log.entidadId }}</code></td>
+            <td class="detail-cell">{{ log.detalles }}</td>
+            <td><code class="hash-code">{{ log.hashPrevio.substring(0, 10) }}...</code></td>
+            <td><code class="hash-code text-cerulean font-bold">{{ log.hashActual.substring(0, 10) }}...</code></td>
+            <td>
+              <span class="status-badge status-ok">
+                <app-icon name="check" size="12px" color="#10b981"></app-icon>
+                Íntegro
+              </span>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </section>
+</div>

@@ -1,0 +1,164 @@
+.users-page {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+
+  .page-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--space-indigo);
+  }
+
+  .page-subtitle {
+    font-size: 0.875rem;
+    color: var(--color-text-secondary);
+    margin-top: 0.25rem;
+  }
+
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background-color: var(--cerulean);
+    color: #ffffff;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+
+    &:hover {
+      background-color: #006c94;
+    }
+  }
+}
+
+.table-container {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  overflow-x: auto;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8125rem;
+
+  th {
+    background-color: #f8fafc;
+    color: var(--color-text-secondary);
+    font-weight: 600;
+    text-align: left;
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--color-border);
+    white-space: nowrap;
+  }
+
+  td {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid #f1f5f9;
+    color: var(--space-indigo);
+    vertical-align: middle;
+  }
+
+  tbody tr:hover {
+    background-color: #f8fafc;
+  }
+
+  .user-cell {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+
+    .avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background-color: rgba(0, 129, 175, 0.1);
+      color: var(--cerulean);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.75rem;
+    }
+
+    .user-name {
+      font-weight: 600;
+    }
+  }
+
+  .email-cell {
+    color: var(--color-text-secondary);
+  }
+
+  .role-badge {
+    display: inline-block;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    background-color: #f1f5f9;
+    color: var(--space-indigo);
+
+    &.badge-admin {
+      background-color: rgba(27, 42, 73, 0.1);
+      color: var(--space-indigo);
+      font-weight: 700;
+    }
+  }
+
+  .scope-type-pill {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.6875rem;
+    padding: 0.15rem 0.35rem;
+    border-radius: 4px;
+    background-color: #e0f2fe;
+    color: var(--cerulean);
+    font-weight: 600;
+  }
+
+  .scope-val {
+    color: var(--color-text-secondary);
+  }
+
+  .status-toggle {
+    border: none;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.6875rem;
+    font-weight: 700;
+    cursor: pointer;
+    background-color: #fee2e2;
+    color: var(--rosewood);
+
+    &.active {
+      background-color: #d1fae5;
+      color: var(--mint-leaf);
+    }
+  }
+
+  .btn-icon {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0.25rem;
+    border-radius: 4px;
+
+    &:hover {
+      background-color: #f1f5f9;
+    }
+  }
+}

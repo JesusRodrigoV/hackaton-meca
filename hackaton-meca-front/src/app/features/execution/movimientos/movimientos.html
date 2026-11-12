@@ -1,1 +1,137 @@
-<p>movimientos works!</p>
+<div class="movimientos-page">
+  <header class="page-header">
+    <div class="header-left">
+      <h1 class="page-title">Libro Diario de Movimientos y Gastos</h1>
+      <p class="page-subtitle">
+        Registro contable detallado de egresos con sellado criptográfico • Gestión {{ authService.currentGestion() }}
+      </p>
+    </div>
+    <div class="header-right">
+      <div class="currency-toggle">
+        <button
+          type="button"
+          [class.active]="currencyMode() === 'BOB'"
+          (click)="currencyMode.set('BOB')"
+        >
+          BOB (Bs)
+        </button>
+        <button
+          type="button"
+          [class.active]="currencyMode() === 'USD'"
+          (click)="currencyMode.set('USD')"
+        >
+          USD ($)
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Filtros -->
+  <section class="filter-bar">
+    <div class="search-box">
+      <app-icon name="search" size="18px" color="#718096"></app-icon>
+      <input
+        type="text"
+        [ngModel]="searchQuery()"
+        (ngModelChange)="searchQuery.set($event)"
+        placeholder="Buscar por comprobante, beneficiario o concepto..."
+      />
+    </div>
+
+    <div class="filter-controls">
+      <div class="select-group">
+        <label>Región:</label>
+        <select [ngModel]="selectedRegion()" (ngModelChange)="selectedRegion.set($event)">
+          <option value="TODAS">Todas las Regiones</option>
+          <option value="La Paz">La Paz</option>
+          <option value="Santa Cruz">Santa Cruz</option>
+          <option value="Cochabamba">Cochabamba</option>
+          <option value="Nacional">Nacional</option>
+        </select>
+      </div>
+
+      <div class="select-group">
+        <label>Financiador:</label>
+        <select [ngModel]="selectedFinanciador()" (ngModelChange)="selectedFinanciador.set($event)">
+          <option value="TODOS">Todos los Donantes</option>
+          <option value="CATALYST 18">CATALYST 18</option>
+          <option value="CEL (Comunidad)">CEL (Comunidad)</option>
+          <option value="KJCF (Fundación)">KJCF (Fundación)</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="summary-metric">
+      <span class="lbl">Total Filtrado:</span>
+      <span class="val tabular-nums">
+        @if (currencyMode() === 'BOB') {
+          {{ totalFiltradoBob() | number:'1.2-2' }} BOB
+        } @else {
+          {{ totalFiltradoUsd() | number:'1.2-2' }} USD
+        }
+      </span>
+    </div>
+  </section>
+
+  <!-- Tabla de Movimientos -->
+  <section class="table-container">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Fecha</th>
+          <th>Comprobante</th>
+          <th>Beneficiario</th>
+          <th>Concepto / Glosa</th>
+          <th>Partida Contable</th>
+          <th>Región / Área</th>
+          <th>Financiador</th>
+          <th class="tabular-nums">Monto ({{ currencyMode() }})</th>
+          <th>Trazabilidad SHA-256</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (item of movimientosFiltrados(); track item.id) {
+          <tr>
+            <td class="date-cell">{{ item.fecha }}</td>
+            <td class="comprobante-cell">{{ item.comprobante }}</td>
+            <td class="font-medium">{{ item.beneficiario }}</td>
+            <td class="concepto-cell">{{ item.concepto }}</td>
+            <td>
+              <div class="account-cell">
+                <span class="account-code">{{ item.codigoCuenta }}</span>
+                <span class="account-name">{{ item.nombreCuenta }}</span>
+              </div>
+            </td>
+            <td>
+              <div class="geo-cell">
+                <span class="region-badge">{{ item.region }}</span>
+                <span class="area-sub">{{ item.area }}</span>
+              </div>
+            </td>
+            <td><span class="badge-fin">{{ item.financiador }}</span></td>
+            <td class="tabular-nums font-bold">
+              @if (currencyMode() === 'BOB') {
+                {{ item.montoBob | number:'1.2-2' }}
+              } @else {
+                {{ item.montoUsd | number:'1.2-2' }}
+              }
+            </td>
+            <td>
+              <div class="hash-tag" [title]="'Audit SHA-256: ' + item.auditHash">
+                <app-icon name="shield-check" size="14px" color="#10b981"></app-icon>
+                <code>{{ item.auditHash.substring(0, 8) }}...{{ item.auditHash.substring(item.auditHash.length - 4) }}</code>
+              </div>
+            </td>
+          </tr>
+        } @empty {
+          <tr>
+            <td colspan="9" class="empty-state">
+              <app-icon name="info-circle" size="32px" color="#94a3b8"></app-icon>
+              <p>No se encontraron movimientos con los criterios ingresados.</p>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </section>
+</div>
