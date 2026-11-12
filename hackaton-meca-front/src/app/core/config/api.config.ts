@@ -54,6 +54,13 @@ export const API_CONFIG = {
       kpis: '/api/v1/dashboard/kpis',
       chartsFinanciador: '/api/v1/dashboard/charts/by-financier',
       chartsRegiones: '/api/v1/dashboard/charts/by-region'
+    },
+    catalogos: {
+      gestiones: '/api/v1/catalogs/gestiones',
+      regiones: '/api/v1/catalogs/regiones',
+      financiadores: '/api/v1/catalogs/financiadores',
+      cuentas: '/api/v1/catalogs/cuentas',
+      tiposCambio: '/api/v1/catalogs/tipos-cambio'
     }
   }
 };

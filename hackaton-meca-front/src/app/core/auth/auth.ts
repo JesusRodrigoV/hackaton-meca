@@ -105,14 +105,20 @@ export class AuthService {
   readonly isApiAuthenticated = signal<boolean>(false);
   readonly isTotpEnabled = signal<boolean>(false);
 
-  // Gestión fiscal activa y gestiones disponibles
+  // Gestión fiscal activa y gestiones disponibles (sincronizadas desde el catálogo real de la BD)
   readonly currentGestion = signal<number>(2026);
-  readonly availableGestiones = signal<number[]>([2026, 2025, 2024]);
+  readonly availableGestiones = signal<number[]>([2026]);
 
   // Propiedades calculadas (Computed Signals)
   readonly isAuthenticated = computed(() => this.currentUser() !== null);
   readonly userRole = computed(() => this.currentUser()?.roleName ?? 'Invitado');
   readonly scopeBadge = computed(() => this.currentUser()?.scopeLabel ?? 'Sin alcance');
+
+  constructor() {
+    if (this.token()) {
+      this.cargarGestiones();
+    }
+  }
 
   /**
    * Conmuta el perfil activo entre los roles prestablecidos (ideal para pruebas y auditoría).
@@ -244,8 +250,9 @@ export class AuthService {
         };
         this.currentUser.set(user);
         this.persistSession(user, accessToken);
-        // Comprobar estado 2FA
+        // Comprobar estado 2FA y cargar gestiones reales del sistema
         this.check2FaStatus();
+        this.cargarGestiones();
         return true;
       }
     } catch {
@@ -366,10 +373,38 @@ export class AuthService {
   }
 
   /**
+   * Carga las gestiones fiscales reales desde la base de datos a través de catálogos.
+   */
+  async cargarGestiones(): Promise<void> {
+    if (!this.http) return;
+    try {
+      const resp = await firstValueFrom(
+        this.http.get<Array<{ id: number; year: number; is_closed: boolean; description?: string }>>(
+          API_CONFIG.endpoints.catalogos.gestiones
+        )
+      );
+      if (resp && resp.length > 0) {
+        const years = resp.map(g => Number(g.year)).filter(y => !isNaN(y) && y > 0).sort((a, b) => b - a);
+        if (years.length > 0) {
+          this.availableGestiones.set(years);
+          if (!years.includes(this.currentGestion())) {
+            this.currentGestion.set(years[0]);
+          }
+        }
+      }
+    } catch {
+      // Si la API no está disponible, se conserva la gestión 2026 configurada por defecto
+    }
+  }
+
+  /**
    * Cambia la gestión fiscal activa del sistema.
    */
-  setGestion(year: number): void {
-    this.currentGestion.set(year);
+  setGestion(year: number | string): void {
+    const parsed = Number(year);
+    if (!isNaN(parsed) && parsed > 0) {
+      this.currentGestion.set(parsed);
+    }
   }
 
   /**

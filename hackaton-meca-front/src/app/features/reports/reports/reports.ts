@@ -37,6 +37,7 @@ export class Reports implements OnInit {
   readonly reportesApiVariaciones = signal<any[] | null>(null);
 
   async ngOnInit(): Promise<void> {
+    await this.authService.cargarGestiones();
     await this.financialService.cargarTechosApi();
     await this.financialService.cargarMovimientosApi();
     await this.financialService.cargarAuditoriaApi();

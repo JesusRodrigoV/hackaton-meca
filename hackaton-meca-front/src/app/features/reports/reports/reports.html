@@ -25,7 +25,6 @@
     <div class="selector-heading">
       <div>
         <h2 id="report-selector-title">Informes disponibles</h2>
-        <p>Selecciona una vista para explorar los datos</p>
       </div>
       <span class="report-count">{{ reportTabs.length }} reportes</span>
     </div>
@@ -52,17 +51,13 @@
   </section>
 
   <section class="report-filter-bar" aria-label="Filtros del reporte">
-    <div class="filters-intro">
-      <h2>Parámetros</h2>
-      <p>Ajusta el periodo y la moneda de consulta</p>
-    </div>
     <div class="filter-controls">
       <div class="filter-group">
-        <label for="report-period">Gestión fiscal</label>
+        <label for="report-period">Año fiscal</label>
         <select id="report-period" [ngModel]="authService.currentGestion()" (ngModelChange)="authService.setGestion($event)">
-          <option [value]="2026">2026 · En curso</option>
-          <option [value]="2025">2025 · Cerrada</option>
-          <option [value]="2024">2024 · Histórica</option>
+          @for (year of authService.availableGestiones(); track year) {
+            <option [value]="year">{{ year }}</option>
+          }
         </select>
       </div>
 
@@ -76,8 +71,8 @@
     </div>
 
     <div class="report-info-pill">
-      <app-icon name="check-shield" size="16px" color="currentColor"></app-icon>
-      <span>Datos limitados a tu alcance</span>
+      <app-icon name="map-pin" size="15px" color="currentColor"></app-icon>
+      <span>Ámbito: {{ authService.scopeBadge() }}</span>
     </div>
   </section>
 
