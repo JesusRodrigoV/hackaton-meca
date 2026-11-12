@@ -544,7 +544,7 @@ def two_factor_setup(
     current_user: User = Depends(get_current_active_user),
     db: Session = Depends(get_db),
 ):
-    secret, uri = auth_service.setup_totp(db, current_user)
+    secret, uri, qr_code = auth_service.setup_totp(db, current_user)
     db.commit()
     background_tasks.add_task(
         audit_service.log_event,
@@ -554,7 +554,7 @@ def two_factor_setup(
         user_id=current_user.id,
         request=request,
     )
-    return TOTPSetupResponse(secret=secret, otpauth_uri=uri)
+    return TOTPSetupResponse(secret=secret, otpauth_uri=uri, qr_code=qr_code)
 
 
 @router.post("/2fa/enable", response_model=TOTPBackupCodesResponse)

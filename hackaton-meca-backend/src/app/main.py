@@ -9,7 +9,18 @@ from fastapi.responses import JSONResponse
 from fastapi_pagination import add_pagination
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
-from app.api.v1 import admin_users, audit_logs, auth, permissions, roles
+from app.api.v1 import (
+    admin_users,
+    audit_logs,
+    auth,
+    catalogs,
+    dashboard,
+    movements,
+    permissions,
+    presupuestos,
+    reports,
+    roles,
+)
 from app.core.config import settings
 from app.core.request_context import (
     current_client_ip,
@@ -25,14 +36,14 @@ logger = logging.getLogger(__name__)
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    logger.info("Iniciando MECA API (%s)", settings.ENVIRONMENT)
+    logger.info("Iniciando API Enseña por Bolivia (%s)", settings.ENVIRONMENT)
     yield
-    logger.info("MECA API detenida")
+    logger.info("API Enseña por Bolivia detenida")
 
 
 app = FastAPI(
-    title="MECA API",
-    description="API de control presupuestario de Enseña por Bolivia",
+    title="API Enseña por Bolivia",
+    description="API de control presupuestario y financiero de Enseña por Bolivia",
     version="1.0.0",
     lifespan=lifespan,
 )
@@ -41,7 +52,7 @@ app = FastAPI(
 @app.get("/")
 async def root():
     return {
-        "message": "MECA API is running",
+        "message": "API is running",
         "docs": "/docs",
         "version": "1.0.0",
     }
@@ -121,6 +132,31 @@ app.include_router(
     audit_logs.router,
     prefix=f"{settings.API_V1_PREFIX}/audit",
     tags=["audit"],
+)
+app.include_router(
+    catalogs.router,
+    prefix=f"{settings.API_V1_PREFIX}/catalogs",
+    tags=["catalogs"],
+)
+app.include_router(
+    presupuestos.router,
+    prefix=f"{settings.API_V1_PREFIX}/presupuestos",
+    tags=["presupuestos"],
+)
+app.include_router(
+    movements.router,
+    prefix=f"{settings.API_V1_PREFIX}/movements",
+    tags=["movements"],
+)
+app.include_router(
+    dashboard.router,
+    prefix=f"{settings.API_V1_PREFIX}/dashboard",
+    tags=["dashboard"],
+)
+app.include_router(
+    reports.router,
+    prefix=f"{settings.API_V1_PREFIX}/reports",
+    tags=["reports"],
 )
 
 

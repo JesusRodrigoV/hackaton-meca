@@ -1,0 +1,155 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "project": "Enseña por Bolivia - MECA Financial Platform",
+  "version": "1.1.0",
+  "updatedAt": "2026-11-12T13:45:00-04:00",
+  "routingPolicy": "code-native",
+  "designSystem": {
+    "spec": "DESIGN.md",
+    "palette": {
+      "brightSnow": "#F8F9FA",
+      "spaceIndigo": "#2B255C",
+      "forestGreen": "#00923D",
+      "tuscanSun": "#ECC562",
+      "deepSpaceBlue": "#0D2439"
+    },
+    "typography": {
+      "interface": "Inter",
+      "numericData": "JetBrains Mono"
+    }
+  },
+  "screens": [
+    {
+      "id": "SCR-AUTH-001",
+      "name": "Iniciar Sesión",
+      "path": "/login",
+      "component": "Login",
+      "strategy": "code-native",
+      "source": "src/app/features/auth/login/login.ts",
+      "states": ["normal", "loading", "error", "demo-switch"],
+      "conformance": "conforms",
+      "status": "ready"
+    },
+    {
+      "id": "SCR-DASH-001",
+      "name": "Tablero Ejecutivo y KPIs",
+      "path": "/dashboard",
+      "component": "Dashboard",
+      "strategy": "code-native",
+      "source": "src/app/features/dashboard/dashboard.ts",
+      "states": ["normal", "kpi-hover", "charts-loaded", "alerts-critical"],
+      "conformance": "conforms",
+      "status": "ready"
+    },
+    {
+      "id": "SCR-BUDG-001",
+      "name": "Techos Presupuestarios",
+      "path": "/presupuestos/techos",
+      "component": "Techos",
+      "strategy": "code-native",
+      "source": "src/app/features/budgets/techos/techos.ts",
+      "states": ["normal", "filtered", "over-budget-warning", "empty"],
+      "conformance": "conforms",
+      "status": "ready"
+    },
+    {
+      "id": "SCR-BUDG-002",
+      "name": "Modificaciones Presupuestarias",
+      "path": "/presupuestos/modificaciones",
+      "component": "Modificaciones",
+      "strategy": "code-native",
+      "source": "src/app/features/budgets/modificaciones/modificaciones.ts",
+      "states": ["normal", "draft", "pending", "approved", "rejected"],
+      "conformance": "conforms",
+      "status": "ready"
+    },
+    {
+      "id": "SCR-EXEC-001",
+      "name": "Libro de Movimientos",
+      "path": "/ejecucion/movimientos",
+      "component": "Movimientos",
+      "strategy": "code-native",
+      "source": "src/app/features/execution/movimientos/movimientos.ts",
+      "states": ["normal", "tab-switch", "date-filtered"],
+      "conformance": "conforms",
+      "status": "ready"
+    },
+    {
+      "id": "SCR-EXEC-002",
+      "name": "Importador Excel EXB",
+      "path": "/ejecucion/importador",
+      "component": "Importador",
+      "strategy": "code-native",
+      "source": "src/app/features/execution/importador/importador.ts",
+      "states": ["drop-idle", "drag-over", "preview-valid", "preview-errors", "committed"],
+      "conformance": "conforms",
+      "status": "ready"
+    },
+    {
+      "id": "SCR-REPO-001",
+      "name": "Centro de Reportes Financieros (7 Reportes)",
+      "path": "/reportes",
+      "component": "Reports",
+      "strategy": "code-native",
+      "source": "src/app/features/reports/reports/reports.ts",
+      "states": ["7-tabs", "filtered", "export-excel", "export-pdf"],
+      "conformance": "conforms",
+      "status": "ready"
+    },
+    {
+      "id": "SCR-SECU-001",
+      "name": "Gestión de Usuarios",
+      "path": "/seguridad/usuarios",
+      "component": "Users",
+      "strategy": "code-native",
+      "source": "src/app/features/security/users/users.ts",
+      "states": ["normal", "search", "create-modal"],
+      "conformance": "conforms",
+      "status": "ready"
+    },
+    {
+      "id": "SCR-SECU-002",
+      "name": "Roles y Permisos RBAC",
+      "path": "/seguridad/roles",
+      "component": "Roles",
+      "strategy": "code-native",
+      "source": "src/app/features/security/roles/roles.ts",
+      "states": ["normal", "permissions-matrix"],
+      "conformance": "conforms",
+      "status": "ready"
+    },
+    {
+      "id": "SCR-SECU-003",
+      "name": "Auditoría del Sistema",
+      "path": "/seguridad/auditoria",
+      "component": "Audit",
+      "strategy": "code-native",
+      "source": "src/app/features/security/audit/audit.ts",
+      "states": ["normal", "filtered", "detail-view"],
+      "conformance": "conforms",
+      "status": "ready"
+    },
+    {
+      "id": "SCR-ERR-403",
+      "name": "Acceso Restringido",
+      "path": "/403",
+      "component": "Forbidden",
+      "strategy": "code-native",
+      "source": "src/app/features/errors/forbidden/forbidden.ts",
+      "states": ["normal", "scope-switch", "back-dashboard"],
+      "conformance": "conforms",
+      "status": "ready"
+    },
+    {
+      "id": "SCR-ERR-404",
+      "name": "Página No Encontrada",
+      "path": "/404",
+      "component": "NotFound",
+      "strategy": "code-native",
+      "source": "src/app/features/errors/not-found/not-found.ts",
+      "states": ["normal", "back-dashboard"],
+      "conformance": "conforms",
+      "status": "ready"
+    }
+  ]
+}

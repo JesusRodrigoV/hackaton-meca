@@ -19,8 +19,9 @@ node_modules/
 !*.env.example
 !.env.example
 
-# Media & Database
-media/
-reports/
+# Media & Generated files
+/media/
+hackaton-meca-backend/media/
+hackaton-meca-backend/reports/
 *.sqlite
 *.sqlite3

@@ -90,6 +90,11 @@ class Presupuesto(Base):
         nullable=False,
     )
 
+    financiador = relationship("Financiador")
+    region = relationship("Region")
+    area = relationship("Area")
+    rubro = relationship("Rubro")
+
     __table_args__ = (
         CheckConstraint(
             "month IS NULL OR month BETWEEN 1 AND 12",

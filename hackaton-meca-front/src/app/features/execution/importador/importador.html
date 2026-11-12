@@ -1,0 +1,174 @@
+<div class="importador-page">
+  <header class="page-header">
+    <div class="header-left">
+      <h1 class="page-title">Cargar gastos desde Excel</h1>
+      <p class="page-subtitle">
+        Importación y revisión de planillas de gastos (.xlsx, .xls)
+      </p>
+    </div>
+  </header>
+
+  <!-- Drop Zone para Carga de Archivos -->
+  @if (!previewReady()) {
+    <section
+      class="upload-zone"
+      [class.drag-over]="isDragging()"
+      (dragover)="onDragOver($event)"
+      (dragleave)="onDragLeave()"
+      (drop)="onDrop($event)"
+    >
+      <div class="upload-content">
+        <div class="upload-icon-circle">
+          <app-icon name="cloud-upload" size="36px" color="#00923d"></app-icon>
+        </div>
+        <h3>Arrastra la planilla Excel aquí o búscala en tu equipo</h3>
+        <p class="upload-desc">
+          Formatos compatibles: .xlsx, .xls o .csv. Tamaño máximo 10 MB.
+        </p>
+
+        <label class="btn-browse">
+          <app-icon name="file" size="18px" color="#ffffff"></app-icon>
+          <span>Seleccionar archivo</span>
+          <input
+            type="file"
+            accept=".xlsx, .xls, .csv"
+            (change)="onFileSelected($event)"
+            style="display: none;"
+          />
+        </label>
+      </div>
+    </section>
+  } @else {
+    <!-- Panel de Pre-validación antes de confirmar -->
+    <section class="preview-panel">
+      <div class="preview-header">
+        <div class="file-summary">
+          <app-icon name="spreadsheet" size="24px" color="#00923d"></app-icon>
+          <div>
+            <h4>{{ selectedFile()?.name }}</h4>
+            <span class="file-size">{{ ((selectedFile()?.size ?? 0) / 1024).toFixed(1) }} KB • Formato válido</span>
+          </div>
+        </div>
+
+        <div class="preview-actions">
+          <button type="button" class="btn-cancel" (click)="cancelarPreview()">Cancelar</button>
+          <button type="button" class="btn-confirm" (click)="confirmarIngesta()">
+            <app-icon name="check" size="18px" color="#ffffff"></app-icon>
+            <span>Guardar gastos</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="preview-metrics">
+        <div class="metric-card">
+          <span class="lbl">Registros Válidos</span>
+          <span class="val text-success tabular-nums">{{ previewStats().filasValidas }}</span>
+        </div>
+        <div class="metric-card">
+          <span class="lbl">Registros con Errores</span>
+          <span class="val text-danger tabular-nums">{{ previewStats().filasError }}</span>
+        </div>
+        <div class="metric-card">
+          <span class="lbl">Monto a Registrar</span>
+          <span class="val tabular-nums">{{ previewStats().montoTotalBob | number:'1.2-2' }} BOB</span>
+        </div>
+      </div>
+
+      @if (previewStats().filasError > 0) {
+        <div class="error-notice">
+          <app-icon name="error-circle" size="20px" color="#e11d48"></app-icon>
+          <div class="error-text">
+            <strong>Atención: Se detectaron {{ previewStats().filasError }} observaciones:</strong>
+            <ul>
+              <li>Fila #24: Cuenta '5.9.99' no existe en el catálogo contable de la gestión 2026.</li>
+              <li>Fila #89: Fecha '31/02/2026' no corresponde a una fecha válida de calendario.</li>
+            </ul>
+            <p>Los registros con error serán omitidos durante la confirmación final.</p>
+          </div>
+        </div>
+      }
+    </section>
+  }
+
+  <!-- Historial de Lotes de Importación -->
+  <section class="history-section">
+    <div class="section-header">
+      <div class="title-wrap">
+        <app-icon name="history" size="20px" color="#2b255c"></app-icon>
+        <h3>Archivos cargados anteriormente</h3>
+      </div>
+      <span class="sub-badge">{{ importaciones().length }} lotes</span>
+    </div>
+
+    <div class="table-container">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Lote ID</th>
+            <th>Nombre del Archivo</th>
+            <th>Fecha de Carga</th>
+            <th class="tabular-nums">Total Filas</th>
+            <th class="tabular-nums">Exitosas</th>
+            <th class="tabular-nums">Errores</th>
+            <th class="tabular-nums">Monto Total (BOB)</th>
+            <th>Usuario</th>
+            <th>Estado</th>
+            <th>Checksum SHA-256</th>
+            <th>Acción</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (lote of importaciones(); track lote.id) {
+            <tr [class.row-reverted]="lote.estado === 'REVERTIDO'">
+              <td class="lote-id">#LOTE-{{ lote.id }}</td>
+              <td class="font-medium">{{ lote.nombreArchivo }}</td>
+              <td class="date-cell">{{ lote.fecha }}</td>
+              <td class="tabular-nums">{{ lote.registrosTotal }}</td>
+              <td class="tabular-nums text-success font-bold">{{ lote.registrosExitosos }}</td>
+              <td class="tabular-nums" [class.text-danger]="lote.registrosError > 0">
+                {{ lote.registrosError }}
+              </td>
+              <td class="tabular-nums font-bold">{{ lote.montoTotalBob | number:'1.2-2' }}</td>
+              <td><span class="user-pill">{{ lote.usuario }}</span></td>
+              <td>
+                @switch (lote.estado) {
+                  @case ('CONFIRMADO') {
+                    <span class="status-badge status-ok">CONFIRMADO</span>
+                  }
+                  @case ('PROCESADO') {
+                    <span class="status-badge status-info">PROCESADO</span>
+                  }
+                  @case ('REVERTIDO') {
+                    <span class="status-badge status-reverted">REVERTIDO</span>
+                  }
+                }
+              </td>
+              <td>
+                <div class="hash-tag" [title]="'SHA-256: ' + lote.checksumSha256">
+                  <app-icon name="fingerprint" size="14px" color="#718096"></app-icon>
+                  <code>{{ lote.checksumSha256.substring(0, 10) }}...</code>
+                </div>
+              </td>
+              <td>
+                @if (lote.estado !== 'REVERTIDO') {
+                  <button
+                    type="button"
+                    class="btn-revert"
+                    *appHasPermission="'importaciones.revertir'"
+                    (click)="revertir(lote.id)"
+                    title="Revertir Lote Completo"
+                  >
+                    <app-icon name="undo" size="14px" color="#e11d48"></app-icon>
+                    <span>Revertir</span>
+                  </button>
+                } @else {
+                  <span class="text-muted text-xs">Revertido</span>
+                }
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </section>
+</div>

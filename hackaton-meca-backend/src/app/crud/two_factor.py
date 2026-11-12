@@ -1,8 +1,11 @@
-import secrets
+import base64
 from datetime import datetime, timezone
+import io
+import secrets
 from typing import Optional
 
 import pyotp
+import qrcode
 from sqlalchemy.orm import Session
 
 from app.core.config import settings
@@ -25,6 +28,20 @@ def get_otpauth_uri(
         name=email,
         issuer_name=issuer_name or settings.TOTP_ISSUER,
     )
+
+
+def generate_qr_code_data_uri(uri: str) -> str:
+    qr = qrcode.QRCode(
+        box_size=6,
+        border=2,
+    )
+    qr.add_data(uri)
+    qr.make(fit=True)
+    img = qr.make_image(fill_color="black", back_color="white")
+    buf = io.BytesIO()
+    img.save(buf, format="PNG")
+    b64 = base64.b64encode(buf.getvalue()).decode("utf-8")
+    return f"data:image/png;base64,{b64}"
 
 
 def save_totp_secret_for_user(db: Session, user: User, secret: str) -> None:

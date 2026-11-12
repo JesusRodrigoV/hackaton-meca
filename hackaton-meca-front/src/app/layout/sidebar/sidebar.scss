@@ -1,0 +1,256 @@
+/* ==========================================================================
+   SIDEBAR INSTITUCIONAL - ENSEÑA POR BOLIVIA
+   Paleta: Space Indigo (#2B255C), Forest Green (#00923D), Tuscan Sun (#ECC562)
+   ========================================================================== */
+
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  width: 260px;
+  min-height: 100vh;
+  background: linear-gradient(180deg, #2b255c 0%, #1c183d 100%);
+  color: #e2e8f0;
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+  user-select: none;
+  flex-shrink: 0;
+  transition: width 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.sidebar-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.25rem 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+
+  .brand-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    background-color: #ffffff;
+    padding: 0.5rem 0.75rem;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow: 0 2px 5px rgba(13, 36, 57, 0.15);
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    outline: none;
+
+    &:hover {
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.22);
+      transform: translateY(-1px);
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+
+    .brand-image {
+      max-height: 38px;
+      max-width: 100%;
+      object-fit: contain;
+      transition: all 0.2s ease;
+    }
+  }
+}
+
+.sidebar-nav {
+  flex: 1;
+  padding: 1.25rem 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+
+  &::-webkit-scrollbar {
+    width: 4px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.12);
+    border-radius: 4px;
+  }
+
+  .nav-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+
+    .group-title {
+      padding: 0 1.25rem;
+      font-size: 0.6875rem;
+      font-weight: 700;
+      color: rgba(236, 197, 98, 0.9); /* Tuscan Sun */
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 0.4rem;
+      white-space: nowrap;
+    }
+
+    .nav-list {
+      list-style: none;
+      margin: 0;
+      padding: 0 0.75rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+
+      li {
+        margin: 0;
+      }
+    }
+  }
+
+  .nav-link {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.625rem 0.75rem;
+    color: #cbd5e1;
+    text-decoration: none;
+    border-radius: 8px;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    transition: all 0.15s ease;
+
+    .link-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 20px;
+      height: 20px;
+      flex-shrink: 0;
+      color: #94a3b8;
+      transition: color 0.15s ease;
+    }
+
+    .link-label {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    &:hover {
+      background-color: rgba(255, 255, 255, 0.08);
+      color: #ffffff;
+
+      .link-icon {
+        color: #ffffff;
+      }
+    }
+
+    &.active {
+      background: linear-gradient(135deg, var(--forest-green) 0%, var(--forest-green-hover) 100%);
+      color: #ffffff;
+      font-weight: 600;
+      box-shadow: 0 2px 8px rgba(0, 146, 61, 0.35);
+
+      .link-icon {
+        color: #ffffff;
+      }
+    }
+  }
+}
+
+.sidebar-footer {
+  padding: 1rem 1.25rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  background-color: rgba(13, 36, 57, 0.35);
+
+  .user-pill {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+
+    .avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--tuscan-sun) 0%, #dfb750 100%);
+      color: var(--deep-space-blue);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.875rem;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+      flex-shrink: 0;
+    }
+
+    .user-info {
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+
+      .user-name {
+        font-size: 0.8125rem;
+        font-weight: 600;
+        color: #ffffff;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .user-role {
+        font-size: 0.6875rem;
+        color: var(--tuscan-sun);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+    }
+  }
+}
+
+/* ==========================================================================
+   ESTADO COMPRIMIDO / COLAPSADO (ANCHO COMPACTO 76px)
+   ========================================================================== */
+
+.sidebar.collapsed {
+  width: 76px;
+
+  .sidebar-header {
+    padding: 1rem 0.5rem;
+
+    .brand-btn {
+      width: 48px;
+      height: 48px;
+      padding: 0.25rem;
+      border-radius: 8px;
+
+      .brand-collapsed {
+        max-height: 34px;
+        max-width: 34px;
+      }
+    }
+  }
+
+  .sidebar-nav {
+    .nav-list {
+      padding: 0 0.5rem;
+    }
+
+    .nav-link {
+      justify-content: center;
+      padding: 0.65rem 0.5rem;
+      gap: 0;
+
+      .link-icon {
+        width: 24px;
+        height: 24px;
+      }
+    }
+  }
+
+  .sidebar-footer {
+    padding: 0.875rem 0.5rem;
+    display: flex;
+    justify-content: center;
+
+    .user-pill {
+      justify-content: center;
+      gap: 0;
+    }
+  }
+}

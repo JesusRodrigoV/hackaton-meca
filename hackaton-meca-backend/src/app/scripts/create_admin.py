@@ -14,12 +14,12 @@ from app.db.session import SessionLocal
 
 def _parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="Create the initial MECA administrator user."
+        description="Create the initial administrator user for Enseña por Bolivia."
     )
     parser.add_argument("--email", required=True, help="Administrator email")
     parser.add_argument(
         "--full-name",
-        default="Administrador MECA",
+        default="Administrador General",
         help="Administrator full name",
     )
     parser.add_argument(

@@ -66,7 +66,7 @@ def _layout(title: str, greeting: str, body: str, button_text: str | None = None
           {body}
           {button}
           <p style="margin-top:28px;font-size:12px;color:#666">
-            Este mensaje fue generado automáticamente por MECA.
+            Este mensaje fue generado automáticamente por Enseña por Bolivia.
           </p>
         </div>
       </body>
@@ -90,14 +90,14 @@ async def send_password_reset_email(
         title="Restablece tu contraseña",
         greeting=f"Hola, {html.escape(full_name)}.",
         body=(
-            "<p>Recibimos una solicitud para restablecer tu contraseña en MECA.</p>"
+            "<p>Recibimos una solicitud para restablecer tu contraseña en Enseña por Bolivia.</p>"
             "<p>Si no realizaste esta solicitud, puedes ignorar este correo.</p>"
             f"<p>El enlace expira en <strong>{settings.PASSWORD_RESET_TOKEN_EXPIRE_MINUTES} minutos</strong>.</p>"
         ),
         button_text="Restablecer contraseña",
         button_url=reset_url,
     )
-    await send_email(email_to, "Restablece tu contraseña de MECA", body)
+    await send_email(email_to, "Restablece tu contraseña - Enseña por Bolivia", body)
 
 
 async def send_generated_password_email(
@@ -106,13 +106,13 @@ async def send_generated_password_email(
     full_name: str,
 ) -> None:
     body = _layout(
-        title="Tu cuenta de MECA fue creada",
+        title="Tu cuenta de Enseña por Bolivia fue creada",
         greeting=f"Hola, {html.escape(full_name)}.",
         body=(
-            "<p>Un administrador creó tu cuenta.</p>"
+            "<p>Un administrador creó tu cuenta institucional.</p>"
             "<p>Contraseña temporal: "
             f'<strong style="font-family:monospace">{html.escape(password)}</strong></p>'
             "<p>Al iniciar sesión deberás cambiarla antes de continuar.</p>"
         ),
     )
-    await send_email(email_to, "Tu cuenta de MECA fue creada", body)
+    await send_email(email_to, "Tu cuenta de Enseña por Bolivia fue creada", body)

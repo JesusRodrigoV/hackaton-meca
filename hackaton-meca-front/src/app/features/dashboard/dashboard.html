@@ -1,0 +1,186 @@
+<div class="dashboard-page">
+  <!-- Saludo e Información Contextual -->
+  <header class="page-header">
+    <div class="header-left">
+      <h1 class="page-title">Dashboard</h1>
+      <p class="page-subtitle">
+        Presupuesto y ejecución financiera • Gestión {{ authService.currentGestion() }}
+      </p>
+    </div>
+    <div class="header-right">
+      <div class="scope-pill">
+        <app-icon name="layer" size="16px" color="#00923d"></app-icon>
+        <span>Alcance: <strong>{{ authService.scopeBadge() }}</strong></span>
+      </div>
+      <a routerLink="/reportes" class="btn-quick-report">
+        <app-icon name="file-blank" size="18px" color="#ffffff"></app-icon>
+        <span>Ver Reportes</span>
+      </a>
+    </div>
+  </header>
+
+  <!-- 4 Tarjetas de Métricas Clave (KPIs) -->
+  <section class="kpi-grid">
+    <div class="kpi-card">
+      <div class="kpi-icon-wrap bg-indigo-subtle">
+        <app-icon name="wallet" size="24px" color="#2b255c"></app-icon>
+      </div>
+      <div class="kpi-content">
+        <span class="kpi-label">Presupuesto Vigente</span>
+        <div class="kpi-value tabular-nums">{{ kpis().presupuestoVigenteBob | number:'1.2-2' }} <small>BOB</small></div>
+        <span class="kpi-helper">Presupuesto inicial más traspasos</span>
+      </div>
+    </div>
+
+    <div class="kpi-card">
+      <div class="kpi-icon-wrap bg-forest-subtle">
+        <app-icon name="line-chart" size="24px" color="#00923d"></app-icon>
+      </div>
+      <div class="kpi-content">
+        <span class="kpi-label">Ejecución Acumulada</span>
+        <div class="kpi-value tabular-nums">{{ kpis().ejecutadoBob | number:'1.2-2' }} <small>BOB</small></div>
+        <div class="progress-bar-wrap">
+          <div
+            class="progress-bar-fill"
+            [style.width.%]="kpis().porcentajeEjecucion > 100 ? 100 : kpis().porcentajeEjecucion"
+            [class.progress-danger]="kpis().porcentajeEjecucion > 100"
+            [class.progress-warning]="kpis().porcentajeEjecucion >= 90 && kpis().porcentajeEjecucion <= 100"
+            [class.progress-success]="kpis().porcentajeEjecucion < 90"
+          ></div>
+        </div>
+        <div class="progress-stats">
+          <span class="progress-pct tabular-nums">{{ kpis().porcentajeEjecucion }}% ejecutado</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="kpi-card">
+      <div class="kpi-icon-wrap" [class.bg-forest-subtle]="kpis().saldoDisponibleBob >= 0" [class.bg-rose-subtle]="kpis().saldoDisponibleBob < 0">
+        <app-icon
+          [name]="kpis().saldoDisponibleBob >= 0 ? 'check-circle' : 'error-circle'"
+          size="24px"
+          [color]="kpis().saldoDisponibleBob >= 0 ? '#00923d' : '#e11d48'"
+        ></app-icon>
+      </div>
+      <div class="kpi-content">
+        <span class="kpi-label">Saldo Disponible</span>
+        <div class="kpi-value tabular-nums" [class.text-danger]="kpis().saldoDisponibleBob < 0">
+          {{ kpis().saldoDisponibleBob | number:'1.2-2' }} <small>BOB</small>
+        </div>
+        <span class="kpi-helper">Saldo restante por ejecutar</span>
+      </div>
+    </div>
+
+    <div class="kpi-card">
+      <div class="kpi-icon-wrap bg-rose-subtle">
+        <app-icon name="bell" size="24px" color="#e11d48"></app-icon>
+      </div>
+      <div class="kpi-content">
+        <span class="kpi-label">Alertas de Presupuesto</span>
+        <div class="kpi-value tabular-nums text-danger">{{ kpis().cuentasSobreejecutadas }} <small>con sobregiro</small></div>
+        <span class="kpi-helper">{{ kpis().cuentasEnAlerta }} cuentas cerca del límite</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Gráficos Visuales (Chart.js) -->
+  <section class="charts-grid">
+    <div class="chart-card">
+      <div class="card-header">
+        <div class="card-title-group">
+          <app-icon name="pie-chart-alt-2" size="20px" color="#00923d"></app-icon>
+          <h3>Distribución por Financiador</h3>
+        </div>
+        <span class="card-badge">Fondos Donantes</span>
+      </div>
+      <div class="chart-container">
+        <canvas #chartFinanciador></canvas>
+      </div>
+    </div>
+
+    <div class="chart-card">
+      <div class="card-header">
+        <div class="card-title-group">
+          <app-icon name="bar-chart-alt-2" size="20px" color="#2b255c"></app-icon>
+          <h3>Presupuesto vs Ejecución por Región</h3>
+        </div>
+        <span class="card-badge">Consolidado Geográfico</span>
+      </div>
+      <div class="chart-container">
+        <canvas #chartRegiones></canvas>
+      </div>
+    </div>
+  </section>
+
+  <!-- Partidas Críticas y Alertas de Gobernanza -->
+  <section class="critical-section">
+    <div class="section-card">
+      <div class="card-header">
+        <div class="card-title-group">
+          <app-icon name="error-circle" size="20px" color="#e11d48"></app-icon>
+          <h3>Partidas con sobregiro o próximas al límite</h3>
+        </div>
+        <a routerLink="/presupuestos/techos" class="btn-link">Ver todas las partidas →</a>
+      </div>
+
+      <div class="table-responsive">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Partida / Cuenta</th>
+              <th>Región</th>
+              <th>Financiador</th>
+              <th class="tabular-nums">Presupuesto Vigente</th>
+              <th class="tabular-nums">Ejecutado</th>
+              <th class="tabular-nums">Saldo</th>
+              <th class="tabular-nums">% Ejec.</th>
+              <th>Estado</th>
+              <th>Acción</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (item of partidasCriticas(); track item.id) {
+              <tr [class.row-alert]="item.estado === 'SOBREEJECUCION' || item.estado === 'EJEC_SIN_PRESUP'">
+                <td class="font-medium">
+                  <div class="account-cell">
+                    <span class="account-code">{{ item.codigoCuenta }}</span>
+                    <span class="account-name">{{ item.nombreCuenta }}</span>
+                  </div>
+                </td>
+                <td>{{ item.region }}</td>
+                <td><span class="badge-fin">{{ item.financiador }}</span></td>
+                <td class="tabular-nums">{{ item.montoVigenteBob | number:'1.2-2' }}</td>
+                <td class="tabular-nums font-medium">{{ item.montoEjecutadoBob | number:'1.2-2' }}</td>
+                <td class="tabular-nums font-bold" [class.text-danger]="item.saldoDisponibleBob < 0">
+                  {{ item.saldoDisponibleBob | number:'1.2-2' }}
+                </td>
+                <td class="tabular-nums">
+                  <span class="pct-pill" [class.pct-danger]="item.porcentajeEjecucion > 100" [class.pct-warning]="item.porcentajeEjecucion >= 90">
+                    {{ item.porcentajeEjecucion }}%
+                  </span>
+                </td>
+                <td>
+                  @if (item.estado === 'SOBREEJECUCION') {
+                    <span class="status-badge status-danger">SOBREEJECUCIÓN</span>
+                  } @else if (item.estado === 'EJEC_SIN_PRESUP') {
+                    <span class="status-badge status-danger">SIN PRESUPUESTO</span>
+                  } @else if (item.porcentajeEjecucion >= 90) {
+                    <span class="status-badge status-warning">ALERTA 90%</span>
+                  } @else {
+                    <span class="status-badge status-ok">OK</span>
+                  }
+                </td>
+                <td>
+                  <a routerLink="/presupuestos/modificaciones" class="btn-action-sm" title="Solicitar Modificación / Traspaso">
+                    <app-icon name="transfer" size="14px" color="currentColor"></app-icon>
+                    <span>Traspasar</span>
+                  </a>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+</div>

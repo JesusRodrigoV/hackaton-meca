@@ -57,7 +57,7 @@ services:
       redis:
         condition: service_healthy
     environment:
-      - DATABASE_URL=postgresql://${POSTGRES_USER:-meca_user}:${POSTGRES_PASSWORD:-meca_password_secure_2026}@db:5432/${POSTGRES_DB:-meca_db}
+      - DATABASE_URL=postgresql+psycopg2://${POSTGRES_USER:-meca_user}:${POSTGRES_PASSWORD:-meca_password_secure_2026}@db:5432/${POSTGRES_DB:-meca_db}
       - SECRET_KEY=${SECRET_KEY:-super_secret_jwt_key_hackaton_meca_2026_xyz789}
       - ALGORITHM=HS256
       - ACCESS_TOKEN_EXPIRE_MINUTES=60
@@ -69,7 +69,7 @@ services:
       - DEFAULT_ADMIN_EMAIL=${DEFAULT_ADMIN_EMAIL:-admin@ensenaporbolivia.org}
       - DEFAULT_ADMIN_PASSWORD=${DEFAULT_ADMIN_PASSWORD:-AdminExB2026!}
       - DEFAULT_ADMIN_PHONE=+59170000000
-      - TOTP_ENCRYPTION_KEY=${TOTP_ENCRYPTION_KEY:-meca_totp_secret_key_32bytes_len!}
+      - TOTP_ENCRYPTION_KEY=${TOTP_ENCRYPTION_KEY:-AX25xl5yJrCPrdDYSgigYd8zK77bOe4PAP0ulM3G_W4=}
       - CLOUDINARY_CLOUD_NAME=${CLOUDINARY_CLOUD_NAME:-dummy_cloud}
       - CLOUDINARY_API_KEY=${CLOUDINARY_API_KEY:-1234567890}
       - CLOUDINARY_API_SECRET=${CLOUDINARY_API_SECRET:-dummy_secret}
@@ -80,6 +80,7 @@ services:
       - MAIL_PORT=587
       - MAIL_FROM=${MAIL_FROM:-noreply@ensenaporbolivia.org}
       - MAIL_FROM_NAME="Enseña por Bolivia"
+    command: ["sh", "-c", "python -m app.scripts.ensure_auth_schema && uvicorn app.main:app --host 0.0.0.0 --port 8000"]
     ports:
       - "8000:8000"
     networks:
@@ -97,7 +98,7 @@ services:
     depends_on:
       - backend
     ports:
-      - "80:80"
+      - "4200:80"
     networks:
       - meca_network
 

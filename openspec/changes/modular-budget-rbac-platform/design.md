@@ -87,3 +87,14 @@ See `proposal.md` for motivation and domain problem statement. The project requi
   → *Mitigation*: Audit only state-changing operations (CREATE, UPDATE, DELETE, IMPORT, LOGIN) and exclude read-only GET queries from full payload capture.
 - **[Permission Synchronization in Frontend]** User permission changes in the database might become stale in the browser.
   → *Mitigation*: Embed permission hashes in the short-lived JWT access token and refresh state on token refresh or re-login.
+
+## UI & Design System (Public Web Palette)
+
+The frontend aligns strictly with Enseña por Bolivia's public web brand palette:
+- **`--bright-snow: #f8f9fa`** (60% background / neutral clarity)
+- **`--space-indigo: #2b255c`** (Primary institutional tone, headers, sidebar)
+- **`--forest-green: #00923d`** (Primary interactive action, execution within limits, positive status)
+- **`--tuscan-sun: #ecc562`** (Warning semaphore, alert thresholds at 90%, institutional gold accent)
+- **`--deep-space-blue: #0d2439`** (Deep structural dark contrast and primary readable text)
+
+Sidebar layout is fixed at 260px featuring the official institutional logo from `public/logos/logo-ensena-nuevo-01-311.webp` with zero unnecessary collapsing toggles.

@@ -1,0 +1,71 @@
+<aside class="sidebar" [class.collapsed]="isCollapsed()">
+  <!-- Header con Logo Institucional Interactivo (Conmuta Expandido / Comprimido) -->
+  <div class="sidebar-header">
+    <button
+      type="button"
+      class="brand-btn"
+      (click)="toggleCollapse()"
+      [title]="isCollapsed() ? 'Expandir menú lateral' : 'Comprimir menú lateral'"
+      [attr.aria-expanded]="!isCollapsed()"
+    >
+      @if (isCollapsed()) {
+        <img
+          src="logos/logo-ensena-nuevo-01-148.webp"
+          alt="Enseña por Bolivia (reducido)"
+          class="brand-image brand-collapsed"
+        />
+      } @else {
+        <img
+          src="logos/logo-ensena-nuevo-01-311.webp"
+          alt="Enseña por Bolivia"
+          class="brand-image brand-expanded"
+        />
+      }
+    </button>
+  </div>
+
+  <!-- Navegación Dinámica -->
+  <nav class="sidebar-nav">
+    @for (section of sections; track section.title) {
+      <div class="nav-group">
+        @if (!isCollapsed()) {
+          <div class="group-title">{{ section.title }}</div>
+        }
+        <ul class="nav-list">
+          @for (item of section.items; track item.route) {
+            <li *appHasPermission="item.permission ?? null">
+              <a
+                [routerLink]="item.route"
+                routerLinkActive="active"
+                class="nav-link"
+                [title]="item.label"
+              >
+                <span class="link-icon">
+                  <app-icon [name]="item.icon" size="sm"></app-icon>
+                </span>
+                @if (!isCollapsed()) {
+                  <span class="link-label">{{ item.label }}</span>
+                }
+              </a>
+            </li>
+          }
+        </ul>
+      </div>
+    }
+  </nav>
+
+  <!-- Footer con Perfil y Rol Activo -->
+  <div class="sidebar-footer">
+    <div class="user-pill" [title]="(auth.currentUser()?.fullName ?? 'Usuario') + ' (' + (auth.currentUser()?.roleName ?? '') + ')'">
+      <div class="avatar">
+        {{ auth.currentUser()?.fullName?.charAt(0) ?? 'U' }}
+      </div>
+      @if (!isCollapsed()) {
+        <div class="user-info">
+          <div class="user-name">{{ auth.currentUser()?.fullName ?? 'Sin usuario' }}</div>
+          <div class="user-role">{{ auth.currentUser()?.roleName ?? 'Invitado' }}</div>
+        </div>
+      }
+    </div>
+  </div>
+</aside>

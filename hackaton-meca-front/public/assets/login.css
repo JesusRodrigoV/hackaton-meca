@@ -1,0 +1,25 @@
+/*
+ * Ajustes globales de la pantalla de acceso.
+ * El componente login.scss contiene la composición; este archivo sólo evita
+ * que el fondo claro de la aplicación operativa se asome detrás del login.
+ */
+
+html:has(.login-page),
+body:has(.login-page) {
+  min-height: 100%;
+  background: #101421;
+}
+
+body:has(.login-page) {
+  overflow-x: hidden;
+}
+
+.login-page ::selection {
+  background: color-mix(in oklab, #0081af 45%, transparent);
+  color: #f4f7fb;
+}
+
+/* El widget de reCAPTCHA se monta dentro de una columna estrecha. */
+.login-recaptcha iframe {
+  max-width: 100%;
+}
