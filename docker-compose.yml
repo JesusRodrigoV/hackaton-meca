@@ -80,6 +80,7 @@ services:
       - MAIL_PORT=587
       - MAIL_FROM=${MAIL_FROM:-noreply@ensenaporbolivia.org}
       - MAIL_FROM_NAME="Enseña por Bolivia"
+    command: ["sh", "-c", "python -m app.scripts.ensure_auth_schema && uvicorn app.main:app --host 0.0.0.0 --port 8000"]
     ports:
       - "8000:8000"
     networks:

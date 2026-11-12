@@ -1,65 +1,93 @@
 <div class="reports-page">
-  <header class="page-header">
-    <div class="header-left">
-      <h1 class="page-title">Reportes</h1>
-      <p class="page-subtitle">
-        Reportes financieros para donantes y dirección • Gestión {{ authService.currentGestion() }}
-      </p>
+  <header class="reports-header">
+    <div class="reports-heading">
+      <h1>Reportes financieros</h1>
+      <p>Consulta la ejecución presupuestaria y prepara información para dirección y donantes.</p>
     </div>
-    <div class="header-right">
+    <div class="reports-actions">
+      <div class="period-chip" aria-label="Gestión seleccionada">
+        <span class="period-dot" aria-hidden="true"></span>
+        <span>GESTIÓN</span>
+        <strong>{{ authService.currentGestion() }}</strong>
+      </div>
       <button type="button" class="btn-action" (click)="imprimirReporte()">
-        <app-icon name="printer" size="18px" color="#0d2439"></app-icon>
+        <app-icon name="printer" size="17px" color="currentColor"></app-icon>
         <span>Imprimir / PDF</span>
       </button>
       <button type="button" class="btn-primary" (click)="exportarReporteActual()">
-        <app-icon name="file-export" size="18px" color="#ffffff"></app-icon>
-        <span>Exportar a Excel</span>
+        <app-icon name="file-export" size="17px" color="currentColor"></app-icon>
+        <span>Exportar Excel</span>
       </button>
     </div>
   </header>
 
-  <!-- Pestañas de los 7 Reportes -->
-  <nav class="report-tabs">
-    @for (tab of reportTabs; track tab.id) {
-      <button
-        type="button"
-        class="tab-btn"
-        [class.active]="activeTab() === tab.id"
-        (click)="activeTab.set(tab.id)"
-      >
-        <span class="tab-code">{{ tab.code }}</span>
-        <span class="tab-title">{{ tab.title }}</span>
-      </button>
-    }
-  </nav>
-
-  <!-- Barra de Filtros de Reporte -->
-  <section class="report-filter-bar">
-    <div class="filter-group">
-      <label>Gestión Fiscal:</label>
-      <select [ngModel]="authService.currentGestion()" (ngModelChange)="authService.setGestion($event)">
-        <option [value]="2026">Gestión 2026 (En Curso)</option>
-        <option [value]="2025">Gestión 2025 (Cerrada)</option>
-        <option [value]="2024">Gestión 2024 (Histórica)</option>
-      </select>
+  <section class="report-selector" aria-labelledby="report-selector-title">
+    <div class="selector-heading">
+      <div>
+        <h2 id="report-selector-title">Informes disponibles</h2>
+        <p>Selecciona una vista para explorar los datos</p>
+      </div>
+      <span class="report-count">{{ reportTabs.length }} reportes</span>
     </div>
+    <nav class="report-tabs" role="tablist" aria-label="Reportes financieros">
+      @for (tab of reportTabs; track tab.id) {
+        <button
+          type="button"
+          class="tab-btn"
+          role="tab"
+          [id]="'tab-' + tab.id"
+          aria-controls="report-panel"
+          [attr.aria-selected]="activeTab() === tab.id"
+          [attr.tabindex]="activeTab() === tab.id ? 0 : -1"
+          [class.active]="activeTab() === tab.id"
+          (click)="activeTab.set(tab.id)"
+          (keydown)="onReportTabKeydown($event, $index)"
+        >
+          <span class="tab-code">{{ tab.code }}</span>
+          <span class="tab-title">{{ tab.title }}</span>
+          <span class="tab-indicator" aria-hidden="true"></span>
+        </button>
+      }
+    </nav>
+  </section>
 
-    <div class="filter-group">
-      <label>Moneda:</label>
-      <select [ngModel]="moneda()" (ngModelChange)="moneda.set($event)">
-        <option value="BOB">Bolivianos (BOB)</option>
-        <option value="USD">Dólares Americanos (USD)</option>
-      </select>
+  <section class="report-filter-bar" aria-label="Filtros del reporte">
+    <div class="filters-intro">
+      <h2>Parámetros</h2>
+      <p>Ajusta el periodo y la moneda de consulta</p>
+    </div>
+    <div class="filter-controls">
+      <div class="filter-group">
+        <label for="report-period">Gestión fiscal</label>
+        <select id="report-period" [ngModel]="authService.currentGestion()" (ngModelChange)="authService.setGestion($event)">
+          <option [value]="2026">2026 · En curso</option>
+          <option [value]="2025">2025 · Cerrada</option>
+          <option [value]="2024">2024 · Histórica</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label for="report-currency">Moneda</label>
+        <select id="report-currency" [ngModel]="moneda()" (ngModelChange)="moneda.set($event)">
+          <option value="BOB">Bolivianos (BOB)</option>
+          <option value="USD">Dólares (USD)</option>
+        </select>
+      </div>
     </div>
 
     <div class="report-info-pill">
-      <app-icon name="check-shield" size="16px" color="#00923d"></app-icon>
-      <span>Datos actualizados según tu alcance asignado</span>
+      <app-icon name="check-shield" size="16px" color="currentColor"></app-icon>
+      <span>Datos limitados a tu alcance</span>
     </div>
   </section>
 
-  <!-- Contenido Dinámico según Reporte Seleccionado -->
-  <section class="report-body">
+  <section
+    class="report-body"
+    id="report-panel"
+    role="tabpanel"
+    tabindex="0"
+    [attr.aria-labelledby]="'tab-' + activeTab()"
+  >
     <!-- REP-01: Ejecución General vs Techos -->
     @if (activeTab() === 'REP-01') {
       <div class="report-card">

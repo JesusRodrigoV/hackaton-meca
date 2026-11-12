@@ -102,6 +102,27 @@ export class Reports implements OnInit {
     return this.techos().filter(t => t.estado === 'SOBREEJECUCION' || t.estado === 'EJEC_SIN_PRESUP' || t.porcentajeEjecucion >= 90);
   });
 
+  onReportTabKeydown(event: KeyboardEvent, currentIndex: number): void {
+    let nextIndex = currentIndex;
+
+    if (event.key === 'ArrowRight') {
+      nextIndex = (currentIndex + 1) % this.reportTabs.length;
+    } else if (event.key === 'ArrowLeft') {
+      nextIndex = (currentIndex - 1 + this.reportTabs.length) % this.reportTabs.length;
+    } else if (event.key === 'Home') {
+      nextIndex = 0;
+    } else if (event.key === 'End') {
+      nextIndex = this.reportTabs.length - 1;
+    } else {
+      return;
+    }
+
+    event.preventDefault();
+    this.activeTab.set(this.reportTabs[nextIndex].id);
+    const tabList = (event.currentTarget as HTMLElement).closest('[role="tablist"]');
+    tabList?.querySelectorAll<HTMLElement>('[role="tab"]')[nextIndex]?.focus();
+  }
+
   exportarReporteActual(): void {
     const tab = this.reportTabs.find(t => t.id === this.activeTab());
     const code = tab?.id ?? 'REP-01';
