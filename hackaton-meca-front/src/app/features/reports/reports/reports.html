@@ -1,9 +1,9 @@
 <div class="reports-page">
   <header class="page-header">
     <div class="header-left">
-      <h1 class="page-title">Módulo de Reportes Oficiales</h1>
+      <h1 class="page-title">Reportes</h1>
       <p class="page-subtitle">
-        Reproducción de los 7 reportes normativos para donantes y dirección ejecutiva • Gestión {{ authService.currentGestion() }}
+        Reportes financieros para donantes y dirección • Gestión {{ authService.currentGestion() }}
       </p>
     </div>
     <div class="header-right">
@@ -13,7 +13,7 @@
       </button>
       <button type="button" class="btn-primary" (click)="exportarReporteActual()">
         <app-icon name="file-export" size="18px" color="#ffffff"></app-icon>
-        <span>Exportar Excel Oficial</span>
+        <span>Exportar a Excel</span>
       </button>
     </div>
   </header>
@@ -54,7 +54,7 @@
 
     <div class="report-info-pill">
       <app-icon name="check-shield" size="16px" color="#00923d"></app-icon>
-      <span>Datos consolidados validados bajo control de concurrencia y RBAC</span>
+      <span>Datos actualizados según tu alcance asignado</span>
     </div>
   </section>
 

@@ -1,9 +1,9 @@
 <div class="movimientos-page">
   <header class="page-header">
     <div class="header-left">
-      <h1 class="page-title">Libro Diario de Movimientos y Gastos</h1>
+      <h1 class="page-title">Registro de gastos</h1>
       <p class="page-subtitle">
-        Registro contable detallado de egresos con sellado criptográfico • Gestión {{ authService.currentGestion() }}
+        Detalle de comprobantes y gastos registrados • Gestión {{ authService.currentGestion() }}
       </p>
     </div>
     <div class="header-right">
@@ -86,7 +86,7 @@
           <th>Región / Área</th>
           <th>Financiador</th>
           <th class="tabular-nums">Monto ({{ currencyMode() }})</th>
-          <th>Trazabilidad SHA-256</th>
+          <th>Firma de auditoría</th>
         </tr>
       </thead>
       <tbody>

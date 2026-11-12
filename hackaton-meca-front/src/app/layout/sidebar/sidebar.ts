@@ -29,35 +29,35 @@ export class Sidebar {
     {
       title: 'PRINCIPAL',
       items: [
-        { label: 'Dashboard', route: '/dashboard', icon: 'grid-alt', permission: 'dashboard.ver' }
+        { label: 'Resumen general', route: '/dashboard', icon: 'grid-alt', permission: 'dashboard.ver' }
       ]
     },
     {
       title: 'PRESUPUESTOS',
       items: [
-        { label: 'Techos Anuales', route: '/presupuestos/techos', icon: 'wallet', permission: 'presupuestos.ver' },
-        { label: 'Modificaciones', route: '/presupuestos/modificaciones', icon: 'transfer-alt', permission: 'modificaciones.solicitar' }
+        { label: 'Presupuesto anual', route: '/presupuestos/techos', icon: 'wallet', permission: 'presupuestos.ver' },
+        { label: 'Traspasos y ajustes', route: '/presupuestos/modificaciones', icon: 'transfer-alt', permission: 'modificaciones.solicitar' }
       ]
     },
     {
-      title: 'EJECUCIÓN CONTABLE',
+      title: 'GASTOS',
       items: [
-        { label: 'Libro de Movimientos', route: '/ejecucion/movimientos', icon: 'receipt', permission: 'reportes.ver' },
-        { label: 'Importador Excel', route: '/ejecucion/importador', icon: 'cloud-upload', permission: 'importaciones.crear' }
+        { label: 'Registro de gastos', route: '/ejecucion/movimientos', icon: 'receipt', permission: 'reportes.ver' },
+        { label: 'Cargar desde Excel', route: '/ejecucion/importador', icon: 'cloud-upload', permission: 'importaciones.crear' }
       ]
     },
     {
-      title: 'INFORMES Y CUENTAS',
+      title: 'REPORTES',
       items: [
-        { label: 'Centro 7 Reportes', route: '/reportes', icon: 'bar-chart-alt-2', permission: 'reportes.ver' }
+        { label: 'Reportes financieros', route: '/reportes', icon: 'bar-chart-alt-2', permission: 'reportes.ver' }
       ]
     },
     {
-      title: 'GOBERNANZA & CONTROL',
+      title: 'SEGURIDAD',
       items: [
-        { label: 'Usuarios y Scopes', route: '/seguridad/usuarios', icon: 'user', permission: 'usuarios.admin' },
-        { label: 'Matriz de Roles', route: '/seguridad/roles', icon: 'shield-quarter', permission: 'roles.admin' },
-        { label: 'Bitácora Auditoría', route: '/seguridad/auditoria', icon: 'history', permission: 'auditoria.ver' }
+        { label: 'Usuarios y accesos', route: '/seguridad/usuarios', icon: 'user', permission: 'usuarios.admin' },
+        { label: 'Permisos por rol', route: '/seguridad/roles', icon: 'shield-quarter', permission: 'roles.admin' },
+        { label: 'Auditoría de cambios', route: '/seguridad/auditoria', icon: 'history', permission: 'auditoria.ver' }
       ]
     }
   ];

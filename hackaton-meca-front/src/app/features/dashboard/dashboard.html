@@ -2,9 +2,9 @@
   <!-- Saludo e Información Contextual -->
   <header class="page-header">
     <div class="header-left">
-      <h1 class="page-title">Tablero Ejecutivo de Control Financiero</h1>
+      <h1 class="page-title">Resumen de Presupuesto y Gastos</h1>
       <p class="page-subtitle">
-        Monitoreo consolidado de ejecución presupuestaria • Gestión Fiscal {{ authService.currentGestion() }}
+        Seguimiento del presupuesto general • Gestión {{ authService.currentGestion() }}
       </p>
     </div>
     <div class="header-right">
@@ -14,7 +14,7 @@
       </div>
       <a routerLink="/reportes" class="btn-quick-report">
         <app-icon name="file-blank" size="18px" color="#ffffff"></app-icon>
-        <span>Generar Reportes</span>
+        <span>Ver Reportes</span>
       </a>
     </div>
   </header>
@@ -28,7 +28,7 @@
       <div class="kpi-content">
         <span class="kpi-label">Presupuesto Vigente</span>
         <div class="kpi-value tabular-nums">{{ kpis().presupuestoVigenteBob | number:'1.2-2' }} <small>BOB</small></div>
-        <span class="kpi-helper">Base inicial + modificaciones aprobadas</span>
+        <span class="kpi-helper">Presupuesto inicial más traspasos</span>
       </div>
     </div>
 
@@ -67,7 +67,7 @@
         <div class="kpi-value tabular-nums" [class.text-danger]="kpis().saldoDisponibleBob < 0">
           {{ kpis().saldoDisponibleBob | number:'1.2-2' }} <small>BOB</small>
         </div>
-        <span class="kpi-helper">Margen operativo disponible</span>
+        <span class="kpi-helper">Saldo restante por ejecutar</span>
       </div>
     </div>
 
@@ -76,9 +76,9 @@
         <app-icon name="bell" size="24px" color="#b24c63"></app-icon>
       </div>
       <div class="kpi-content">
-        <span class="kpi-label">Desviaciones y Alertas</span>
-        <div class="kpi-value tabular-nums text-danger">{{ kpis().cuentasSobreejecutadas }} <small>críticas</small></div>
-        <span class="kpi-helper">{{ kpis().cuentasEnAlerta }} cuentas próximas al techo</span>
+        <span class="kpi-label">Alertas de Presupuesto</span>
+        <div class="kpi-value tabular-nums text-danger">{{ kpis().cuentasSobreejecutadas }} <small>con sobregiro</small></div>
+        <span class="kpi-helper">{{ kpis().cuentasEnAlerta }} cuentas cerca del límite</span>
       </div>
     </div>
   </section>
@@ -118,9 +118,9 @@
       <div class="card-header">
         <div class="card-title-group">
           <app-icon name="error-circle" size="20px" color="#b24c63"></app-icon>
-          <h3>Partidas con Atención Prioritaria (Desviaciones / Alertas)</h3>
+          <h3>Partidas con sobregiro o próximas al límite</h3>
         </div>
-        <a routerLink="/presupuestos/techos" class="btn-link">Ver todos los techos →</a>
+        <a routerLink="/presupuestos/techos" class="btn-link">Ver todas las partidas →</a>
       </div>
 
       <div class="table-responsive">

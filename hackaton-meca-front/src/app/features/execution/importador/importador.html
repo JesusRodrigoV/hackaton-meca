@@ -1,9 +1,9 @@
 <div class="importador-page">
   <header class="page-header">
     <div class="header-left">
-      <h1 class="page-title">Ingesta Masiva de Extractos Contables</h1>
+      <h1 class="page-title">Cargar gastos desde Excel</h1>
       <p class="page-subtitle">
-        Carga y pre-validación de planillas Excel (.xlsx, .xls) con cálculo automático de Checksum SHA-256
+        Importación y revisión de planillas de gastos (.xlsx, .xls)
       </p>
     </div>
   </header>
@@ -21,14 +21,14 @@
         <div class="upload-icon-circle">
           <app-icon name="cloud-upload" size="36px" color="#00923d"></app-icon>
         </div>
-        <h3>Arrastra tu archivo Excel aquí o haz clic para examinar</h3>
+        <h3>Arrastra la planilla Excel aquí o búscala en tu equipo</h3>
         <p class="upload-desc">
-          Compatible con planillas de ejecución contable (.xlsx, .xls). Máximo 10 MB por lote.
+          Formatos compatibles: .xlsx, .xls o .csv. Tamaño máximo 10 MB.
         </p>
 
         <label class="btn-browse">
           <app-icon name="file" size="18px" color="#ffffff"></app-icon>
-          <span>Seleccionar Planilla Excel</span>
+          <span>Seleccionar archivo</span>
           <input
             type="file"
             accept=".xlsx, .xls, .csv"
@@ -54,7 +54,7 @@
           <button type="button" class="btn-cancel" (click)="cancelarPreview()">Cancelar</button>
           <button type="button" class="btn-confirm" (click)="confirmarIngesta()">
             <app-icon name="check" size="18px" color="#ffffff"></app-icon>
-            <span>Confirmar Ingesta al Mayor</span>
+            <span>Guardar gastos</span>
           </button>
         </div>
       </div>
@@ -69,7 +69,7 @@
           <span class="val text-danger tabular-nums">{{ previewStats().filasError }}</span>
         </div>
         <div class="metric-card">
-          <span class="lbl">Monto Total a Imputar</span>
+          <span class="lbl">Monto a Registrar</span>
           <span class="val tabular-nums">{{ previewStats().montoTotalBob | number:'1.2-2' }} BOB</span>
         </div>
       </div>
@@ -95,9 +95,9 @@
     <div class="section-header">
       <div class="title-wrap">
         <app-icon name="history" size="20px" color="#1b2a49"></app-icon>
-        <h3>Historial de Lotes Ingeridos</h3>
+        <h3>Archivos cargados anteriormente</h3>
       </div>
-      <span class="sub-badge">{{ importaciones().length }} lotes registrados</span>
+      <span class="sub-badge">{{ importaciones().length }} lotes</span>
     </div>
 
     <div class="table-container">

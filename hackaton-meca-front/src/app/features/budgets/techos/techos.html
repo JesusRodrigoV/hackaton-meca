@@ -2,9 +2,9 @@
   <!-- Header -->
   <header class="page-header">
     <div class="header-left">
-      <h1 class="page-title">Techos Presupuestarios Anuales</h1>
+      <h1 class="page-title">Presupuesto y techos de gasto</h1>
       <p class="page-subtitle">
-        Matriz de techos aprobados vs ejecución contable • Gestión Fiscal {{ authService.currentGestion() }}
+        Partidas aprobadas y avance del gasto • Gestión {{ authService.currentGestion() }}
       </p>
     </div>
     <div class="header-right">
@@ -14,7 +14,7 @@
       </button>
       <a routerLink="/presupuestos/modificaciones" class="btn-primary">
         <app-icon name="plus" size="18px" color="#ffffff"></app-icon>
-        <span>Nueva Modificación</span>
+        <span>Nuevo traspaso</span>
       </a>
     </div>
   </header>
@@ -22,21 +22,21 @@
   <!-- Barra de Resumen Financiero -->
   <section class="summary-cards">
     <div class="summary-item">
-      <span class="lbl">Total Presupuesto Vigente</span>
+      <span class="lbl">Presupuesto Vigente</span>
       <span class="val tabular-nums">{{ totalVigente() | number:'1.2-2' }} <small>BOB</small></span>
     </div>
     <div class="summary-item">
-      <span class="lbl">Total Ejecutado Acumulado</span>
+      <span class="lbl">Gasto Acumulado</span>
       <span class="val tabular-nums">{{ totalEjecutado() | number:'1.2-2' }} <small>BOB</small></span>
     </div>
     <div class="summary-item">
-      <span class="lbl">Saldo Presupuestario Total</span>
+      <span class="lbl">Saldo Restante</span>
       <span class="val tabular-nums" [class.text-danger]="totalSaldo() < 0">
         {{ totalSaldo() | number:'1.2-2' }} <small>BOB</small>
       </span>
     </div>
     <div class="summary-item">
-      <span class="lbl">Tasa Global de Ejecución</span>
+      <span class="lbl">% de Ejecución</span>
       <span class="val tabular-nums" [class.text-danger]="porcentajeGlobal() > 100">
         {{ porcentajeGlobal() }}%
       </span>

@@ -1,15 +1,15 @@
 <div class="audit-page">
   <header class="page-header">
     <div class="header-left">
-      <h1 class="page-title">Pistas de Auditoría y Trazabilidad Criptográfica</h1>
+      <h1 class="page-title">Historial de auditoría</h1>
       <p class="page-subtitle">
-        Registro inmutable encadenado mediante SHA-256 para verificación formal de transacciones
+        Registro de cambios y operaciones en el sistema
       </p>
     </div>
     <div class="header-right">
       <button type="button" class="btn-verify" [disabled]="isVerifying()" (click)="verificarCadena()">
         <app-icon name="shield-quarter" size="18px" color="#ffffff"></app-icon>
-        <span>{{ isVerifying() ? 'Verificando Cadena...' : 'Verificar Integridad SHA-256' }}</span>
+        <span>{{ isVerifying() ? 'Verificando...' : 'Verificar firmas de auditoría' }}</span>
       </button>
     </div>
   </header>

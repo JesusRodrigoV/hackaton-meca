@@ -2,7 +2,7 @@
   <!-- Izquierda: Contexto de Trabajo -->
   <div class="topbar-left">
     <div class="gestion-selector">
-      <span class="label">Gestión Fiscal:</span>
+      <span class="label">Año fiscal:</span>
       <select [value]="auth.currentGestion()" (change)="onGestionChange($event)" class="select-clean">
         @for (year of auth.availableGestiones(); track year) {
           <option [value]="year">{{ year }}</option>
@@ -10,35 +10,93 @@
       </select>
     </div>
 
-    <!-- Badge de Jurisdicción (Data Scoping Activo) -->
+    <!-- Jurisdicción / Alcance de datos -->
     <div class="scope-badge" [class.scoped]="auth.currentUser().scopeType !== 'global'">
       <app-icon name="map-pin" size="xs" [color]="auth.currentUser().scopeType !== 'global' ? 'var(--forest-green)' : '#718096'"></app-icon>
       <span>{{ auth.scopeBadge() }}</span>
     </div>
   </div>
 
-  <!-- Derecha: Simulador de Roles para Jurado + Perfil -->
+  <!-- Derecha: Selector de Rol y Notificaciones -->
   <div class="topbar-right">
-    <!-- Switcher de Perfil para Demo -->
+    <!-- Selector de Rol para pruebas -->
     <div class="role-switcher">
       <label class="switcher-label">
         <app-icon name="user-check" size="xs" color="var(--forest-green)"></app-icon>
-        <span>Simular Rol:</span>
+        <span>Ver como:</span>
       </label>
       <select [value]="auth.currentUser().roleCode" (change)="onRoleChange($event)" class="role-select">
-        <option value="ADMIN">Super Admin (Nacional)</option>
-        <option value="FINANCE">Finanzas / Contador</option>
-        <option value="COORDINATOR">Coord. Santa Cruz (Regional)</option>
-        <option value="AUDITOR">Auditor CATALYST (Donante)</option>
+        <option value="ADMIN">Director General (Admin)</option>
+        <option value="FINANCE">Contador (Finanzas)</option>
+        <option value="COORDINATOR">Coordinador Santa Cruz</option>
+        <option value="AUDITOR">Auditor CATALYST</option>
       </select>
     </div>
 
     <div class="divider"></div>
 
-    <!-- Notificaciones / Alertas -->
-    <button class="btn-icon" title="Alertas de Ejecución">
-      <app-icon name="bell" size="sm" color="var(--space-indigo)"></app-icon>
-      <span class="notification-dot"></span>
-    </button>
+    <!-- Campana de Notificaciones -->
+    <div class="notification-container">
+      <button
+        type="button"
+        class="btn-icon"
+        (click)="toggleNotifications()"
+        title="Ver notificaciones y alertas"
+      >
+        <app-icon name="bell" size="sm" color="var(--space-indigo)"></app-icon>
+        @if (unreadCount() > 0) {
+          <span class="notification-badge">{{ unreadCount() }}</span>
+        }
+      </button>
+
+      <!-- Panel de Notificaciones -->
+      @if (showNotifications()) {
+        <div class="notification-dropdown">
+          <div class="dropdown-header">
+            <div class="header-title">
+              <span class="title">Notificaciones</span>
+              @if (unreadCount() > 0) {
+                <span class="count-tag">{{ unreadCount() }} nuevas</span>
+              }
+            </div>
+            @if (unreadCount() > 0) {
+              <button type="button" class="btn-text" (click)="markAllAsRead()">
+                Marcar leídas
+              </button>
+            }
+          </div>
+
+          <div class="dropdown-body">
+            @for (item of notifications(); track item.id) {
+              <a
+                [routerLink]="item.ruta"
+                (click)="closeNotifications()"
+                class="notification-item"
+                [class.unread]="!item.leido"
+              >
+                <div class="item-icon" [class.icon-danger]="item.tipo === 'urgente'" [class.icon-warning]="item.tipo === 'aviso'" [class.icon-info]="item.tipo === 'solicitud'">
+                  @if (item.tipo === 'urgente') {
+                    <app-icon name="error-circle" size="16px" color="#e11d48"></app-icon>
+                  } @else if (item.tipo === 'solicitud') {
+                    <app-icon name="transfer" size="16px" color="#00923d"></app-icon>
+                  } @else {
+                    <app-icon name="info-circle" size="16px" color="#ecc562"></app-icon>
+                  }
+                </div>
+                <div class="item-content">
+                  <div class="item-title">{{ item.titulo }}</div>
+                  <div class="item-msg">{{ item.mensaje }}</div>
+                  <div class="item-time">{{ item.tiempo }}</div>
+                </div>
+              </a>
+            } @empty {
+              <div class="empty-notifications">
+                <p>No tienes notificaciones pendientes.</p>
+              </div>
+            }
+          </div>
+        </div>
+      }
+    </div>
   </div>
 </header>
