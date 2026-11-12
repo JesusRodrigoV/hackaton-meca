@@ -1,8 +1,20 @@
 import { Routes } from '@angular/router';
 import { Shell } from './layout/shell/shell';
 import { authGuard, guestGuard, permissionGuard } from './core/guards/auth.guard';
+import { publicCssResolver } from './public/public-css';
 
 export const routes: Routes = [
+  {
+    path: '',
+    pathMatch: 'full',
+    resolve: { publicCss: publicCssResolver },
+    loadComponent: () => import('./public/landing/landing').then(m => m.Landing)
+  },
+  {
+    path: 'landing',
+    resolve: { publicCss: publicCssResolver },
+    loadComponent: () => import('./public/landing/landing').then(m => m.Landing)
+  },
   {
     path: 'login',
     canActivate: [guestGuard],
@@ -13,11 +25,6 @@ export const routes: Routes = [
     component: Shell,
     canActivate: [authGuard],
     children: [
-      {
-        path: '',
-        pathMatch: 'full',
-        redirectTo: 'dashboard'
-      },
       {
         path: 'dashboard',
         loadComponent: () => import('./features/dashboard/dashboard').then(m => m.Dashboard)

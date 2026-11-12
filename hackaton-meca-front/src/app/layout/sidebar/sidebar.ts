@@ -32,7 +32,7 @@ export class Sidebar {
     {
       title: 'PRINCIPAL',
       items: [
-        { label: 'Resumen general', route: '/dashboard', icon: 'grid-alt', permission: 'dashboard.ver' }
+        { label: 'Dashboard', route: '/dashboard', icon: 'grid-alt', permission: 'dashboard.ver' }
       ]
     },
     {
