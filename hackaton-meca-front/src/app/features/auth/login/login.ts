@@ -20,22 +20,52 @@ export class Login {
   readonly errorMessage = signal<string>('');
   readonly isSubmitting = signal<boolean>(false);
 
+  // Flujo 2FA
+  readonly step = signal<'credentials' | '2fa'>('credentials');
+  readonly sessionToken = signal<string>('');
+  readonly totpCode = signal<string>('');
+
   async onSubmit(): Promise<void> {
     this.errorMessage.set('');
     this.isSubmitting.set(true);
 
     try {
-      const ok = await this.authService.login(this.email(), this.password());
-      this.isSubmitting.set(false);
-      if (ok) {
-        const returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/dashboard';
-        this.router.navigateByUrl(returnUrl);
+      if (this.step() === 'credentials') {
+        const res = await this.authService.login(this.email(), this.password());
+        this.isSubmitting.set(false);
+
+        if (res.requires2Fa) {
+          this.sessionToken.set(res.sessionToken || '');
+          this.step.set('2fa');
+          return;
+        }
+
+        if (res.success) {
+          const returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/dashboard';
+          this.router.navigateByUrl(returnUrl);
+        } else {
+          this.errorMessage.set(res.error || 'Credenciales no válidas. Por favor verifique sus datos.');
+        }
       } else {
-        this.errorMessage.set('Credenciales no válidas. Por favor verifique sus datos.');
+        const ok = await this.authService.verifyLogin2Fa(this.sessionToken(), this.totpCode());
+        this.isSubmitting.set(false);
+
+        if (ok) {
+          const returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/dashboard';
+          this.router.navigateByUrl(returnUrl);
+        } else {
+          this.errorMessage.set('Código de seguridad incorrecto o expirado. Intente nuevamente.');
+        }
       }
     } catch {
       this.isSubmitting.set(false);
       this.errorMessage.set('Error al conectar con el servidor de autenticación.');
     }
+  }
+
+  volverACredenciales(): void {
+    this.step.set('credentials');
+    this.totpCode.set('');
+    this.errorMessage.set('');
   }
 }

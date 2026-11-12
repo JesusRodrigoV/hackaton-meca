@@ -103,6 +103,7 @@ export class AuthService {
   readonly currentUser = signal<UserProfile | null>(getStoredUser());
   readonly token = signal<string | null>(getStoredToken());
   readonly isApiAuthenticated = signal<boolean>(false);
+  readonly isTotpEnabled = signal<boolean>(false);
 
   // Gestión fiscal activa y gestiones disponibles
   readonly currentGestion = signal<number>(2026);
@@ -130,79 +131,29 @@ export class AuthService {
   /**
    * Autentica con el backend FastAPI o mediante preset institucional.
    */
-  async login(email: string, password: string): Promise<boolean> {
+  async login(email: string, password: string): Promise<{ success: boolean; requires2Fa?: boolean; sessionToken?: string; error?: string }> {
     if (this.http) {
       try {
-        const tokenResp = await firstValueFrom(
-          this.http.post<{ access_token: string; refresh_token?: string; token_type: string }>(
+        const resp = await firstValueFrom(
+          this.http.post<any>(
             API_CONFIG.endpoints.auth.login,
             { email, password }
           )
         );
 
-        if (tokenResp?.access_token) {
-          this.token.set(tokenResp.access_token);
-          this.isApiAuthenticated.set(true);
-
-          try {
-            const profile = await firstValueFrom(
-              this.http.get<{
-                id: number;
-                email: string;
-                full_name?: string;
-                first_name?: string;
-                last_name?: string;
-                roles?: Array<{ name: string; code: string }>;
-                permissions?: string[];
-              }>(API_CONFIG.endpoints.auth.me, {
-                headers: { Authorization: `Bearer ${tokenResp.access_token}` }
-              })
-            );
-
-            if (profile) {
-              const rawRoleName = profile.roles?.[0]?.name ?? 'Administrador General';
-              let roleCode: 'ADMIN' | 'FINANCE' | 'COORDINATOR' | 'AUDITOR' = 'ADMIN';
-              let scopeType: 'global' | 'region' | 'financier' = 'global';
-              let scopeLabel = 'Nivel Nacional (Consolidado)';
-
-              if (rawRoleName.toLowerCase().includes('finanz')) {
-                roleCode = 'FINANCE';
-                scopeLabel = 'Operativo Contable Nacional';
-              } else if (rawRoleName.toLowerCase().includes('coord') || profile.email.includes('scz') || profile.email.includes('santacruz')) {
-                roleCode = 'COORDINATOR';
-                scopeType = 'region';
-                scopeLabel = 'Región: Santa Cruz (SC)';
-              } else if (rawRoleName.toLowerCase().includes('audit') || profile.email.includes('catalyst')) {
-                roleCode = 'AUDITOR';
-                scopeType = 'financier';
-                scopeLabel = 'Financiador: CATALYST 18';
-              }
-
-              const fullName = profile.full_name || `${profile.first_name ?? ''} ${profile.last_name ?? ''}`.trim() || profile.email;
-
-              const user: UserProfile = {
-                id: profile.id,
-                email: profile.email,
-                fullName,
-                roleName: rawRoleName,
-                roleCode,
-                scopeType,
-                scopeLabel,
-                permissions: profile.permissions && profile.permissions.length > 0 
-                  ? profile.permissions 
-                  : (PRESET_USERS[roleCode]?.permissions ?? PRESET_USERS['ADMIN'].permissions)
-              };
-              this.currentUser.set(user);
-              this.persistSession(user, tokenResp.access_token);
-              return true;
-            }
-          } catch {
-            // Continúa con token y preset si falla el perfil
-          }
-          return true;
+        if (resp?.session_token) {
+          // Requiere segundo factor de autenticación (2FA)
+          return { success: false, requires2Fa: true, sessionToken: resp.session_token };
         }
-      } catch {
-        // Fallback a los usuarios demo si el backend está en proceso de arranque
+
+        if (resp?.access_token) {
+          const ok = await this.establishSession(resp.access_token);
+          return { success: ok };
+        }
+      } catch (err: any) {
+        if (err?.status === 401) {
+          return { success: false, error: 'Credenciales incorrectas' };
+        }
       }
     }
 
@@ -212,16 +163,162 @@ export class AuthService {
       this.currentUser.set(foundUser);
       this.token.set(token);
       this.persistSession(foundUser, token);
-      return true;
+      return { success: true };
     }
 
-    // Usuario por defecto si no coincide exactamente
-    const fallbackUser = PRESET_USERS['ADMIN'];
-    const fallbackToken = 'jwt-demo-token-exb-2026';
-    this.currentUser.set(fallbackUser);
-    this.token.set(fallbackToken);
-    this.persistSession(fallbackUser, fallbackToken);
+    return { success: false, error: 'Credenciales inválidas' };
+  }
+
+  /**
+   * Valida el código TOTP de 6 dígitos tras el paso 1 de login
+   */
+  async verifyLogin2Fa(sessionToken: string, code: string): Promise<boolean> {
+    if (!this.http) return false;
+    try {
+      const resp = await firstValueFrom(
+        this.http.post<any>(API_CONFIG.endpoints.auth.twoFactorVerifyLogin, {
+          session_token: sessionToken,
+          code: code.trim()
+        })
+      );
+      if (resp?.access_token) {
+        return await this.establishSession(resp.access_token);
+      }
+      return false;
+    } catch {
+      return false;
+    }
+  }
+
+  private async establishSession(accessToken: string): Promise<boolean> {
+    this.token.set(accessToken);
+    this.isApiAuthenticated.set(true);
+
+    try {
+      const profile = await firstValueFrom(
+        this.http!.get<{
+          id: number;
+          email: string;
+          full_name?: string;
+          first_name?: string;
+          last_name?: string;
+          roles?: Array<{ name: string; code: string }>;
+          permissions?: string[];
+        }>(API_CONFIG.endpoints.auth.me, {
+          headers: { Authorization: `Bearer ${accessToken}` }
+        })
+      );
+
+      if (profile) {
+        const rawRoleName = profile.roles?.[0]?.name ?? 'Administrador General';
+        let roleCode: 'ADMIN' | 'FINANCE' | 'COORDINATOR' | 'AUDITOR' = 'ADMIN';
+        let scopeType: 'global' | 'region' | 'financier' = 'global';
+        let scopeLabel = 'Nivel Nacional (Consolidado)';
+
+        if (rawRoleName.toLowerCase().includes('finanz')) {
+          roleCode = 'FINANCE';
+          scopeLabel = 'Operativo Contable Nacional';
+        } else if (rawRoleName.toLowerCase().includes('coord') || profile.email.includes('scz') || profile.email.includes('santacruz')) {
+          roleCode = 'COORDINATOR';
+          scopeType = 'region';
+          scopeLabel = 'Región: Santa Cruz (SC)';
+        } else if (rawRoleName.toLowerCase().includes('audit') || profile.email.includes('catalyst')) {
+          roleCode = 'AUDITOR';
+          scopeType = 'financier';
+          scopeLabel = 'Financiador: CATALYST 18';
+        }
+
+        const fullName = profile.full_name || `${profile.first_name ?? ''} ${profile.last_name ?? ''}`.trim() || profile.email;
+
+        const user: UserProfile = {
+          id: profile.id,
+          email: profile.email,
+          fullName,
+          roleName: rawRoleName,
+          roleCode,
+          scopeType,
+          scopeLabel,
+          permissions: profile.permissions && profile.permissions.length > 0
+            ? profile.permissions
+            : (PRESET_USERS[roleCode]?.permissions ?? PRESET_USERS['ADMIN'].permissions)
+        };
+        this.currentUser.set(user);
+        this.persistSession(user, accessToken);
+        // Comprobar estado 2FA
+        this.check2FaStatus();
+        return true;
+      }
+    } catch {
+      // Perfil no disponible
+    }
     return true;
+  }
+
+  // ==========================================================================
+  // GESTIÓN DE AUTENTICACIÓN EN DOS PASOS (2FA)
+  // ==========================================================================
+
+  async check2FaStatus(): Promise<boolean> {
+    if (!this.http) return false;
+    try {
+      const resp = await firstValueFrom(
+        this.http.get<{ is_enabled: boolean; enabled_at: string | null }>(
+          API_CONFIG.endpoints.auth.twoFactorStatus
+        )
+      );
+      this.isTotpEnabled.set(resp.is_enabled);
+      return resp.is_enabled;
+    } catch {
+      return false;
+    }
+  }
+
+  async setup2Fa(): Promise<{ secret: string; otpauth_uri: string } | null> {
+    if (!this.http) return null;
+    try {
+      return await firstValueFrom(
+        this.http.post<{ secret: string; otpauth_uri: string }>(
+          API_CONFIG.endpoints.auth.twoFactorSetup,
+          {}
+        )
+      );
+    } catch {
+      return null;
+    }
+  }
+
+  async enable2Fa(code: string): Promise<{ success: boolean; backupCodes?: string[]; error?: string }> {
+    if (!this.http) return { success: false, error: 'No conectado' };
+    try {
+      const resp = await firstValueFrom(
+        this.http.post<{ backup_codes?: string[] }>(
+          API_CONFIG.endpoints.auth.twoFactorEnable,
+          { totp_code: code.trim() }
+        )
+      );
+      this.isTotpEnabled.set(true);
+      return { success: true, backupCodes: resp.backup_codes || [] };
+    } catch (err: any) {
+      const detail = err?.error?.detail || 'Código de verificación incorrecto o expirado';
+      return { success: false, error: detail };
+    }
+  }
+
+  async disable2Fa(password: string, code: string): Promise<{ success: boolean; error?: string }> {
+    if (!this.http) return { success: false, error: 'No conectado' };
+    try {
+      await firstValueFrom(
+        this.http.post<{ message: string }>(
+          API_CONFIG.endpoints.auth.twoFactorDisable,
+          { password, totp_code: code.trim() }
+        )
+      );
+      this.isTotpEnabled.set(false);
+      return { success: true };
+    } catch (err: any) {
+      const detail = err?.error?.detail || 'Contraseña o código 2FA inválidos';
+      return { success: false, error: detail };
+    }
   }
 
   /**

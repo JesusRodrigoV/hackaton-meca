@@ -1,9 +1,9 @@
 <div class="users-page">
   <header class="page-header">
     <div class="header-left">
-      <h1 class="page-title">Usuarios y permisos</h1>
+      <h1 class="page-title">Usuarios y Niveles de Acceso</h1>
       <p class="page-subtitle">
-        Usuarios del sistema y alcance de datos asignado
+        Control de usuarios, roles organizacionales y granularidad de alcance territorial y donantes
       </p>
     </div>
     <div class="header-right">
@@ -14,26 +14,55 @@
     </div>
   </header>
 
+  <!-- Notificación toast -->
+  @if (toastMessage(); as t) {
+    <div class="toast-alert" [class.success]="t.type === 'success'" [class.error]="t.type === 'error'">
+      <app-icon [name]="t.type === 'success' ? 'check-circle' : 'error-circle'" size="18px" [color]="t.type === 'success' ? '#00923d' : '#e11d48'"></app-icon>
+      <span>{{ t.text }}</span>
+    </div>
+  }
+
+  <!-- Barra de Filtro y Búsqueda -->
+  <section class="filter-section">
+    <div class="search-box">
+      <app-icon name="search" size="16px" color="#64748b"></app-icon>
+      <input
+        type="text"
+        [(ngModel)]="searchQuery"
+        placeholder="Buscar por nombre, correo, rol o territorio..."
+        class="input-search"
+      />
+    </div>
+    <div class="users-counter">
+      <span>Mostrando <strong>{{ usuariosFiltrados().length }}</strong> de {{ usuarios().length }} usuarios</span>
+    </div>
+  </section>
+
+  <!-- Tabla de Usuarios -->
   <section class="table-container">
     <table class="data-table">
       <thead>
         <tr>
           <th>Usuario</th>
           <th>Correo Electrónico</th>
-          <th>Rol Asignado</th>
-          <th>Tipo de Alcance</th>
+          <th>Rol en el Sistema</th>
+          <th>Nivel de Acceso</th>
           <th>Delimitación de Datos</th>
+          <th>Granularidad de Permisos</th>
           <th>Estado</th>
-          <th>Acción</th>
+          <th class="text-center">Acciones</th>
         </tr>
       </thead>
       <tbody>
-        @for (u of usuarios(); track u.id) {
+        @for (u of usuariosFiltrados(); track u.id) {
           <tr>
             <td>
               <div class="user-cell">
                 <div class="avatar">{{ u.nombreCompleto.substring(0, 2).toUpperCase() }}</div>
-                <span class="user-name">{{ u.nombreCompleto }}</span>
+                <div class="user-info">
+                  <span class="user-name">{{ u.nombreCompleto }}</span>
+                  <span class="user-sub">{{ u.rolCodigo }}</span>
+                </div>
               </div>
             </td>
             <td class="email-cell">{{ u.email }}</td>
@@ -43,10 +72,18 @@
               </span>
             </td>
             <td>
-              <span class="scope-type-pill">{{ u.alcanceTipo }}</span>
+              <span class="scope-type-pill" [class.scope-global]="u.alcanceTipo === 'GLOBAL'" [class.scope-region]="u.alcanceTipo === 'REGION'" [class.scope-fin]="u.alcanceTipo === 'FINANCIADOR'">
+                {{ u.alcanceTipo === 'GLOBAL' ? 'Nacional' : (u.alcanceTipo === 'REGION' ? 'Regional' : 'Financiador') }}
+              </span>
             </td>
             <td>
               <span class="scope-val font-medium">{{ u.alcanceValor }}</span>
+            </td>
+            <td>
+              <button type="button" class="btn-perm-pill" (click)="abrirModalPermisos(u)" title="Ver detalle de permisos de este usuario">
+                <app-icon name="check-shield" size="13px" color="var(--forest-green)"></app-icon>
+                <span>{{ u.permisos.length }} permisos activos</span>
+              </button>
             </td>
             <td>
               <button
@@ -54,18 +91,19 @@
                 class="status-toggle"
                 [class.active]="u.activo"
                 (click)="toggleActivo(u)"
+                title="Alternar estado activo/inactivo"
               >
                 {{ u.activo ? 'ACTIVO' : 'INACTIVO' }}
               </button>
             </td>
-            <td>
+            <td class="text-center">
               <button
                 type="button"
                 class="btn-icon"
-                title="Editar usuario"
+                title="Editar usuario y nivel de acceso"
                 (click)="abrirModalEditar(u)"
               >
-                <app-icon name="edit-alt" size="16px" color="#00923d"></app-icon>
+                <app-icon name="edit-alt" size="16px" color="var(--forest-green)"></app-icon>
               </button>
             </td>
           </tr>
@@ -74,119 +112,250 @@
     </table>
   </section>
 
+  <!-- MODAL DE CREACIÓN / EDICIÓN DE USUARIO -->
   @if (isModalOpen()) {
     <div class="modal-backdrop" (click)="cerrarModal()">
       <div class="modal-dialog" (click)="$event.stopPropagation()">
         <div class="modal-header">
           <div class="modal-title-group">
-            <h2 class="modal-title">{{ isEditing() ? 'Editar Usuario' : 'Nuevo Usuario' }}</h2>
-            <p class="modal-subtitle">
-              {{ isEditing() ? 'Modifica el perfil, rol asignado y alcance de datos.' : 'Ingresa los datos para habilitar un nuevo usuario.' }}
-            </p>
+            <app-icon name="user" size="22px" color="var(--forest-green)"></app-icon>
+            <div>
+              <h2 class="modal-title">{{ isEditing() ? 'Editar Usuario y Accesos' : 'Crear Nuevo Usuario' }}</h2>
+              <p class="modal-subtitle">
+                {{ isEditing() ? 'Modifica los datos personales, rol y delimitación de alcance.' : 'Registra un nuevo usuario con perfil y alcance territorial definido.' }}
+              </p>
+            </div>
           </div>
-          <button type="button" class="btn-close" (click)="cerrarModal()" title="Cerrar">
-            <app-icon name="x" size="20px" color="#64748b"></app-icon>
-          </button>
+          <button type="button" class="btn-close" (click)="cerrarModal()" title="Cerrar">&times;</button>
         </div>
 
         <form (ngSubmit)="guardarUsuario()">
           <div class="modal-body">
-            <div class="form-group">
-              <label for="uNombre">Nombre Completo</label>
-              <input
-                id="uNombre"
-                type="text"
-                name="nombre"
-                [ngModel]="editNombre()"
-                (ngModelChange)="editNombre.set($event)"
-                placeholder="Ej. Juan Pérez"
-                required
-              />
-            </div>
-
-            <div class="form-group">
-              <label for="uEmail">Correo Institucional</label>
-              <input
-                id="uEmail"
-                type="email"
-                name="email"
-                [ngModel]="editEmail()"
-                (ngModelChange)="editEmail.set($event)"
-                placeholder="usuario@ensenaporbolivia.org"
-                required
-              />
-            </div>
-
             <div class="form-row">
-              <div class="form-group">
-                <label for="uRol">Rol en el Sistema</label>
-                <select
-                  id="uRol"
-                  name="rol"
-                  [ngModel]="editRolCodigo()"
-                  (ngModelChange)="editRolCodigo.set($event)"
-                >
-                  <option value="ADMIN">Administrador General</option>
-                  <option value="FINANCE">Contador / Finanzas</option>
-                  <option value="COORDINATOR">Coordinador Regional</option>
-                  <option value="AUDITOR">Auditor Externo Donante</option>
-                </select>
+              <div class="form-group flex-1">
+                <label for="uNombre">Nombre Completo *</label>
+                <input
+                  id="uNombre"
+                  type="text"
+                  name="nombre"
+                  [(ngModel)]="editNombre"
+                  placeholder="Ej. Rodrigo Fernández"
+                  required
+                  class="input-clean"
+                />
               </div>
 
-              <div class="form-group">
-                <label for="uAlcanceTipo">Tipo de Alcance</label>
-                <select
-                  id="uAlcanceTipo"
-                  name="alcanceTipo"
-                  [ngModel]="editAlcanceTipo()"
-                  (ngModelChange)="onAlcanceTipoChange($event)"
-                >
-                  <option value="GLOBAL">Nivel Nacional (Consolidado)</option>
-                  <option value="REGION">Regional Territorial</option>
-                  <option value="FINANCIADOR">Por Donante / Financiador</option>
-                </select>
+              <div class="form-group flex-1">
+                <label for="uEmail">Correo Institucional *</label>
+                <input
+                  id="uEmail"
+                  type="email"
+                  name="email"
+                  [(ngModel)]="editEmail"
+                  placeholder="ejemplo@ensenaporbolivia.org"
+                  required
+                  class="input-clean"
+                />
               </div>
+            </div>
+
+            @if (!isEditing()) {
+              <div class="form-group">
+                <label for="uPassword">Contraseña Inicial</label>
+                <input
+                  id="uPassword"
+                  type="password"
+                  name="password"
+                  [(ngModel)]="editPassword"
+                  placeholder="••••••••••••"
+                  class="input-clean"
+                />
+                <small class="helper-text">Mínimo 8 caracteres, al menos una mayúscula y un número</small>
+              </div>
+            }
+
+            <div class="form-group">
+              <label for="uRol">Rol en el Sistema *</label>
+              <select
+                id="uRol"
+                name="rol"
+                [(ngModel)]="editRolId"
+                class="select-clean"
+              >
+                @for (r of availableRoles(); track r.id) {
+                  <option [value]="r.id">{{ r.name }}</option>
+                }
+              </select>
+              @if (selectedRoleInForm(); as r) {
+                <p class="role-hint">{{ r.description }}</p>
+              }
             </div>
 
             <div class="form-group">
-              <label for="uAlcanceValor">Delimitación de Datos</label>
-              <input
-                id="uAlcanceValor"
-                type="text"
-                name="alcanceValor"
-                [ngModel]="editAlcanceValor()"
-                (ngModelChange)="editAlcanceValor.set($event)"
-                placeholder="Ej. Santa Cruz (SC)"
-                required
-              />
+              <label>Nivel de Acceso Territorial y de Donante *</label>
+              <div class="scope-type-selector">
+                <button
+                  type="button"
+                  class="scope-choice-btn"
+                  [class.active]="editAlcanceTipo() === 'GLOBAL'"
+                  (click)="onAlcanceTipoChange('GLOBAL')"
+                >
+                  <app-icon name="map-pin" size="16px" [color]="editAlcanceTipo() === 'GLOBAL' ? '#ffffff' : '#475569'"></app-icon>
+                  <span>Nacional (Global)</span>
+                </button>
+                <button
+                  type="button"
+                  class="scope-choice-btn"
+                  [class.active]="editAlcanceTipo() === 'REGION'"
+                  (click)="onAlcanceTipoChange('REGION')"
+                >
+                  <app-icon name="map" size="16px" [color]="editAlcanceTipo() === 'REGION' ? '#ffffff' : '#475569'"></app-icon>
+                  <span>Regional</span>
+                </button>
+                <button
+                  type="button"
+                  class="scope-choice-btn"
+                  [class.active]="editAlcanceTipo() === 'FINANCIADOR'"
+                  (click)="onAlcanceTipoChange('FINANCIADOR')"
+                >
+                  <app-icon name="buildings" size="16px" [color]="editAlcanceTipo() === 'FINANCIADOR' ? '#ffffff' : '#475569'"></app-icon>
+                  <span>Por Donante</span>
+                </button>
+              </div>
             </div>
+
+            <!-- Delimitación Específica según tipo -->
+            @if (editAlcanceTipo() === 'GLOBAL') {
+              <div class="scope-detail-box">
+                <app-icon name="check-shield" size="18px" color="var(--forest-green)"></app-icon>
+                <div>
+                  <strong>Consolidado Nacional</strong>
+                  <p>El usuario podrá consultar y gestionar datos presupuestarios de todas las regiones y donantes del país.</p>
+                </div>
+              </div>
+            } @else if (editAlcanceTipo() === 'REGION') {
+              <div class="form-group">
+                <label for="uRegion">Región Geográfica Autorizada *</label>
+                <select
+                  id="uRegion"
+                  name="region"
+                  [(ngModel)]="editAlcanceValor"
+                  class="select-clean"
+                >
+                  @for (reg of regionesDisponibles; track reg) {
+                    <option [value]="reg">{{ reg }}</option>
+                  }
+                </select>
+                <small class="helper-text">Solo podrá consultar y solicitar operaciones para esta región.</small>
+              </div>
+            } @else {
+              <div class="form-group">
+                <label for="uFinanciador">Donante / Financiador Autorizado *</label>
+                <select
+                  id="uFinanciador"
+                  name="financiador"
+                  [(ngModel)]="editAlcanceValor"
+                  class="select-clean"
+                >
+                  @for (fin of financiadoresDisponibles; track fin) {
+                    <option [value]="fin">{{ fin }}</option>
+                  }
+                </select>
+                <small class="helper-text">Solo tendrá visibilidad de los fondos provistos por este donante.</small>
+              </div>
+            }
+
+            <!-- Resumen de permisos que este usuario tendrá -->
+            @if (selectedRoleInForm(); as r) {
+              <div class="permissions-preview-box">
+                <div class="preview-header">
+                  <app-icon name="shield-quarter" size="15px" color="var(--space-indigo)"></app-icon>
+                  <h4>Permisos Granulares Concedidos ({{ r.permissions.length }})</h4>
+                </div>
+                <div class="perm-tags-wrap">
+                  @for (p of r.permissions; track p) {
+                    <span class="perm-tag">{{ p }}</span>
+                  }
+                </div>
+              </div>
+            }
 
             <div class="form-group-checkbox">
               <label class="checkbox-label">
                 <input
                   type="checkbox"
                   name="activo"
-                  [ngModel]="editActivo()"
-                  (ngModelChange)="editActivo.set($event)"
+                  [(ngModel)]="editActivo"
                 />
                 <span class="checkbox-text">
-                  <strong>Usuario activo</strong>
-                  <small>Permitir el acceso y autenticación a la plataforma</small>
+                  <strong>Usuario activo en plataforma</strong>
+                  <small>Permitir iniciar sesión y operar con las credenciales asignadas</small>
                 </span>
               </label>
             </div>
           </div>
 
           <div class="modal-footer">
-            <button type="button" class="btn-secondary" (click)="cerrarModal()">
-              Cancelar
-            </button>
-            <button type="submit" class="btn-primary" [disabled]="isSaving()">
+            <button type="button" class="btn-cancel" (click)="cerrarModal()">Cancelar</button>
+            <button
+              type="submit"
+              class="btn-primary-action"
+              [disabled]="isSaving() || !editNombre().trim() || !editEmail().trim()"
+            >
               <app-icon name="check" size="18px" color="#ffffff"></app-icon>
               <span>{{ isSaving() ? 'Guardando...' : (isEditing() ? 'Actualizar Usuario' : 'Crear Usuario') }}</span>
             </button>
           </div>
         </form>
+      </div>
+    </div>
+  }
+
+  <!-- MODAL PARA INSPECCIONAR PERMISOS DEL USUARIO -->
+  @if (isPermisosModalOpen() && selectedUserForPermisos(); as u) {
+    <div class="modal-backdrop" (click)="cerrarModalPermisos()">
+      <div class="modal-dialog modal-dialog-sm" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <div class="modal-title-group">
+            <app-icon name="check-shield" size="22px" color="var(--forest-green)"></app-icon>
+            <div>
+              <h2 class="modal-title">Nivel de Acceso y Permisos</h2>
+              <p class="modal-subtitle">{{ u.nombreCompleto }} ({{ u.email }})</p>
+            </div>
+          </div>
+          <button type="button" class="btn-close" (click)="cerrarModalPermisos()">&times;</button>
+        </div>
+
+        <div class="modal-body">
+          <div class="user-summary-card">
+            <div class="summary-item">
+              <span class="label">Rol Asignado:</span>
+              <strong class="val">{{ u.rol }}</strong>
+            </div>
+            <div class="summary-item">
+              <span class="label">Tipo de Alcance:</span>
+              <strong class="val">{{ u.alcanceTipo === 'GLOBAL' ? 'Nacional Consolidado' : (u.alcanceTipo === 'REGION' ? 'Regional' : 'Donante') }}</strong>
+            </div>
+            <div class="summary-item">
+              <span class="label">Delimitación:</span>
+              <strong class="val">{{ u.alcanceValor }}</strong>
+            </div>
+          </div>
+
+          <h4 class="perm-list-title">Permisos Granulares Habilitados</h4>
+          <div class="perm-list-container">
+            @for (p of u.permisos; track p) {
+              <div class="perm-row-item">
+                <app-icon name="check" size="15px" color="var(--forest-green)"></app-icon>
+                <span>{{ p }}</span>
+              </div>
+            }
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn-cancel" (click)="cerrarModalPermisos()">Cerrar</button>
+        </div>
       </div>
     </div>
   }

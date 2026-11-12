@@ -1,6 +1,8 @@
 import { Component, inject, signal, computed, OnInit } from '@angular/core';
 import { CommonModule, DecimalPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { HttpClient } from '@angular/common/http';
+import { firstValueFrom } from 'rxjs';
 import { FinancialService } from '../../../core/services/financial';
 import { AuthService } from '../../../core/auth/auth';
 import { BoxIconComponent } from '../../../shared/components/box-icon/box-icon';
@@ -15,6 +17,7 @@ export type TipoReporte = 'REP-01' | 'REP-02' | 'REP-03' | 'REP-04' | 'REP-05' |
   styleUrl: './reports.scss'
 })
 export class Reports implements OnInit {
+  private readonly http = inject(HttpClient, { optional: true });
   readonly financialService = inject(FinancialService);
   readonly authService = inject(AuthService);
 
@@ -55,13 +58,13 @@ export class Reports implements OnInit {
   }
 
   readonly reportTabs = [
-    { id: 'REP-01' as const, code: 'REP-01', title: 'Ejecución General vs Techos', icon: 'file-blank' },
-    { id: 'REP-02' as const, code: 'REP-02', title: 'Por Financiador / Donante', icon: 'buildings' },
-    { id: 'REP-03' as const, code: 'REP-03', title: 'Por Región Geográfica', icon: 'map' },
-    { id: 'REP-04' as const, code: 'REP-04', title: 'Por Área Programática', icon: 'group' },
-    { id: 'REP-05' as const, code: 'REP-05', title: 'Flujo Mensual / Trimestral', icon: 'calendar' },
-    { id: 'REP-06' as const, code: 'REP-06', title: 'Desviaciones y Alertas', icon: 'alarm-exclamation' },
-    { id: 'REP-07' as const, code: 'REP-07', title: 'Trazabilidad SHA-256', icon: 'shield-quarter' }
+    { id: 'REP-01' as const, title: 'Ejecución General vs Techos', icon: 'file-blank' },
+    { id: 'REP-02' as const, title: 'Por Financiador / Donante', icon: 'buildings' },
+    { id: 'REP-03' as const, title: 'Por Región Geográfica', icon: 'map' },
+    { id: 'REP-04' as const, title: 'Por Área Programática', icon: 'group' },
+    { id: 'REP-05' as const, title: 'Flujo Mensual / Trimestral', icon: 'calendar' },
+    { id: 'REP-06' as const, title: 'Desviaciones y Alertas', icon: 'alarm-exclamation' },
+    { id: 'REP-07' as const, title: 'Trazabilidad SHA-256', icon: 'shield-quarter' }
   ];
 
   // Reporte 2: Agrupado por Financiador
@@ -199,20 +202,56 @@ export class Reports implements OnInit {
     tabList?.querySelectorAll<HTMLElement>('[role="tab"]')[nextIndex]?.focus();
   }
 
-  exportarReporteActual(): void {
-    const tab = this.reportTabs.find(t => t.id === this.activeTab());
-    const code = tab?.id ?? 'REP-01';
-    const exportUrl = `${API_CONFIG.endpoints.reportes.exportarExcel(code)}&moneda=${this.moneda()}`;
+  private async descargarArchivo(exportUrl: string, nombreArchivo: string): Promise<void> {
+    if (this.http) {
+      try {
+        const blob = await firstValueFrom(this.http.get(exportUrl, { responseType: 'blob' }));
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = nombreArchivo;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+        return;
+      } catch (err) {
+        console.warn('Descarga por HttpClient falló, recurriendo a enlace directo:', err);
+      }
+    }
+
     const link = document.createElement('a');
     link.href = exportUrl;
     link.target = '_blank';
-    link.download = `Reporte_${code}_${this.moneda()}_${this.authService.currentGestion()}.xlsx`;
+    link.download = nombreArchivo;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
   }
 
+  private buildExportFilename(ext: 'xlsx' | 'pdf'): string {
+    const tab = this.reportTabs.find(t => t.id === this.activeTab());
+    const title = (tab?.title ?? 'Ejecucion').replace(/[\s\/]+/g, '_');
+    return `Reporte_${title}_${this.moneda()}_${this.authService.currentGestion()}.${ext}`;
+  }
+
+  async descargarExcel(): Promise<void> {
+    const tipo = this.activeTab();
+    const exportUrl = `${API_CONFIG.endpoints.reportes.exportarExcel(tipo)}&moneda=${this.moneda()}`;
+    await this.descargarArchivo(exportUrl, this.buildExportFilename('xlsx'));
+  }
+
+  async descargarPdf(): Promise<void> {
+    const tipo = this.activeTab();
+    const exportUrl = `${API_CONFIG.endpoints.reportes.exportarPdf(tipo)}&moneda=${this.moneda()}`;
+    await this.descargarArchivo(exportUrl, this.buildExportFilename('pdf'));
+  }
+
+  exportarReporteActual(): void {
+    this.descargarExcel();
+  }
+
   imprimirReporte(): void {
-    window.print();
+    this.descargarPdf();
   }
 }

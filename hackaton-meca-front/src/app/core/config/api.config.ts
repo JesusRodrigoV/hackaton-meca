@@ -9,7 +9,12 @@ export const API_CONFIG = {
       me: '/api/v1/auth/me',
       refresh: '/api/v1/auth/refresh',
       logout: '/api/v1/auth/logout',
-      changePassword: '/api/v1/auth/change-password'
+      changePassword: '/api/v1/auth/change-password',
+      twoFactorStatus: '/api/v1/auth/2fa/status',
+      twoFactorSetup: '/api/v1/auth/2fa/setup',
+      twoFactorEnable: '/api/v1/auth/2fa/enable',
+      twoFactorDisable: '/api/v1/auth/2fa/disable',
+      twoFactorVerifyLogin: '/api/v1/auth/2fa/verify-login'
     },
     presupuestos: {
       techos: '/api/v1/presupuestos/techos',
@@ -37,7 +42,9 @@ export const API_CONFIG = {
     },
     seguridad: {
       usuarios: '/api/v1/users',
+      usuarioScopes: (id: number) => `/api/v1/users/${id}/scopes`,
       roles: '/api/v1/roles',
+      rolPermisos: (id: number) => `/api/v1/roles/${id}/permissions`,
       permisos: '/api/v1/permissions',
       permisosCatalogo: '/api/v1/roles/permissions/catalog',
       auditoria: '/api/v1/audit',

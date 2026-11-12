@@ -10,13 +10,13 @@
         <span>GESTIÓN</span>
         <strong>{{ authService.currentGestion() }}</strong>
       </div>
-      <button type="button" class="btn-action" (click)="imprimirReporte()">
+      <button type="button" class="btn-action" (click)="descargarPdf()" title="Descargar reporte en formato PDF">
         <app-icon name="printer" size="17px" color="currentColor"></app-icon>
-        <span>Imprimir / PDF</span>
+        <span>Descargar PDF</span>
       </button>
-      <button type="button" class="btn-primary" (click)="exportarReporteActual()">
+      <button type="button" class="btn-primary" (click)="descargarExcel()" title="Descargar reporte en formato Excel">
         <app-icon name="file-export" size="17px" color="currentColor"></app-icon>
-        <span>Exportar Excel</span>
+        <span>Descargar Excel</span>
       </button>
     </div>
   </header>
@@ -43,7 +43,7 @@
           (click)="activeTab.set(tab.id)"
           (keydown)="onReportTabKeydown($event, $index)"
         >
-          <span class="tab-code">{{ tab.code }}</span>
+          <app-icon [name]="tab.icon" size="16px" color="currentColor"></app-icon>
           <span class="tab-title">{{ tab.title }}</span>
           <span class="tab-indicator" aria-hidden="true"></span>
         </button>
@@ -92,7 +92,7 @@
     @if (activeTab() === 'REP-01') {
       <div class="report-card">
         <div class="card-title-bar">
-          <h3>REP-01: Estado General de Ejecución Presupuestaria vs Techos Aprobados</h3>
+          <h3>Estado General de Ejecución Presupuestaria vs Techos Aprobados</h3>
           <span class="currency-tag">{{ moneda() }}</span>
         </div>
         <div class="table-container">
@@ -144,7 +144,7 @@
     @if (activeTab() === 'REP-02') {
       <div class="report-card">
         <div class="card-title-bar">
-          <h3>REP-02: Ejecución Presupuestaria por Financiador / Donante</h3>
+          <h3>Ejecución Presupuestaria por Financiador / Donante</h3>
           <span class="currency-tag">{{ moneda() }}</span>
         </div>
         <div class="table-container">
@@ -182,7 +182,7 @@
     @if (activeTab() === 'REP-03') {
       <div class="report-card">
         <div class="card-title-bar">
-          <h3>REP-03: Ejecución Presupuestaria por Región Geográfica</h3>
+          <h3>Ejecución Presupuestaria por Región Geográfica</h3>
           <span class="currency-tag">{{ moneda() }}</span>
         </div>
         <div class="table-container">
@@ -218,7 +218,7 @@
     @if (activeTab() === 'REP-04') {
       <div class="report-card">
         <div class="card-title-bar">
-          <h3>REP-04: Ejecución por Área Operativa y Programática</h3>
+          <h3>Ejecución por Área Operativa y Programática</h3>
           <span class="currency-tag">{{ moneda() }}</span>
         </div>
         <div class="table-container">
@@ -252,7 +252,7 @@
     @if (activeTab() === 'REP-05') {
       <div class="report-card">
         <div class="card-title-bar">
-          <h3>REP-05: Matriz de Ejecución Temporal (Ene - Mar 2026 / Q1)</h3>
+          <h3>Matriz de Ejecución Temporal (Ene - Mar 2026 / Q1)</h3>
           <span class="currency-tag">{{ moneda() }}</span>
         </div>
         <div class="table-container">
@@ -289,7 +289,7 @@
     @if (activeTab() === 'REP-06') {
       <div class="report-card">
         <div class="card-title-bar">
-          <h3>REP-06: Informe de Desviaciones Críticas y Sobreejecución</h3>
+          <h3>Informe de Desviaciones Críticas y Sobreejecución</h3>
           <span class="currency-tag text-danger">Alerta Prioritaria</span>
         </div>
         <div class="table-container">
@@ -329,7 +329,7 @@
     @if (activeTab() === 'REP-07') {
       <div class="report-card">
         <div class="card-title-bar">
-          <h3>REP-07: Pistas de Auditoría y Trazabilidad Criptográfica</h3>
+          <h3>Pistas de Auditoría y Trazabilidad Criptográfica</h3>
           <span class="currency-tag text-success">Cadena Inmutable SHA-256</span>
         </div>
         <div class="table-container">

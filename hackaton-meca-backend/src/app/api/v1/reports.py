@@ -1,14 +1,15 @@
-import io
-from typing import List, Optional
-from fastapi import APIRouter, Depends, Query, Response, status
-import openpyxl
-from openpyxl.styles import Font, PatternFill, Alignment
+from fastapi import APIRouter, Depends, HTTPException, Query, Response, status
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 
 from app.core.dependencies import get_current_active_user, require_permission
 from app.db.session import get_db
 from app.models.security import User
+from app.services.report_export import (
+    build_report_dataset,
+    render_excel_bytes,
+    render_pdf_bytes,
+)
 
 router = APIRouter()
 
@@ -177,85 +178,37 @@ def get_budget_variances(
     "/export",
     dependencies=[Depends(require_permission("reportes.exportar"))],
 )
-def export_report_excel(
-    tipo: str = Query("general", description="Tipo de reporte a exportar"),
+def export_report(
+    tipo: str = Query("REP-01", description="Tipo de reporte a exportar (REP-01..REP-07)"),
+    format: str = Query("excel", description="Formato de exportación: excel o pdf"),
+    moneda: str = Query("BOB", description="Moneda de visualización: BOB o USD"),
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_active_user),
 ):
-    sql = text("""
-        SELECT 
-            COALESCE(c.code, ru.code) AS codigo,
-            COALESCE(c.name, ru.name) AS cuenta,
-            ru.name AS rubro,
-            r.name AS region,
-            a.name AS area,
-            f.name AS financiador,
-            v.presupuesto_inicial_bob AS inicial,
-            v.modificaciones_bob AS modif,
-            v.presupuesto_vigente_bob AS vigente,
-            v.ejecutado_bob AS ejecutado,
-            v.saldo_bob AS saldo,
-            COALESCE(v.pct_ejecucion, 0) AS porcentaje,
-            v.alerta AS estado
-        FROM v_ejecucion_vs_presupuesto v
-        JOIN regiones r ON r.id = v.region_id
-        JOIN areas a ON a.id = v.area_id
-        JOIN financiadores f ON f.id = v.financiador_id
-        JOIN rubros ru ON ru.id = v.rubro_id
-        LEFT JOIN cuentas c ON c.id = v.cuenta_id
-        ORDER BY r.name, ru.code;
-    """)
-    rows = db.execute(sql).mappings().all()
+    fmt = format.lower().strip()
+    if fmt not in {"excel", "xlsx", "pdf"}:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Formato no soportado. Use 'excel' o 'pdf'.",
+        )
 
-    wb = openpyxl.Workbook()
-    ws = wb.active
-    ws.title = "Ejecucion Presupuestaria"
+    dataset = build_report_dataset(db, tipo)
+    safe_code = dataset.code.replace("/", "-")
 
-    # Encabezado institucional
-    header_fill = PatternFill(start_color="2B255C", end_color="2B255C", fill_type="solid")
-    header_font = Font(name="Calibri", size=11, bold=True, color="FFFFFF")
+    if fmt == "pdf":
+        generated_by = getattr(current_user, "full_name", None) or current_user.email
+        pdf_bytes = render_pdf_bytes(dataset, generated_by=generated_by, moneda=moneda.upper())
+        filename = f"Reporte_MECA_{safe_code}.pdf"
+        return Response(
+            content=pdf_bytes,
+            media_type="application/pdf",
+            headers={"Content-Disposition": f'attachment; filename="{filename}"'},
+        )
 
-    headers = [
-        "Código", "Cuenta / Partida", "Rubro", "Región", "Área", "Financiador",
-        "Ppto Inicial (Bs)", "Modificaciones (Bs)", "Ppto Vigente (Bs)",
-        "Ejecutado (Bs)", "Saldo Disponible (Bs)", "% Ejecución", "Estado"
-    ]
-    ws.append(headers)
-
-    for cell in ws[1]:
-        cell.fill = header_fill
-        cell.font = header_font
-        cell.alignment = Alignment(horizontal="center", vertical="center")
-
-    for r in rows:
-        ws.append([
-            r["codigo"],
-            r["cuenta"],
-            r["rubro"],
-            r["region"],
-            r["area"],
-            r["financiador"],
-            float(r["inicial"] or 0),
-            float(r["modif"] or 0),
-            float(r["vigente"] or 0),
-            float(r["ejecutado"] or 0),
-            float(r["saldo"] or 0),
-            float(r["porcentaje"] or 0),
-            r["estado"],
-        ])
-
-    for col in ws.columns:
-        max_len = max(len(str(cell.value or "")) for cell in col)
-        col_letter = openpyxl.utils.get_column_letter(col[0].column)
-        ws.column_dimensions[col_letter].width = max(max_len + 3, 12)
-
-    buf = io.BytesIO()
-    wb.save(buf)
-    buf.seek(0)
-
-    filename = f"Reporte_Presupuestario_MECA_{tipo}.xlsx"
+    xlsx_bytes = render_excel_bytes(dataset)
+    filename = f"Reporte_MECA_{safe_code}.xlsx"
     return Response(
-        content=buf.getvalue(),
+        content=xlsx_bytes,
         media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
         headers={"Content-Disposition": f'attachment; filename="{filename}"'},
     )

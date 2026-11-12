@@ -708,3 +708,92 @@
     }
   }
 }
+
+/* Reglas de impresión para guardado en PDF de alta fidelidad */
+@media print {
+  @page {
+    size: landscape;
+    margin: 1.2cm;
+  }
+
+  app-sidebar,
+  app-topbar,
+  .page-header .header-right,
+  .report-tabs,
+  .report-filter-bar,
+  .currency-tag {
+    display: none !important;
+  }
+
+  body,
+  .app-container,
+  .main-content,
+  .reports-page {
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #ffffff !important;
+    box-shadow: none !important;
+  }
+
+  .page-header {
+    margin-bottom: 1rem !important;
+
+    .page-title {
+      font-size: 1.35rem !important;
+      color: #0d2439 !important;
+    }
+
+    .page-subtitle {
+      font-size: 0.8rem !important;
+      color: #475569 !important;
+    }
+  }
+
+  .report-card {
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    background: transparent !important;
+  }
+
+  .card-title-bar {
+    border-bottom: 2px solid #00923d;
+    padding-bottom: 8px;
+    margin-bottom: 12px;
+
+    h3 {
+      font-size: 1.1rem !important;
+      color: #0d2439 !important;
+      font-weight: 700 !important;
+    }
+  }
+
+  .table-container {
+    overflow: visible !important;
+    box-shadow: none !important;
+    border: none !important;
+  }
+
+  .report-table {
+    width: 100% !important;
+    border-collapse: collapse !important;
+    font-size: 8.5pt !important;
+
+    th, td {
+      border: 1px solid #cbd5e1 !important;
+      padding: 6px 8px !important;
+    }
+
+    th {
+      background-color: #f1f5f9 !important;
+      color: #0f172a !important;
+      font-weight: 700 !important;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+
+    tbody tr {
+      page-break-inside: avoid;
+    }
+  }
+}

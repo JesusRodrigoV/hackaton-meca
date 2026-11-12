@@ -172,3 +172,33 @@ def deactivate_user(
         request=request,
     )
     return MessageResponse(message="Usuario desactivado correctamente")
+
+
+@router.get("/{user_id}/scopes")
+def get_user_scopes(
+    user_id: int,
+    _: User = Depends(require_permission(PermissionCode.USUARIOS_ADMIN)),
+    db: Session = Depends(get_db),
+):
+    user_service.get_user_or_404(db, user_id)
+    scopes = crud_user.get_user_data_scopes(db, user_id)
+    return [
+        {"dimension_type": s.dimension_type, "dimension_id": s.dimension_id}
+        for s in scopes
+    ]
+
+
+@router.put("/{user_id}/scopes")
+def update_user_scopes(
+    user_id: int,
+    payload: list[dict],
+    current_user: User = Depends(require_permission(PermissionCode.USUARIOS_ADMIN)),
+    db: Session = Depends(get_db),
+):
+    user_service.get_user_or_404(db, user_id)
+    updated = crud_user.replace_user_data_scopes(db, user_id, payload)
+    db.commit()
+    return [
+        {"dimension_type": s.dimension_type, "dimension_id": s.dimension_id}
+        for s in updated
+    ]
