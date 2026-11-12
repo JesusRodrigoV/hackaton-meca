@@ -15,12 +15,6 @@ export class Topbar {
   readonly auth = inject(AuthService);
   private readonly router = inject(Router);
 
-  onRoleChange(event: Event): void {
-    const target = event.target as HTMLSelectElement;
-    const roleKey = target.value as 'ADMIN' | 'FINANCE' | 'COORDINATOR' | 'AUDITOR';
-    this.auth.switchUser(roleKey);
-  }
-
   onGestionChange(event: Event): void {
     const target = event.target as HTMLSelectElement;
     this.auth.setGestion(Number(target.value));

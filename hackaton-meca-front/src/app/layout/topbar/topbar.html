@@ -17,19 +17,14 @@
     </div>
   </div>
 
-  <!-- Derecha: Selector de Rol de Acceso -->
+  <!-- Derecha: Perfil de Usuario y Cierre de Sesión -->
   <div class="topbar-right">
-    <div class="role-switcher">
-      <label class="switcher-label">
-        <app-icon name="user-check" size="xs" color="var(--forest-green)"></app-icon>
-        <span>Ver como:</span>
-      </label>
-      <select [value]="auth.currentUser()?.roleCode ?? 'ADMIN'" (change)="onRoleChange($event)" class="role-select">
-        <option value="ADMIN">Director General (Admin)</option>
-        <option value="FINANCE">Contador (Finanzas)</option>
-        <option value="COORDINATOR">Coordinador Santa Cruz</option>
-        <option value="AUDITOR">Auditor CATALYST</option>
-      </select>
+    <div class="user-profile-badge">
+      <div class="user-avatar">{{ (auth.currentUser()?.fullName ?? 'U').substring(0, 2).toUpperCase() }}</div>
+      <div class="user-details">
+        <span class="user-name">{{ auth.currentUser()?.fullName ?? 'Usuario' }}</span>
+        <span class="user-role">{{ auth.userRole() }}</span>
+      </div>
     </div>
 
     <!-- Botón para cerrar sesión -->

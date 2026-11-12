@@ -76,37 +76,45 @@
   align-items: center;
   gap: 16px;
 
-  .role-switcher {
+  .user-profile-badge {
     display: flex;
     align-items: center;
-    gap: 8px;
-    background-color: var(--forest-green-subtle);
-    border: 1px solid var(--forest-green-border);
-    padding: 5px 12px;
+    gap: 10px;
+    padding: 4px 12px;
+    background-color: #ffffff;
+    border: 1px solid var(--color-border);
     border-radius: 8px;
-    transition: all 0.15s ease;
+    box-shadow: var(--shadow-sm);
 
-    &:hover {
-      background-color: rgba(0, 146, 61, 0.12);
-    }
-
-    .switcher-label {
+    .user-avatar {
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      background: linear-gradient(135deg, var(--space-indigo) 0%, var(--space-indigo-light) 100%);
+      color: #ffffff;
+      font-size: 0.6875rem;
+      font-weight: 700;
       display: flex;
       align-items: center;
-      gap: 4px;
-      font-size: 0.75rem;
-      font-weight: 700;
-      color: var(--forest-green-text);
+      justify-content: center;
+      flex-shrink: 0;
     }
 
-    .role-select {
-      background: transparent;
-      border: none;
-      font-size: 0.8125rem;
-      font-weight: 600;
-      color: var(--space-indigo);
-      cursor: pointer;
-      outline: none;
+    .user-details {
+      display: flex;
+      flex-direction: column;
+      line-height: 1.2;
+
+      .user-name {
+        font-size: 0.8125rem;
+        font-weight: 600;
+        color: var(--deep-space-blue);
+      }
+
+      .user-role {
+        font-size: 0.6875rem;
+        color: var(--color-text-secondary);
+      }
     }
   }
 

@@ -7,7 +7,7 @@
       </p>
     </div>
     <div class="header-right">
-      <button type="button" class="btn-primary">
+      <button type="button" class="btn-primary" (click)="abrirModalNuevo()">
         <app-icon name="user-plus" size="18px" color="#ffffff"></app-icon>
         <span>Nuevo Usuario</span>
       </button>
@@ -59,7 +59,12 @@
               </button>
             </td>
             <td>
-              <button type="button" class="btn-icon" title="Editar Permisos">
+              <button
+                type="button"
+                class="btn-icon"
+                title="Editar usuario"
+                (click)="abrirModalEditar(u)"
+              >
                 <app-icon name="edit-alt" size="16px" color="#00923d"></app-icon>
               </button>
             </td>
@@ -68,4 +73,121 @@
       </tbody>
     </table>
   </section>
+
+  @if (isModalOpen()) {
+    <div class="modal-backdrop" (click)="cerrarModal()">
+      <div class="modal-dialog" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <div class="modal-title-group">
+            <h2 class="modal-title">{{ isEditing() ? 'Editar Usuario' : 'Nuevo Usuario' }}</h2>
+            <p class="modal-subtitle">
+              {{ isEditing() ? 'Modifica el perfil, rol asignado y alcance de datos.' : 'Ingresa los datos para habilitar un nuevo usuario.' }}
+            </p>
+          </div>
+          <button type="button" class="btn-close" (click)="cerrarModal()" title="Cerrar">
+            <app-icon name="x" size="20px" color="#64748b"></app-icon>
+          </button>
+        </div>
+
+        <form (ngSubmit)="guardarUsuario()">
+          <div class="modal-body">
+            <div class="form-group">
+              <label for="uNombre">Nombre Completo</label>
+              <input
+                id="uNombre"
+                type="text"
+                name="nombre"
+                [ngModel]="editNombre()"
+                (ngModelChange)="editNombre.set($event)"
+                placeholder="Ej. Juan Pérez"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="uEmail">Correo Institucional</label>
+              <input
+                id="uEmail"
+                type="email"
+                name="email"
+                [ngModel]="editEmail()"
+                (ngModelChange)="editEmail.set($event)"
+                placeholder="usuario@ensenaporbolivia.org"
+                required
+              />
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="uRol">Rol en el Sistema</label>
+                <select
+                  id="uRol"
+                  name="rol"
+                  [ngModel]="editRolCodigo()"
+                  (ngModelChange)="editRolCodigo.set($event)"
+                >
+                  <option value="ADMIN">Administrador General</option>
+                  <option value="FINANCE">Contador / Finanzas</option>
+                  <option value="COORDINATOR">Coordinador Regional</option>
+                  <option value="AUDITOR">Auditor Externo Donante</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="uAlcanceTipo">Tipo de Alcance</label>
+                <select
+                  id="uAlcanceTipo"
+                  name="alcanceTipo"
+                  [ngModel]="editAlcanceTipo()"
+                  (ngModelChange)="onAlcanceTipoChange($event)"
+                >
+                  <option value="GLOBAL">Nivel Nacional (Consolidado)</option>
+                  <option value="REGION">Regional Territorial</option>
+                  <option value="FINANCIADOR">Por Donante / Financiador</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="uAlcanceValor">Delimitación de Datos</label>
+              <input
+                id="uAlcanceValor"
+                type="text"
+                name="alcanceValor"
+                [ngModel]="editAlcanceValor()"
+                (ngModelChange)="editAlcanceValor.set($event)"
+                placeholder="Ej. Santa Cruz (SC)"
+                required
+              />
+            </div>
+
+            <div class="form-group-checkbox">
+              <label class="checkbox-label">
+                <input
+                  type="checkbox"
+                  name="activo"
+                  [ngModel]="editActivo()"
+                  (ngModelChange)="editActivo.set($event)"
+                />
+                <span class="checkbox-text">
+                  <strong>Usuario activo</strong>
+                  <small>Permitir el acceso y autenticación a la plataforma</small>
+                </span>
+              </label>
+            </div>
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn-secondary" (click)="cerrarModal()">
+              Cancelar
+            </button>
+            <button type="submit" class="btn-primary" [disabled]="isSaving()">
+              <app-icon name="check" size="18px" color="#ffffff"></app-icon>
+              <span>{{ isSaving() ? 'Guardando...' : (isEditing() ? 'Actualizar Usuario' : 'Crear Usuario') }}</span>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  }
 </div>
