@@ -87,8 +87,11 @@ class Settings(BaseSettings):
     @field_validator("DATABASE_URL", mode="before")
     @classmethod
     def assemble_db_url(cls, value: str) -> str:
-        if value and value.startswith("postgres://"):
-            return value.replace("postgres://", "postgresql://", 1)
+        if value:
+            if value.startswith("postgres://"):
+                return value.replace("postgres://", "postgresql+psycopg2://", 1)
+            elif value.startswith("postgresql://"):
+                return value.replace("postgresql://", "postgresql+psycopg2://", 1)
         return value
 
     @field_validator("CORS_ORIGINS", mode="before")
