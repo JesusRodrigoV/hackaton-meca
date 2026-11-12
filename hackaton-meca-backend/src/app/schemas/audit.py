@@ -1,30 +1,29 @@
-from pydantic import BaseModel, EmailStr
 from datetime import datetime
 from typing import Any, Optional
 
-class AuditLogUser(BaseModel):
-    id: str
-    username: str
-    email: EmailStr
+from pydantic import BaseModel, ConfigDict, EmailStr
 
-    class Config:
-        from_attributes = True
+
+class AuditLogUser(BaseModel):
+    id: int
+    email: EmailStr
+    full_name: str
+
+    model_config = ConfigDict(from_attributes=True)
+
 
 class AuditLogOut(BaseModel):
     id: int
-    event: str
-    log_type: str = "security"
-    action: Optional[str] = None
-    detail: Optional[str] = None
-    timestamp: datetime
-    attempted_email: Optional[str] = None
+    action: str
+    entity: str
+    entity_id: Optional[str] = None
+    details_json: Optional[Any] = None
     ip_address: Optional[str] = None
-    ip_country: Optional[str] = None
-    ip_asn: Optional[int] = None
-    ip_organization: Optional[str] = None
-    ip_guide_data: Optional[dict[str, Any]] = None
+    user_agent: Optional[str] = None
+    request_id: Optional[str] = None
+    created_at: datetime
+    prev_hash: Optional[str] = None
+    row_hash: Optional[str] = None
+    user: Optional[AuditLogUser] = None
 
-    user: Optional[AuditLogUser] = None 
-
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)

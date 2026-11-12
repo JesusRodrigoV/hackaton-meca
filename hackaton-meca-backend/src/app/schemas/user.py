@@ -1,98 +1,68 @@
-from pydantic import BaseModel, EmailStr, Field
-from typing import Optional
 from datetime import datetime
-from pydantic import field_validator
+from typing import List, Optional
 
-# Reuse password policy validator
+from pydantic import BaseModel, ConfigDict, EmailStr, Field, field_validator
+
 from app.core.password_policy import validate_password_strength_func
+from app.schemas.role import RoleOut
 
 
 class UserBase(BaseModel):
-    email: Optional[EmailStr] = None
-    username: str
-    phone_number: Optional[str] = None
+    email: EmailStr
+    full_name: str = Field(..., min_length=1, max_length=150)
 
 
 class UserCreate(UserBase):
     password: Optional[str] = None
-    # Si se establece a True, el servidor generará una contraseña segura para el usuario
     generate_password: bool = False
-    # Token de reCAPTCHA v3 para validación server-side
-    recaptcha_token: Optional[str] = None
-
-
-class AdminUserCreate(UserBase):
-    password: str = ""
-    generate_password: bool = False
-    role_id: int
-    is_active: Optional[bool] = True
-
-    @field_validator("password")
-    def validate_password_strength(cls, v: str) -> str:
-        if not v:
-            return v
-        return validate_password_strength_func(v)
-
-
-class AdminUserUpdate(BaseModel):
-    email: Optional[EmailStr] = None
-    username: Optional[str] = None
-    role_id: Optional[int] = None
-    is_active: Optional[bool] = None
-
-
-class UserUpdateProfile(BaseModel):
-    username: Optional[str] = None
-    email: Optional[EmailStr] = None
-    photo_url: Optional[str] = None
-    password: Optional[str] = None
 
     @field_validator("password")
     def validate_password_strength(cls, v: Optional[str]) -> Optional[str]:
-        if v is not None:
+        if v:
             return validate_password_strength_func(v)
         return v
 
 
+class AdminUserCreate(UserCreate):
+    role_ids: List[int] = Field(default_factory=list)
+    is_active: bool = True
+
+
+class AdminUserUpdate(BaseModel):
+    email: Optional[EmailStr] = None
+    full_name: Optional[str] = Field(None, min_length=1, max_length=150)
+    role_ids: Optional[List[int]] = None
+    is_active: Optional[bool] = None
+
+
+class UserUpdateProfile(BaseModel):
+    full_name: Optional[str] = Field(None, min_length=1, max_length=150)
+
+
 class UserOut(BaseModel):
-    id: str
-    email: Optional[EmailStr] = None
-    username: str
-    phone_number: Optional[str] = None
-    phone_verified: bool = False
+    id: int
+    email: EmailStr
+    full_name: str
     is_active: bool
-    is_admin: bool = False
-    role_id: int
-    photo_url: Optional[str] = None
+    must_change_password: bool = False
+    is_totp_enabled: bool = False
+    last_login_at: Optional[datetime] = None
     created_at: datetime
+    updated_at: datetime
+    roles: List[RoleOut] = Field(default_factory=list)
 
-    class Config:
-        from_attributes = True
-
-
-# pagination
-class UserOutWithRole(BaseModel):
-    id: str
-    email: Optional[EmailStr] = None
-    username: str
-    phone_number: Optional[str] = None
-    phone_verified: bool = False
-    is_active: bool
-    is_admin: bool
-    role_id: int
-    photo_url: Optional[str] = None
-    created_at: datetime
-
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
-class UserProfileOut(UserOutWithRole):
-    permissions: list[str] = Field(default_factory=list)
+class UserOutWithRole(UserOut):
+    """Alias de compatibilidad; los roles ya vienen incluidos en UserOut."""
+
+
+class UserProfileOut(UserOut):
+    permissions: List[str] = Field(default_factory=list)
 
 
 class UserCreateResponse(UserOut):
     generated_password: Optional[str] = None
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)

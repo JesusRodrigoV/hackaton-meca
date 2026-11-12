@@ -1,42 +1,25 @@
-from fastapi import Response
-from sqlalchemy.orm import Session
 from typing import Optional
-from app.models.user import User
-from app.core.security import verify_password
-from app.crud.user import get_user_by_identifier
-from app.core.config import settings
 
-def authenticate_user(db: Session, identifier: str, password: str) -> Optional[User]:
-    user = get_user_by_identifier(db, identifier)
+from sqlalchemy.orm import Session
+
+from app.core.security import verify_password
+from app.crud.user import get_user_by_email
+from app.models.security import User
+
+
+def authenticate_credentials(
+    db: Session,
+    email: str,
+    password: str,
+) -> Optional[User]:
+    """Return the user when email + password match.
+
+    Account state (active, lockout, 2FA, forced password change) is evaluated by
+    the auth service/endpoint, not here.
+    """
+    user = get_user_by_email(db, email)
     if not user:
         return None
-    if not verify_password(password, user.hashed_password):
-        return None
-    if getattr(user, "is_active", True) is False:
+    if not verify_password(password, user.password_hash):
         return None
     return user
-
-
-def set_refresh_cookie(response: Response, token: str):
-    expires_seconds = settings.REFRESH_TOKEN_EXPIRE_DAYS * 24 * 60 * 60
-    response.set_cookie(
-        key="refresh_token",
-        value=token,
-        httponly=True,
-        secure=True,
-        samesite="none",
-        path="/zooconnect/",
-        max_age=expires_seconds
-    )
-
-def clear_refresh_cookie(response: Response):
-    """
-    Helper para limpiar cookies
-    """
-    response.delete_cookie(
-        key="refresh_token",
-        httponly=True,
-        secure=True,
-        samesite="none",
-        path="/zooconnect/"
-    )

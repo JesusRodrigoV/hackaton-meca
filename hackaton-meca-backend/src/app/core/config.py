@@ -1,55 +1,82 @@
-from pydantic_settings import BaseSettings, SettingsConfigDict
-from pydantic import AnyHttpUrl, field_validator
-from typing import List, Union
+import json
+from pathlib import Path
+from typing import List, Literal, Union
 
-# correo
-from pydantic import EmailStr
+from pydantic import EmailStr, field_validator
+from pydantic_settings import BaseSettings, SettingsConfigDict
+
+_BACKEND_DIR = Path(__file__).resolve().parents[3]
 
 
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(
-        env_file=".env", case_sensitive=True, extra="ignore"
+        env_file=str(_BACKEND_DIR / ".env"),
+        case_sensitive=True,
+        extra="ignore",
     )
 
+    # Application
+    ENVIRONMENT: str = "development"
+    API_V1_PREFIX: str = "/api/v1"
+    TIMEZONE: str = "America/La_Paz"
+
+    # Database
     DATABASE_URL: str
+
+    # JWT
     SECRET_KEY: str
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 15
     REFRESH_TOKEN_EXPIRE_DAYS: int = 30
-    MEDIA_DIR: str = "./media"
-    CORS_ORIGINS: List[str] = [
-        "http://localhost:4200",
-        "https://vercel-zoo-connect.vercel.app",
-        "https://vercel-zoo-connect-git-main-mfjm0265-7988s-projects.vercel.app",
-        "https://zoo-connect-completo.vercel.app",
-    ]
-    DEFAULT_ADMIN_EMAIL: str
-    DEFAULT_ADMIN_PASSWORD: str
-    DEFAULT_ADMIN_PHONE: str = "+10000000001"
-    #
-    CLOUDINARY_CLOUD_NAME: str
-    CLOUDINARY_API_KEY: str
-    CLOUDINARY_API_SECRET: str
-    #
-    # correo - Postmark (API HTTPS - compatible con Render)
-    POSTMARK_SERVER_TOKEN: str
-    MAIL_USERNAME: str
-    MAIL_PASSWORD: str
-    MAIL_SERVER: str
-    MAIL_PORT: int
+    CHANGE_PASSWORD_TOKEN_EXPIRE_MINUTES: int = 10
+    TWO_FACTOR_SESSION_EXPIRE_MINUTES: int = 5
+    PASSWORD_RESET_TOKEN_EXPIRE_MINUTES: int = 30
+
+    # Refresh cookie
+    REFRESH_COOKIE_NAME: str = "meca_refresh_token"
+    REFRESH_COOKIE_SECURE: bool | None = None
+    REFRESH_COOKIE_SAMESITE: Literal["lax", "strict", "none"] = "lax"
+    REFRESH_COOKIE_PATH: str = "/api/v1/auth"
+
+    # 2FA / TOTP
+    TOTP_ISSUER: str = "MECA"
+    TOTP_ENCRYPTION_KEY: str
+    BACKUP_CODE_COUNT: int = 5
+
+    # Login lockout
+    MAX_FAILED_ATTEMPTS: int = 5
+    LOCKOUT_DURATION_MINUTES: int = 5
+
+    # Email (SMTP only)
+    MAIL_ENABLED: bool = True
+    MAIL_USERNAME: str = ""
+    MAIL_PASSWORD: str = ""
+    MAIL_SERVER: str = ""
+    MAIL_PORT: int = 587
     MAIL_STARTTLS: bool = True
     MAIL_SSL_TLS: bool = False
-    MAIL_FROM: EmailStr
-    MAIL_FROM_NAME: str = "ZooConnect"
-    # 2fa
-    TOTP_ENCRYPTION_KEY: str
-    # redis
+    MAIL_FROM: EmailStr = "no-reply@meca.local"
+    MAIL_FROM_NAME: str = "MECA"
+    FRONTEND_RESET_PASSWORD_URL: str = "http://localhost:3000/reset-password"
+
+    # CORS
+    CORS_ORIGINS: List[str] = []
+
+    # Redis (optional rate limiting / cache)
     REDIS_URL: str | None = None
     REDIS_HOST: str = "localhost"
     REDIS_PORT: int = 6379
     REDIS_DB: int = 0
-    # automatizacion tareas
-    TIMEZONE: str = "America/La_Paz"
+
+    # Files
+    MEDIA_DIR: str = "./media"
+    REPORTS_DIR: str = "./media/reports"
+
+    @property
+    def refresh_cookie_secure(self) -> bool:
+        if self.REFRESH_COOKIE_SECURE is not None:
+            return self.REFRESH_COOKIE_SECURE
+        return self.ENVIRONMENT.lower() == "production"
 
     @property
     def redis_connection_url(self) -> str:
@@ -57,53 +84,27 @@ class Settings(BaseSettings):
             return self.REDIS_URL
         return f"redis://{self.REDIS_HOST}:{self.REDIS_PORT}/{self.REDIS_DB}"
 
-    #
-    FRONTEND_RESET_PASSWORD_URL: AnyHttpUrl = "http://localhost:3000/reset-password"
-    PASSWORD_RESET_TOKEN_EXPIRE_MINUTES: int = 30
-
-    # ReCAPTCHA v2 (Google) - Visible widget
-    RECAPTCHA_SECRET_KEY: str
-    RECAPTCHA_SITE_KEY: str = "6Lcxxxxxxxxxxxxxxxxxxxxxxxxx"
-    RECAPTCHA_VERIFY_URL: str = "https://www.google.com/recaptcha/api/siteverify"
-    REQUIRE_RECAPTCHA: bool = True
-    TEXTBEE_API_BASE_URL: str = "https://api.textbee.dev/api/v1"
-    TEXTBEE_API_KEY: str = ""
-    TEXTBEE_DEVICE_ID: str = ""
-    SMS_OTP_EXPIRE_MINUTES: int = 10
-    #
-    #
-    # Políticas de histórico de contraseñas por rol
-    PASSWORD_HISTORY_ADMIN_MAX: int = 5
-    PASSWORD_HISTORY_ESPECIALISTA_MAX: int = 5  # veterinario, cuidador
-    PASSWORD_HISTORY_PACIENTE_MAX: int = 3  # visitante
-    PASSWORD_HISTORY_USUARIO_BASICO_MAX: int = 3
-    #
-    # Días de validez de contraseña por rol
-    PASSWORD_VALIDITY_ADMIN_DAYS: int = 90
-    PASSWORD_VALIDITY_ESPECIALISTA_DAYS: int = 90
-    PASSWORD_VALIDITY_PACIENTE_DAYS: int = 180
-    PASSWORD_VALIDITY_USUARIO_BASICO_DAYS: int = 180
-    #
-
     @field_validator("DATABASE_URL", mode="before")
     @classmethod
-    def assemble_db_url(cls, v: str):
-        if v and v.startswith("postgres://"):
-            return v.replace("postgres://", "postgresql://", 1)
-        return v
+    def assemble_db_url(cls, value: str) -> str:
+        if value and value.startswith("postgres://"):
+            return value.replace("postgres://", "postgresql://", 1)
+        return value
 
     @field_validator("CORS_ORIGINS", mode="before")
     @classmethod
-    def assemble_cors_origins(cls, v: Union[str, List[str]]):
-        if isinstance(v, str):
-            if v.startswith("[") and v.endswith("]"):
+    def assemble_cors_origins(cls, value: Union[str, List[str]]):
+        if isinstance(value, str):
+            stripped = value.strip()
+            if not stripped:
+                return []
+            if stripped.startswith("["):
                 try:
-                    import json
-                    return json.loads(v)
-                except Exception:
+                    return json.loads(stripped)
+                except json.JSONDecodeError:
                     pass
-            return [i.strip() for i in v.split(",") if i.strip()]
-        return v
+            return [origin.strip() for origin in stripped.split(",") if origin.strip()]
+        return value
 
 
 settings = Settings()

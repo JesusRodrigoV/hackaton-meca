@@ -1,39 +1,23 @@
-from fastapi import FastAPI, HTTPException, Request
-from fastapi.middleware.cors import CORSMiddleware
-from fastapi.exceptions import RequestValidationError
-from fastapi.responses import JSONResponse
-from contextlib import asynccontextmanager
-from fastapi.concurrency import run_in_threadpool
 import logging
+from contextlib import asynccontextmanager
 
+from fastapi import FastAPI, HTTPException, Request
+from fastapi.encoders import jsonable_encoder
+from fastapi.exceptions import RequestValidationError
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 from fastapi_pagination import add_pagination
-from app.core.config import settings
-from app.core.request_context import current_client_ip, resolve_client_ip
-from app.scripts.create_admin import create_default_admin
-from app.scripts.seeds import init_db
-from app.core.scheduler import scheduler, setup_scheduler
+from starlette.exceptions import HTTPException as StarletteHTTPException
 
-from app.api.v1 import (
-    auth,
-    animals,
-    admin_users,
-    favorite_animals,
-    surveys,
-    trivia,
-    vendp,
-    inventario_admin,
-    transacciones,
-    alimentacion,
-    tareas,
-    veterinario,
-    dashboards,
-    reportes,
-    onboarding,
-    permissions,
-    roles,
-    audit_logs,
-    information_assets,
-    risk_matrix,
+from app.api.v1 import admin_users, audit_logs, auth, permissions, roles
+from app.core.config import settings
+from app.core.request_context import (
+    current_client_ip,
+    current_request_id,
+    current_user_agent,
+    resolve_client_ip,
+    resolve_request_id,
+    resolve_user_agent,
 )
 
 logger = logging.getLogger(__name__)
@@ -41,132 +25,136 @@ logger = logging.getLogger(__name__)
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    logger.info("Iniciando ZooConnect API")
-
-    logger.info("Verificando datos semilla")
-    await run_in_threadpool(init_db)
-
-    logger.info("Verificando usuario administrador")
-    await run_in_threadpool(create_default_admin)
-
-    logger.info("Iniciando Scheduler")
-    setup_scheduler()
-
-    logger.info("Verificacion exitosa")
-
+    logger.info("Iniciando MECA API (%s)", settings.ENVIRONMENT)
     yield
-
-    logger.info("Apagando ZooConnect")
-    if scheduler.running:
-        scheduler.shutdown()
-        logger.info("APScheduler detenido")
-    logger.info("ZooConnect API detenida")
+    logger.info("MECA API detenida")
 
 
 app = FastAPI(
-    title="ZooConnect API",
+    title="MECA API",
+    description="API de control presupuestario de Enseña por Bolivia",
+    version="1.0.0",
     lifespan=lifespan,
-    description="API para la gestion de un zoologico",
-    version="5.0.0",
 )
+
 
 @app.get("/")
 async def root():
-    return {"message": "ZooConnect API is running", "docs": "/docs", "version": "5.0.0"}
+    return {
+        "message": "MECA API is running",
+        "docs": "/docs",
+        "version": "1.0.0",
+    }
+
 
 @app.get("/healthz")
 async def healthz():
     return {"status": "ok"}
 
-# Log de orígenes permitidos para depuración en Render
-logger.info("Configurando CORS con orígenes: %s", settings.CORS_ORIGINS)
 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.CORS_ORIGINS,
     allow_credentials=True,
-    allow_methods=["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+    allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     allow_headers=["*"],
 )
 
 SENSITIVE_PREFIXES = (
-    "/zooconnect/auth",
-    "/zooconnect/admin_users",
-    "/zooconnect/audit",
-    "/zooconnect/veterinario",
-    "/zooconnect/reportes",
-    "/zooconnect/security",
-    "/zooconnect/inventario",
-    "/zooconnect/transacciones",
+    f"{settings.API_V1_PREFIX}/auth",
+    f"{settings.API_V1_PREFIX}/users",
+    f"{settings.API_V1_PREFIX}/roles",
+    f"{settings.API_V1_PREFIX}/permissions",
+    f"{settings.API_V1_PREFIX}/audit",
 )
 
 
 @app.middleware("http")
-async def add_security_headers(request: Request, call_next):
-    current_client_ip.set(resolve_client_ip(request))
+async def security_headers_and_context(request: Request, call_next):
+    ip_token = current_client_ip.set(resolve_client_ip(request))
+    user_agent_token = current_user_agent.set(resolve_user_agent(request))
+    request_id_token = current_request_id.set(resolve_request_id(request))
 
-    # Optimización para CORS preflight
-    if request.method == "OPTIONS":
-        return await call_next(request)
+    try:
+        response = await call_next(request)
+        if request.method != "OPTIONS":
+            response.headers["X-Frame-Options"] = "DENY"
+            response.headers["X-Content-Type-Options"] = "nosniff"
+            response.headers["Strict-Transport-Security"] = (
+                "max-age=63072000; includeSubDomains"
+            )
+            if any(
+                request.url.path.startswith(prefix)
+                for prefix in SENSITIVE_PREFIXES
+            ):
+                response.headers["Cache-Control"] = (
+                    "no-store, no-cache, must-revalidate"
+                )
+        return response
+    finally:
+        current_client_ip.reset(ip_token)
+        current_user_agent.reset(user_agent_token)
+        current_request_id.reset(request_id_token)
 
-    response = await call_next(request)
-    response.headers["X-Frame-Options"] = "DENY"
-    response.headers["X-Content-Type-Options"] = "nosniff"
-    response.headers["Strict-Transport-Security"] = (
-        "max-age=63072000; includeSubDomains"
-    )
-    if any(request.url.path.startswith(prefix) for prefix in SENSITIVE_PREFIXES):
-        response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate"
-    return response
 
-
-app.include_router(auth.router, prefix="/zooconnect/auth", tags=["auth"])
-app.include_router(admin_users.router, prefix="/zooconnect/admin_users", tags=["admin"])
+app.include_router(
+    auth.router,
+    prefix=f"{settings.API_V1_PREFIX}/auth",
+    tags=["auth"],
+)
+app.include_router(
+    admin_users.router,
+    prefix=f"{settings.API_V1_PREFIX}/users",
+    tags=["users"],
+)
+app.include_router(
+    roles.router,
+    prefix=f"{settings.API_V1_PREFIX}/roles",
+    tags=["roles"],
+)
 app.include_router(
     permissions.router,
-    prefix="/zooconnect/admin_users/permissions",
+    prefix=f"{settings.API_V1_PREFIX}/permissions",
     tags=["permissions"],
 )
-app.include_router(roles.router, prefix="/zooconnect/admin_roles", tags=["roles"])
-app.include_router(audit_logs.router, prefix="/zooconnect/audit", tags=["audit"])
-app.include_router(information_assets.router, prefix="/zooconnect/information-assets", tags=["information-assets"])
-app.include_router(risk_matrix.router, prefix="/zooconnect/risk-matrix", tags=["risk-matrix"])
-app.include_router(animals.router, prefix="/zooconnect/animals")
-app.include_router(surveys.router, prefix="/zooconnect/surveys")
-app.include_router(trivia.router, prefix="/zooconnect/trivia", tags=["trivia"])
-app.include_router(favorite_animals.router, prefix="/zooconnect/favorite_animals")
 app.include_router(
-    vendp.router, prefix="/zooconnect/security", tags=["Seguridad"]
+    audit_logs.router,
+    prefix=f"{settings.API_V1_PREFIX}/audit",
+    tags=["audit"],
 )
-app.include_router(
-    inventario_admin.router,
-    prefix="/zooconnect/inventario",
-    tags=["Inventario"],
-)
-app.include_router(
-    transacciones.router,
-    prefix="/zooconnect/transacciones",
-    tags=["Entradas y salidas de inventario"],
-)
-app.include_router(
-    alimentacion.router, prefix="/zooconnect/alimentacion", tags=["Alimentacion"]
-)
-app.include_router(tareas.router, prefix="/zooconnect/tareas", tags=["Tareas"])
-app.include_router(
-    veterinario.router, prefix="/zooconnect/veterinario", tags=["Veterinario"]
-)
-app.include_router(dashboards.router, prefix="/zooconnect/dashboards", tags=["Dashboards"])
-app.include_router(reportes.router, prefix="/zooconnect/reportes", tags=["Reportes"])
-app.include_router(
-    onboarding.router, prefix="/zooconnect/onboarding", tags=["Onboarding"]
-)
+
 
 @app.exception_handler(RequestValidationError)
 async def validation_exception_handler(request: Request, exc: RequestValidationError):
-    logger.warning("Error de validacion en %s %s: %s", request.method, request.url.path, exc.errors())
+    logger.warning(
+        "Error de validación en %s %s: %s",
+        request.method,
+        request.url.path,
+        exc.errors(),
+    )
     return JSONResponse(
         status_code=422,
-        content={"detail": "Datos invalidos", "errors": exc.errors()},
+        content={
+            "detail": "Datos inválidos",
+            "errors": jsonable_encoder(exc.errors()),
+        },
+    )
+
+
+@app.exception_handler(StarletteHTTPException)
+async def starlette_http_exception_handler(
+    request: Request,
+    exc: StarletteHTTPException,
+):
+    default_details = {
+        404: "Recurso no encontrado",
+        405: "Método no permitido",
+    }
+    detail = default_details.get(exc.status_code, exc.detail)
+    return JSONResponse(
+        status_code=exc.status_code,
+        content={"detail": detail},
+        headers=exc.headers,
     )
 
 
@@ -175,6 +163,7 @@ async def http_exception_handler(request: Request, exc: HTTPException):
     return JSONResponse(
         status_code=exc.status_code,
         content={"detail": exc.detail},
+        headers=exc.headers,
     )
 
 
