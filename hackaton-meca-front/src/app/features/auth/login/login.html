@@ -3,14 +3,14 @@
     <!-- Header Institucional -->
     <div class="login-header">
       <img src="logos/logo-ensena-nuevo-01-311.webp" alt="Enseña por Bolivia" class="brand-logo" />
-      <h1 class="system-title">Presupuesto y Ejecución Financiera</h1>
-      <p class="system-subtitle">Sistema contable y rendición de cuentas para donantes</p>
+      <h1 class="system-title">Gestión Presupuestaria</h1>
+      <p class="system-subtitle">Ingresa con tu cuenta institucional para continuar</p>
     </div>
 
     <!-- Formulario de Acceso -->
     <form (ngSubmit)="onSubmit()" class="login-form">
       <div class="form-group">
-        <label for="email">Correo Institucional</label>
+        <label for="email">Correo electrónico</label>
         <div class="input-wrapper">
           <app-icon name="envelope" size="20px" color="#718096"></app-icon>
           <input
@@ -53,36 +53,14 @@
           <span>Ingresando...</span>
         } @else {
           <app-icon name="log-in" size="20px" color="#ffffff"></app-icon>
-          <span>Iniciar Sesión</span>
+          <span>Iniciar sesión</span>
         }
       </button>
     </form>
 
-    <!-- Roles Demo para Hackatón / Evaluación -->
-    <div class="demo-section">
-      <div class="demo-divider">
-        <span>USUARIOS DE PRUEBA</span>
-      </div>
-
-      <div class="demo-grid">
-        @for (demo of demoRoles; track demo.key) {
-          <button type="button" class="demo-card" (click)="loginAsDemo(demo.key)">
-            <div class="demo-icon" [style.background-color]="demo.color + '1a'">
-              <app-icon [name]="demo.icon" size="22px" [color]="demo.color"></app-icon>
-            </div>
-            <div class="demo-info">
-              <span class="demo-name">{{ demo.name }}</span>
-              <span class="demo-role">{{ demo.role }}</span>
-              <span class="demo-scope">{{ demo.scope }}</span>
-            </div>
-          </button>
-        }
-      </div>
-    </div>
-
     <!-- Footer -->
     <div class="login-footer">
-      <span>Enseña por Bolivia • Gestión 2026</span>
+      <span>Enseña por Bolivia — Gestión 2026</span>
     </div>
   </div>
 </div>

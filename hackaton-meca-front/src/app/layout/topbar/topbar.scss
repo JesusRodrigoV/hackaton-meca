@@ -69,6 +69,38 @@
       font-weight: 700;
     }
   }
+
+  .db-status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 10px;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    background-color: #f1f5f9;
+    border: 1px solid #cbd5e1;
+    color: #64748b;
+    transition: all 0.2s ease;
+
+    .status-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background-color: #94a3b8;
+    }
+
+    &.connected {
+      background-color: var(--forest-green-subtle);
+      border-color: var(--forest-green-border);
+      color: var(--forest-green-text);
+
+      .status-dot {
+        background-color: var(--forest-green);
+        box-shadow: 0 0 0 2px rgba(0, 146, 61, 0.25);
+      }
+    }
+  }
 }
 
 .topbar-right {

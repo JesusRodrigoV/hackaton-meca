@@ -147,94 +147,9 @@
   }
 }
 
-.demo-section {
+.login-footer {
   margin-top: 2rem;
-
-  .demo-divider {
-    position: relative;
-    text-align: center;
-    margin-bottom: 1.25rem;
-
-    &::before {
-      content: '';
-      position: absolute;
-      top: 50%;
-      left: 0;
-      right: 0;
-      height: 1px;
-      background-color: var(--color-border);
-      z-index: 1;
-    }
-
-    span {
-      position: relative;
-      z-index: 2;
-      background-color: var(--color-surface);
-      padding: 0 0.75rem;
-      font-size: 0.6875rem;
-      font-weight: 700;
-      letter-spacing: 0.05em;
-      color: var(--color-text-muted);
-      text-transform: uppercase;
-    }
-  }
-
-  .demo-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 0.75rem;
-
-    .demo-card {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      padding: 0.75rem;
-      background-color: #f8fafc;
-      border: 1px solid var(--color-border);
-      border-radius: 8px;
-      cursor: pointer;
-      text-align: left;
-      transition: all 0.15s ease;
-
-      &:hover {
-        border-color: var(--forest-green);
-        background-color: #ffffff;
-        box-shadow: var(--shadow-sm);
-        transform: translateY(-1px);
-      }
-
-      .demo-icon {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 36px;
-        height: 36px;
-        border-radius: 6px;
-        flex-shrink: 0;
-      }
-
-      .demo-info {
-        display: flex;
-        flex-direction: column;
-
-        .demo-name {
-          font-size: 0.8125rem;
-          font-weight: 600;
-          color: var(--deep-space-blue);
-        }
-
-        .demo-role {
-          font-size: 0.6875rem;
-          color: var(--color-text-muted);
-        }
-
-        .demo-scope {
-          font-size: 0.625rem;
-          font-weight: 600;
-          color: var(--forest-green-text);
-          margin-top: 0.1rem;
-        }
-      }
-    }
-  }
+  text-align: center;
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
 }
