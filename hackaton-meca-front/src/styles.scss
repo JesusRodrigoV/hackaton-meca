@@ -1,43 +1,58 @@
 /* ==========================================================================
    SISTEMA DE DISEÑO INSTITUCIONAL - ENSEÑA POR BOLIVIA
-   Paleta Oficial: Bright Snow, Midnight Indigo, Forest Green, Tuscan Sun, Deep Space Blue, Rosewood
+   Paleta Oficial: Bright Snow, Space Indigo, Forest Green, Tuscan Sun, Deep Space Blue
    ========================================================================== */
 
 :root {
-  /* Paleta Base Oficial */
+  /* 1. Paleta Canónica Oficial (Web Pública) */
   --bright-snow: #f8f9fa;
-  --space-indigo: #232046;
+  --space-indigo: #2b255c;
   --forest-green: #00923d;
-  --forest-green-hover: #007832;
-  --forest-green-subtle: rgba(0, 146, 61, 0.09);
-  --forest-green-border: rgba(0, 146, 61, 0.25);
-  --forest-green-text: #007531;
-
   --tuscan-sun: #ecc562;
-  --tuscan-sun-subtle: rgba(236, 197, 98, 0.22);
-  --tuscan-sun-border: rgba(236, 197, 98, 0.45);
-  --tuscan-sun-text: #7c5e10;
-
   --deep-space-blue: #0d2439;
-  --deep-space-subtle: rgba(13, 36, 57, 0.06);
 
+  /* 2. Tonos Derivados: Forest Green (Acción y Éxito) */
+  --forest-green-hover: #007a33;
+  --forest-green-subtle: rgba(0, 146, 61, 0.08);
+  --forest-green-border: rgba(0, 146, 61, 0.22);
+  --forest-green-text: #007531;
+  --forest-green-glow: rgba(0, 146, 61, 0.18);
+
+  /* 3. Tonos Derivados: Space Indigo (Identidad Institucional) */
+  --space-indigo-hover: #211c49;
+  --space-indigo-subtle: rgba(43, 37, 92, 0.08);
+  --space-indigo-border: rgba(43, 37, 92, 0.18);
+  --space-indigo-text: #2b255c;
+
+  /* 4. Tonos Derivados: Tuscan Sun (Atención y Alertas Preventivas) */
+  --tuscan-sun-hover: #e2b64b;
+  --tuscan-sun-subtle: rgba(236, 197, 98, 0.18);
+  --tuscan-sun-border: rgba(236, 197, 98, 0.45);
+  --tuscan-sun-text: #855f05; /* WCAG AAA sobre fondos claros */
+
+  /* 5. Tonos Derivados: Deep Space Blue (Contraste y Lectura) */
+  --deep-space-subtle: rgba(13, 36, 57, 0.04);
+  --deep-space-border: rgba(13, 36, 57, 0.12);
+
+  /* 6. Tonos Derivados: Rosewood (Riesgo Crítico y Sobreejecución) */
   --rosewood: #e11d48;
   --rosewood-hover: #be123c;
-  --rosewood-subtle: rgba(225, 29, 72, 0.09);
-  --rosewood-border: rgba(225, 29, 72, 0.25);
+  --rosewood-subtle: rgba(225, 29, 72, 0.08);
+  --rosewood-border: rgba(225, 29, 72, 0.22);
   --rosewood-text: #be123c;
 
-  /* Neutros Estructurados */
+  /* 7. Neutros Estructurados */
   --color-bg: var(--bright-snow);
   --color-surface: #ffffff;
   --color-border: #e2e8f0;
-  --color-border-subtle: #f1f5f9;
+  --color-border-subtle: #edf2f7;
+  --color-border-focus: #cbd5e1;
 
   --color-text-primary: var(--deep-space-blue);
   --color-text-secondary: #475569;
   --color-text-muted: #64748b;
 
-  /* Tokens Semánticos */
+  /* 8. Tokens Semánticos */
   --color-primary: var(--forest-green);
   --color-primary-hover: var(--forest-green-hover);
   --color-brand: var(--space-indigo);
@@ -45,10 +60,13 @@
   --color-danger: var(--rosewood);
   --color-success: var(--forest-green);
 
-  /* Sombras Tintadas Suaves */
-  --shadow-sm: 0 1px 2px rgba(13, 36, 57, 0.05);
-  --shadow-md: 0 4px 6px -1px rgba(13, 36, 57, 0.07), 0 2px 4px -2px rgba(13, 36, 57, 0.05);
-  --shadow-lg: 0 10px 15px -3px rgba(13, 36, 57, 0.08), 0 4px 6px -4px rgba(13, 36, 57, 0.04);
+  /* 9. Elevaciones y Sombras Tintadas Multicapa */
+  --shadow-xs: 0 1px 2px rgba(13, 36, 57, 0.04);
+  --shadow-sm: 0 1px 3px rgba(13, 36, 57, 0.06), 0 1px 2px rgba(13, 36, 57, 0.04);
+  --shadow-md: 0 4px 6px -1px rgba(13, 36, 57, 0.08), 0 2px 4px -2px rgba(13, 36, 57, 0.04);
+  --shadow-lg: 0 10px 15px -3px rgba(13, 36, 57, 0.08), 0 4px 6px -4px rgba(13, 36, 57, 0.03);
+  --shadow-card: 0 1px 3px rgba(13, 36, 57, 0.05), 0 1px 2px -1px rgba(13, 36, 57, 0.04);
+  --shadow-card-hover: 0 8px 16px -2px rgba(13, 36, 57, 0.08), 0 4px 6px -2px rgba(13, 36, 57, 0.03);
 }
 
 /* ==========================================================================
@@ -78,7 +96,7 @@ body {
 }
 
 /* ==========================================================================
-   COMPONENTES UI COMPARTIDOS (BOTONES, BADGES, TABLAS, FORMULARIOS)
+   COMPONENTES UI COMPARTIDOS
    ========================================================================== */
 
 /* Botones Base */
@@ -89,12 +107,12 @@ body {
   gap: 0.5rem;
   font-size: 0.875rem;
   font-weight: 600;
-  padding: 0.5rem 1rem;
+  padding: 0.55rem 1rem;
   border-radius: 8px;
   border: 1px solid transparent;
   cursor: pointer;
   text-decoration: none;
-  transition: all 0.15s ease;
+  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
   user-select: none;
   white-space: nowrap;
 
@@ -103,45 +121,62 @@ body {
   }
 
   &:disabled {
-    opacity: 0.6;
+    opacity: 0.55;
     cursor: not-allowed;
     transform: none;
   }
 }
 
 .btn-primary {
-  background-color: var(--forest-green);
+  background: linear-gradient(135deg, var(--forest-green) 0%, var(--forest-green-hover) 100%);
   color: #ffffff;
   border-color: var(--forest-green);
-  box-shadow: var(--shadow-sm);
+  box-shadow: 0 1px 2px rgba(0, 146, 61, 0.2), 0 1px 3px rgba(13, 36, 57, 0.06);
 
   &:hover:not(:disabled) {
-    background-color: var(--forest-green-hover);
-    border-color: var(--forest-green-hover);
+    background: linear-gradient(135deg, #009d42 0%, var(--forest-green) 100%);
+    border-color: #007a33;
+    box-shadow: 0 2px 4px rgba(0, 146, 61, 0.25), 0 2px 6px rgba(13, 36, 57, 0.08);
+  }
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px var(--forest-green-glow);
   }
 }
 
 .btn-secondary {
   background-color: #ffffff;
   color: var(--deep-space-blue);
-  border-color: #cbd5e1;
-  box-shadow: var(--shadow-sm);
+  border-color: var(--color-border);
+  box-shadow: var(--shadow-xs);
 
   &:hover:not(:disabled) {
     background-color: #f8fafc;
-    border-color: #94a3b8;
+    border-color: #cbd5e1;
+    color: var(--space-indigo);
+  }
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(13, 36, 57, 0.1);
   }
 }
 
 .btn-brand {
-  background-color: var(--space-indigo);
+  background: linear-gradient(135deg, var(--space-indigo) 0%, var(--space-indigo-hover) 100%);
   color: #ffffff;
   border-color: var(--space-indigo);
-  box-shadow: var(--shadow-sm);
+  box-shadow: 0 1px 3px rgba(43, 37, 92, 0.2);
 
   &:hover:not(:disabled) {
-    background-color: #1a1738;
-    border-color: #1a1738;
+    background: linear-gradient(135deg, #322b6b 0%, var(--space-indigo) 100%);
+    border-color: #1e1942;
+  }
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(43, 37, 92, 0.2);
   }
 }
 
@@ -154,6 +189,7 @@ body {
     background-color: var(--rosewood);
     color: #ffffff;
     border-color: var(--rosewood);
+    box-shadow: 0 2px 4px rgba(225, 29, 72, 0.25);
   }
 }
 
@@ -182,11 +218,11 @@ body {
   display: inline-flex;
   align-items: center;
   gap: 0.35rem;
-  padding: 0.25rem 0.55rem;
-  border-radius: 6px;
+  padding: 0.25rem 0.625rem;
+  border-radius: 9999px;
   font-size: 0.6875rem;
   font-weight: 700;
-  letter-spacing: 0.03em;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
   white-space: nowrap;
 }
@@ -216,28 +252,28 @@ body {
 }
 
 .badge-fin, .badge-indigo {
-  background-color: rgba(35, 32, 70, 0.08);
+  background-color: var(--space-indigo-subtle);
   color: var(--space-indigo);
-  border: 1px solid rgba(35, 32, 70, 0.2);
+  border: 1px solid var(--space-indigo-border);
 }
 
 /* Contenedores y Tarjetas */
 .card {
   background-color: var(--color-surface);
   border: 1px solid var(--color-border);
-  border-radius: 10px;
+  border-radius: 12px;
   padding: 1.25rem;
-  box-shadow: var(--shadow-sm);
-  transition: box-shadow 0.15s ease;
+  box-shadow: var(--shadow-card);
+  transition: box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1), transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* Tablas Maestras */
 .table-container {
   background-color: var(--color-surface);
   border: 1px solid var(--color-border);
-  border-radius: 8px;
+  border-radius: 10px;
   overflow-x: auto;
-  box-shadow: var(--shadow-sm);
+  box-shadow: var(--shadow-card);
 }
 
 .data-table {
@@ -250,7 +286,7 @@ body {
     color: var(--color-text-secondary);
     font-weight: 700;
     text-align: left;
-    padding: 0.75rem 1rem;
+    padding: 0.8rem 1rem;
     border-bottom: 1px solid var(--color-border);
     white-space: nowrap;
     text-transform: uppercase;
@@ -259,7 +295,7 @@ body {
   }
 
   td {
-    padding: 0.75rem 1rem;
+    padding: 0.8rem 1rem;
     border-bottom: 1px solid var(--color-border-subtle);
     color: var(--deep-space-blue);
     vertical-align: middle;
@@ -268,12 +304,16 @@ body {
   tbody tr {
     transition: background-color 0.1s ease;
 
+    &:nth-child(even) {
+      background-color: #fafbfc;
+    }
+
     &:hover {
-      background-color: #f8fafc;
+      background-color: #f1f5f9;
     }
 
     &.row-alert {
-      background-color: rgba(225, 29, 72, 0.03);
+      background-color: rgba(225, 29, 72, 0.04);
     }
   }
 }
@@ -281,18 +321,22 @@ body {
 /* Entradas de Formularios */
 .form-input, .form-select {
   border: 1px solid var(--color-border);
-  border-radius: 6px;
+  border-radius: 8px;
   background-color: #ffffff;
-  padding: 0.5rem 0.75rem;
+  padding: 0.55rem 0.85rem;
   font-size: 0.8125rem;
   color: var(--deep-space-blue);
   outline: none;
   font-family: inherit;
   transition: border-color 0.15s ease, box-shadow 0.15s ease;
 
+  &:hover {
+    border-color: #cbd5e1;
+  }
+
   &:focus {
     border-color: var(--forest-green);
-    box-shadow: 0 0 0 3px rgba(0, 146, 61, 0.15);
+    box-shadow: 0 0 0 3px var(--forest-green-glow);
   }
 }
 
@@ -306,4 +350,3 @@ body {
 .font-bold { font-weight: 700; }
 .font-medium { font-weight: 600; }
 .font-mono { font-family: 'JetBrains Mono', monospace; }
-
