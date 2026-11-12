@@ -3,8 +3,8 @@
   flex-direction: column;
   width: 260px;
   min-height: 100vh;
-  background-color: var(--space-indigo);
-  color: #E2E8F0;
+  background-color: #1a1738; /* Midnight Indigo profundo y sobrio */
+  color: #e2e8f0;
   border-right: 1px solid rgba(255, 255, 255, 0.08);
   user-select: none;
   flex-shrink: 0;
@@ -15,17 +15,20 @@
   align-items: center;
   justify-content: center;
   padding: 1.25rem 1rem;
-  background-color: #ffffff;
-  border-bottom: 2px solid var(--forest-green);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 
   .brand {
     display: flex;
     align-items: center;
     justify-content: center;
     width: 100%;
+    background-color: #ffffff;
+    padding: 0.5rem 0.75rem;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
 
     .brand-image {
-      max-height: 48px;
+      max-height: 38px;
       max-width: 100%;
       object-fit: contain;
     }
@@ -49,7 +52,7 @@
       padding: 0 1.25rem;
       font-size: 0.6875rem;
       font-weight: 700;
-      color: rgba(236, 197, 98, 0.85); /* Tuscan Sun accent */
+      color: rgba(236, 197, 98, 0.85); /* Tuscan Sun suave */
       letter-spacing: 0.08em;
       text-transform: uppercase;
       margin-bottom: 0.35rem;
@@ -117,7 +120,7 @@
 .sidebar-footer {
   padding: 1rem 1.25rem;
   border-top: 1px solid rgba(255, 255, 255, 0.08);
-  background-color: rgba(13, 36, 57, 0.4); /* Deep space blue tint */
+  background-color: rgba(13, 36, 57, 0.35);
 
   .user-pill {
     display: flex;

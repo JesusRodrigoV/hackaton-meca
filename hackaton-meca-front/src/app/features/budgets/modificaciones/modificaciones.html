@@ -7,193 +7,198 @@
       </p>
     </div>
     <div class="header-right">
-      <button type="button" class="btn-primary" (click)="abrirModal()">
-        <app-icon name="transfer-alt" size="18px" color="#ffffff"></app-icon>
-        <span>Nuevo traspaso</span>
-      </button>
+      <p-button
+        label="Nuevo traspaso"
+        icon="pi pi-arrows-h"
+        size="small"
+        (click)="abrirModal()"
+      ></p-button>
     </div>
   </header>
 
-  <!-- Tabla de Modificaciones -->
-  <section class="table-container">
-    <table class="data-table">
-      <thead>
+  <!-- Tabla PrimeNG de Modificaciones -->
+  <section class="table-card">
+    <p-table
+      [value]="modificaciones()"
+      [tableStyle]="{ 'min-width': '65rem' }"
+      styleClass="p-datatable-sm p-datatable-striped"
+    >
+      <ng-template #header>
         <tr>
-          <th>Ref / ID</th>
-          <th>Fecha</th>
-          <th>Tipo</th>
-          <th>Detalle de Cuentas (Traspaso)</th>
-          <th>Justificación</th>
-          <th class="tabular-nums">Monto (BOB)</th>
+          <th style="width: 100px">Ref / ID</th>
+          <th style="width: 110px">Fecha</th>
+          <th style="width: 110px">Tipo</th>
+          <th>Detalle de Cuentas</th>
+          <th>Motivo del traspaso</th>
+          <th class="tabular-nums" style="width: 130px">Monto (BOB)</th>
           <th>Solicitante</th>
           <th>Aprobador</th>
-          <th>Estado</th>
-          <th>Acción</th>
+          <th style="width: 110px">Estado</th>
+          <th style="width: 100px">Acción</th>
         </tr>
-      </thead>
-      <tbody>
-        @for (item of modificaciones(); track item.id) {
-          <tr>
-            <td class="ref-cell">#MOD-{{ item.id }}</td>
-            <td class="date-cell">{{ item.fecha }}</td>
-            <td>
-              <span class="tipo-badge" [class.tipo-traspaso]="item.tipo === 'TRASPASO'" [class.tipo-incremento]="item.tipo === 'INCREMENTO'">
-                {{ item.tipo }}
-              </span>
-            </td>
-            <td>
-              <div class="routes-flow">
-                @if (item.cuentaOrigen) {
-                  <div class="route-from">
-                    <span class="lbl">Origen:</span>
-                    <span class="acc">{{ item.cuentaOrigen }}</span>
-                  </div>
-                }
-                <div class="route-to">
-                  <span class="lbl">Destino:</span>
-                  <span class="acc">{{ item.cuentaDestino }}</span>
+      </ng-template>
+
+      <ng-template #body let-item>
+        <tr>
+          <td class="ref-cell">#MOD-{{ item.id }}</td>
+          <td class="date-cell">{{ item.fecha }}</td>
+          <td>
+            <span class="tipo-badge" [class.tipo-traspaso]="item.tipo === 'TRASPASO'" [class.tipo-incremento]="item.tipo === 'INCREMENTO'">
+              {{ item.tipo }}
+            </span>
+          </td>
+          <td>
+            <div class="routes-flow">
+              @if (item.cuentaOrigen) {
+                <div class="route-from">
+                  <span class="lbl">Origen:</span>
+                  <span class="acc">{{ item.cuentaOrigen }}</span>
                 </div>
+              }
+              <div class="route-to">
+                <span class="lbl">Destino:</span>
+                <span class="acc">{{ item.cuentaDestino }}</span>
               </div>
-            </td>
-            <td class="desc-cell">{{ item.descripcion }}</td>
-            <td class="tabular-nums font-bold">{{ item.montoBob | number:'1.2-2' }}</td>
-            <td><span class="user-text">{{ item.solicitante }}</span></td>
-            <td><span class="user-text">{{ item.aprobador ?? '—' }}</span></td>
-            <td>
-              @switch (item.estado) {
-                @case ('APROBADO') {
-                  <span class="status-badge status-approved">APROBADO</span>
-                }
-                @case ('BORRADOR') {
-                  <span class="status-badge status-draft">PENDIENTE</span>
-                }
-                @case ('RECHAZADO') {
-                  <span class="status-badge status-rejected">RECHAZADO</span>
-                }
-              }
-            </td>
-            <td>
-              @if (item.estado === 'BORRADOR') {
-                <button
-                  type="button"
-                  class="btn-approve"
-                  *appHasPermission="'modificaciones.aprobar'"
-                  (click)="aprobar(item.id)"
-                  title="Aprobar Traspaso"
-                >
-                  <app-icon name="check" size="16px" color="#ffffff"></app-icon>
-                  <span>Aprobar</span>
-                </button>
-              } @else {
-                <span class="text-muted text-xs">Finalizado</span>
-              }
-            </td>
-          </tr>
-        }
-      </tbody>
-    </table>
+            </div>
+          </td>
+          <td class="desc-cell">{{ item.descripcion }}</td>
+          <td class="tabular-nums font-bold">{{ item.montoBob | number:'1.2-2' }}</td>
+          <td><span class="user-text">{{ item.solicitante }}</span></td>
+          <td><span class="user-text">{{ item.aprobador ?? '—' }}</span></td>
+          <td>
+            <p-tag
+              [value]="item.estado === 'BORRADOR' ? 'PENDIENTE' : item.estado"
+              [severity]="getEstadoSeverity(item.estado)"
+            ></p-tag>
+          </td>
+          <td>
+            @if (item.estado === 'BORRADOR') {
+              <p-button
+                *appHasPermission="'modificaciones.aprobar'"
+                label="Aprobar"
+                icon="pi pi-check"
+                size="small"
+                severity="success"
+                (click)="aprobar(item.id)"
+              ></p-button>
+            } @else {
+              <span class="text-muted text-xs">Finalizado</span>
+            }
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
   </section>
 
-  <!-- Modal / Diálogo de Solicitud -->
-  @if (showModal()) {
-    <div class="modal-backdrop" (click)="cerrarModal()">
-      <div class="modal-dialog" (click)="$event.stopPropagation()">
-        <div class="modal-header">
-          <div class="modal-title-group">
-            <app-icon name="transfer" size="22px" color="#00923d"></app-icon>
-            <h2>Solicitud de Modificación Presupuestaria</h2>
-          </div>
-          <button type="button" class="btn-close" (click)="cerrarModal()">×</button>
-        </div>
-
-        <div class="modal-body">
-          <div class="form-group">
-            <label>Tipo de Operación:</label>
-            <div class="radio-cards">
-              <label class="radio-option" [class.selected]="tipoModificacion() === 'TRASPASO'">
-                <input
-                  type="radio"
-                  name="tipo"
-                  value="TRASPASO"
-                  [ngModel]="tipoModificacion()"
-                  (ngModelChange)="tipoModificacion.set($event)"
-                />
-                <span>Traspaso entre Cuentas</span>
-              </label>
-              <label class="radio-option" [class.selected]="tipoModificacion() === 'INCREMENTO'">
-                <input
-                  type="radio"
-                  name="tipo"
-                  value="INCREMENTO"
-                  [ngModel]="tipoModificacion()"
-                  (ngModelChange)="tipoModificacion.set($event)"
-                />
-                <span>Incremento / Ampliación</span>
-              </label>
-            </div>
-          </div>
-
-          @if (tipoModificacion() === 'TRASPASO') {
-            <div class="form-group">
-              <label>Partida Origen (Cederá presupuesto):</label>
-              <select [ngModel]="cuentaOrigen()" (ngModelChange)="cuentaOrigen.set($event)">
-                @for (t of techos(); track t.id) {
-                  <option [value]="t.codigoCuenta + ' - ' + t.nombreCuenta">
-                    {{ t.codigoCuenta }} - {{ t.nombreCuenta }} (Saldo: BOB {{ t.saldoDisponibleBob | number:'1.2-2' }})
-                  </option>
-                }
-              </select>
-            </div>
-          }
-
-          <div class="form-group">
-            <label>Partida Destino (Recibirá presupuesto):</label>
-            <select [ngModel]="cuentaDestino()" (ngModelChange)="cuentaDestino.set($event)">
-              @for (t of techos(); track t.id) {
-                <option [value]="t.codigoCuenta + ' - ' + t.nombreCuenta">
-                  {{ t.codigoCuenta }} - {{ t.nombreCuenta }} (Vigente: BOB {{ t.montoVigenteBob | number:'1.2-2' }})
-                </option>
-              }
-            </select>
-          </div>
-
-          <div class="form-group">
-            <label>Monto a Modificar (BOB):</label>
+  <!-- Modal Nativo PrimeNG Dialog -->
+  <p-dialog
+    header="Registrar traspaso de presupuesto"
+    [visible]="showModal()"
+    (visibleChange)="showModal.set($event)"
+    [modal]="true"
+    [style]="{ width: '520px' }"
+    [draggable]="false"
+    [resizable]="false"
+  >
+    <div class="modal-form">
+      <div class="form-group">
+        <label>Tipo de Operación:</label>
+        <div class="radio-cards">
+          <label class="radio-option" [class.selected]="tipoModificacion() === 'TRASPASO'">
             <input
-              type="number"
-              min="1"
-              [ngModel]="montoBob()"
-              (ngModelChange)="montoBob.set($event)"
-              placeholder="0.00"
+              type="radio"
+              name="tipo"
+              value="TRASPASO"
+              [ngModel]="tipoModificacion()"
+              (ngModelChange)="tipoModificacion.set($event)"
             />
-          </div>
-
-          <div class="form-group">
-            <label>Justificación Técnica y Destino del Gasto:</label>
-            <textarea
-              rows="3"
-              [ngModel]="descripcion()"
-              (ngModelChange)="descripcion.set($event)"
-              placeholder="Explique el motivo del traspaso o ampliación..."
-            ></textarea>
-          </div>
-
-          @if (errorValidacion()) {
-            <div class="alert-error">
-              <app-icon name="error-circle" size="18px" color="#b24c63"></app-icon>
-              <span>{{ errorValidacion() }}</span>
-            </div>
-          }
-        </div>
-
-        <div class="modal-footer">
-          <button type="button" class="btn-cancel" (click)="cerrarModal()">Cancelar</button>
-          <button type="button" class="btn-primary" (click)="guardarSolicitud()">
-            <app-icon name="check" size="18px" color="#ffffff"></app-icon>
-            <span>Registrar Solicitud</span>
-          </button>
+            <span>Traspaso entre Cuentas</span>
+          </label>
+          <label class="radio-option" [class.selected]="tipoModificacion() === 'INCREMENTO'">
+            <input
+              type="radio"
+              name="tipo"
+              value="INCREMENTO"
+              [ngModel]="tipoModificacion()"
+              (ngModelChange)="tipoModificacion.set($event)"
+            />
+            <span>Incremento de Techo</span>
+          </label>
         </div>
       </div>
+
+      @if (tipoModificacion() === 'TRASPASO') {
+        <div class="form-group">
+          <label>Cuenta origen (cede presupuesto):</label>
+          <select [ngModel]="cuentaOrigen()" (ngModelChange)="cuentaOrigen.set($event)" class="form-select">
+            @for (t of techos(); track t.id) {
+              <option [value]="t.codigoCuenta + ' - ' + t.nombreCuenta">
+                {{ t.codigoCuenta }} - {{ t.nombreCuenta }} (Saldo: BOB {{ t.saldoDisponibleBob | number:'1.2-2' }})
+              </option>
+            }
+          </select>
+        </div>
+      }
+
+      <div class="form-group">
+        <label>Cuenta destino (recibe presupuesto):</label>
+        <select [ngModel]="cuentaDestino()" (ngModelChange)="cuentaDestino.set($event)" class="form-select">
+          @for (t of techos(); track t.id) {
+            <option [value]="t.codigoCuenta + ' - ' + t.nombreCuenta">
+              {{ t.codigoCuenta }} - {{ t.nombreCuenta }} (Vigente: BOB {{ t.montoVigenteBob | number:'1.2-2' }})
+            </option>
+          }
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Monto a transferir (BOB):</label>
+        <input
+          pInputText
+          type="number"
+          min="1"
+          [ngModel]="montoBob()"
+          (ngModelChange)="montoBob.set($event)"
+          placeholder="0.00"
+          class="w-full"
+        />
+      </div>
+
+      <div class="form-group">
+        <label>Motivo del traspaso:</label>
+        <textarea
+          rows="3"
+          [ngModel]="descripcion()"
+          (ngModelChange)="descripcion.set($event)"
+          placeholder="Explique la necesidad operativa del ajuste..."
+          class="form-textarea"
+        ></textarea>
+      </div>
+
+      @if (errorValidacion()) {
+        <div class="alert-error">
+          <app-icon name="error-circle" size="18px" color="#e11d48"></app-icon>
+          <span>{{ errorValidacion() }}</span>
+        </div>
+      }
     </div>
-  }
+
+    <ng-template #footer>
+      <div class="modal-footer-btns">
+        <p-button
+          label="Cancelar"
+          severity="secondary"
+          [outlined]="true"
+          size="small"
+          (click)="cerrarModal()"
+        ></p-button>
+        <p-button
+          label="Registrar traspaso"
+          icon="pi pi-check"
+          size="small"
+          (click)="guardarSolicitud()"
+        ></p-button>
+      </div>
+    </ng-template>
+  </p-dialog>
 </div>
