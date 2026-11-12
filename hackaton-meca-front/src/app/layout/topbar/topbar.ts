@@ -2,7 +2,6 @@ import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../core/auth/auth';
-import { FinancialService } from '../../core/services/financial';
 import { BoxIconComponent } from '../../shared/components/box-icon/box-icon';
 
 @Component({
@@ -14,7 +13,6 @@ import { BoxIconComponent } from '../../shared/components/box-icon/box-icon';
 })
 export class Topbar {
   readonly auth = inject(AuthService);
-  readonly financial = inject(FinancialService);
   private readonly router = inject(Router);
 
   onRoleChange(event: Event): void {

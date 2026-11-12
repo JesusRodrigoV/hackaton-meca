@@ -15,12 +15,6 @@
       <app-icon name="map-pin" size="xs" [color]="auth.currentUser()?.scopeType !== 'global' ? 'var(--forest-green)' : '#718096'"></app-icon>
       <span>{{ auth.scopeBadge() }}</span>
     </div>
-
-    <!-- Indicador de Backend / Base de Datos -->
-    <div class="db-status-badge" [class.connected]="financial.apiConnected()" [title]="financial.apiConnected() ? 'Conectado a PostgreSQL y Backend FastAPI' : 'Modo reactivo local (backend no detectado)'">
-      <span class="status-dot"></span>
-      <span class="status-text">{{ financial.apiConnected() ? 'BD Conectada' : 'Modo Offline' }}</span>
-    </div>
   </div>
 
   <!-- Derecha: Selector de Rol de Acceso -->

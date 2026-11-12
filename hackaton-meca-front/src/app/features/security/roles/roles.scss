@@ -95,11 +95,10 @@
     background-color: #f8fafc;
   }
 
-  .code-cell {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.75rem;
-    font-weight: 700;
-    color: var(--forest-green-text);
+  .action-cell {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--deep-space-blue);
   }
 
   .badge-module {
