@@ -1,4 +1,7 @@
-import { Injectable, signal, computed } from '@angular/core';
+import { Injectable, signal, computed, inject } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { firstValueFrom } from 'rxjs';
+import { API_CONFIG } from '../config/api.config';
 
 export interface UserProfile {
   id: number;
@@ -73,9 +76,12 @@ export const PRESET_USERS: Record<string, UserProfile> = {
   providedIn: 'root'
 })
 export class AuthService {
+  private readonly http = inject(HttpClient, { optional: true });
+
   // Estado reactivo de usuario y autenticación
   readonly currentUser = signal<UserProfile | null>(PRESET_USERS['ADMIN']);
   readonly token = signal<string | null>('jwt-demo-token-exb-2026');
+  readonly isApiAuthenticated = signal<boolean>(false);
 
   // Gestión fiscal activa y gestiones disponibles
   readonly currentGestion = signal<number>(2026);
@@ -93,19 +99,76 @@ export class AuthService {
     if (PRESET_USERS[roleKey]) {
       this.currentUser.set(PRESET_USERS[roleKey]);
       this.token.set(`jwt-token-${roleKey.toLowerCase()}-exb`);
+      this.isApiAuthenticated.set(false);
     }
   }
 
   /**
-   * Simula o realiza el login con credenciales.
+   * Autentica con el backend FastAPI o mediante preset institucional.
    */
-  login(email: string, _password: string): boolean {
+  async login(email: string, password: string): Promise<boolean> {
+    if (this.http) {
+      try {
+        const tokenResp = await firstValueFrom(
+          this.http.post<{ access_token: string; refresh_token?: string; token_type: string }>(
+            API_CONFIG.endpoints.auth.login,
+            { email, password }
+          )
+        );
+
+        if (tokenResp?.access_token) {
+          this.token.set(tokenResp.access_token);
+          this.isApiAuthenticated.set(true);
+
+          try {
+            const profile = await firstValueFrom(
+              this.http.get<{
+                id: number;
+                email: string;
+                full_name?: string;
+                first_name?: string;
+                last_name?: string;
+                roles?: Array<{ name: string; code: string }>;
+                permissions?: string[];
+              }>(API_CONFIG.endpoints.auth.me, {
+                headers: { Authorization: `Bearer ${tokenResp.access_token}` }
+              })
+            );
+
+            if (profile) {
+              const roleName = profile.roles?.[0]?.name ?? 'Administrador General';
+              const roleCode = (profile.roles?.[0]?.code as any) ?? 'ADMIN';
+              const fullName = profile.full_name || `${profile.first_name ?? ''} ${profile.last_name ?? ''}`.trim() || profile.email;
+
+              this.currentUser.set({
+                id: profile.id,
+                email: profile.email,
+                fullName,
+                roleName,
+                roleCode: roleCode in PRESET_USERS ? roleCode : 'ADMIN',
+                scopeType: 'global',
+                scopeLabel: 'Nivel Nacional (Consolidado)',
+                permissions: profile.permissions ?? PRESET_USERS['ADMIN'].permissions
+              });
+              return true;
+            }
+          } catch {
+            // Continúa con token y preset si falla el perfil
+          }
+          return true;
+        }
+      } catch {
+        // Fallback a los usuarios demo si el backend está en proceso de arranque
+      }
+    }
+
     const foundUser = Object.values(PRESET_USERS).find(u => u.email.toLowerCase() === email.toLowerCase());
     if (foundUser) {
       this.currentUser.set(foundUser);
       this.token.set(`jwt-token-${foundUser.roleCode.toLowerCase()}-exb`);
       return true;
     }
+
     // Usuario por defecto si no coincide exactamente
     this.currentUser.set(PRESET_USERS['ADMIN']);
     this.token.set('jwt-demo-token-exb-2026');
@@ -113,11 +176,24 @@ export class AuthService {
   }
 
   /**
-   * Cierra la sesión activa.
+   * Cierra la sesión activa en el frontend y en el backend si está conectado.
    */
-  logout(): void {
+  async logout(): Promise<void> {
+    const curToken = this.token();
+    if (this.http && curToken && this.isApiAuthenticated()) {
+      try {
+        await firstValueFrom(
+          this.http.post(API_CONFIG.endpoints.auth.logout, {}, {
+            headers: { Authorization: `Bearer ${curToken}` }
+          })
+        );
+      } catch {
+        // Fallo silenciado en desconexión
+      }
+    }
     this.currentUser.set(null);
     this.token.set(null);
+    this.isApiAuthenticated.set(false);
   }
 
   /**

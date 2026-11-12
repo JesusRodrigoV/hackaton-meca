@@ -70,14 +70,17 @@ export class Importador {
     this.previewReady.set(false);
   }
 
-  confirmarIngesta(): void {
-    alert('Lote procesado e incorporado exitosamente a la ejecución presupuestaria.');
+  async confirmarIngesta(): Promise<void> {
+    const file = this.selectedFile();
+    if (file) {
+      await this.financialService.subirPlanillaExcelApi(file);
+    }
     this.cancelarPreview();
   }
 
-  revertir(loteId: number): void {
+  async revertir(loteId: number): Promise<void> {
     if (confirm(`¿Está seguro de revertir el Lote #${loteId}? Todos los movimientos asociados serán dados de baja en el libro mayor.`)) {
-      this.financialService.revertirLote(loteId);
+      await this.financialService.revertirLoteApi(loteId);
     }
   }
 }

@@ -67,6 +67,10 @@ export const routes: Routes = [
         loadComponent: () => import('./features/errors/forbidden/forbidden').then(m => m.Forbidden)
       },
       {
+        path: '403',
+        redirectTo: 'prohibido'
+      },
+      {
         path: '404',
         loadComponent: () => import('./features/errors/not-found/not-found').then(m => m.NotFound)
       }

@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { FinancialService } from '../../../core/services/financial';
 import { AuthService } from '../../../core/auth/auth';
 import { BoxIconComponent } from '../../../shared/components/box-icon/box-icon';
+import { API_CONFIG } from '../../../core/config/api.config';
 
 export type TipoReporte = 'REP-01' | 'REP-02' | 'REP-03' | 'REP-04' | 'REP-05' | 'REP-06' | 'REP-07';
 
@@ -97,7 +98,15 @@ export class Reports {
 
   exportarReporteActual(): void {
     const tab = this.reportTabs.find(t => t.id === this.activeTab());
-    alert(`Exportando ${tab?.code} - ${tab?.title} en formato oficial para donantes.`);
+    const code = tab?.id ?? 'REP-01';
+    const exportUrl = `${API_CONFIG.endpoints.reportes.exportarExcel(code)}&moneda=${this.moneda()}`;
+    const link = document.createElement('a');
+    link.href = exportUrl;
+    link.target = '_blank';
+    link.download = `Reporte_${code}_${this.moneda()}_${this.authService.currentGestion()}.xlsx`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   }
 
   imprimirReporte(): void {

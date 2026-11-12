@@ -65,29 +65,22 @@ export class Login {
     }
   }
 
-  onSubmit(): void {
+  async onSubmit(): Promise<void> {
     this.errorMessage.set('');
     this.isSubmitting.set(true);
 
-    // Verificación de credenciales simulada
-    setTimeout(() => {
+    try {
+      const ok = await this.authService.login(this.email(), this.password());
       this.isSubmitting.set(false);
-      const emailVal = this.email().toLowerCase().trim();
-
-      if (emailVal.includes('admin')) {
-        this.authService.switchUser('ADMIN');
-      } else if (emailVal.includes('finanz')) {
-        this.authService.switchUser('FINANCE');
-      } else if (emailVal.includes('coord') || emailVal.includes('scz')) {
-        this.authService.switchUser('COORDINATOR');
-      } else if (emailVal.includes('audit')) {
-        this.authService.switchUser('AUDITOR');
+      if (ok) {
+        const returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/dashboard';
+        this.router.navigateByUrl(returnUrl);
       } else {
-        this.authService.switchUser('ADMIN');
+        this.errorMessage.set('Credenciales no válidas. Por favor verifique sus datos.');
       }
-
-      const returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/dashboard';
-      this.router.navigateByUrl(returnUrl);
-    }, 400);
+    } catch {
+      this.isSubmitting.set(false);
+      this.errorMessage.set('Error al conectar con el servidor de autenticación.');
+    }
   }
 }

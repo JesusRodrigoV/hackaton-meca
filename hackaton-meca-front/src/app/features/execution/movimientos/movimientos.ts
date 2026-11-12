@@ -1,4 +1,4 @@
-import { Component, inject, signal, computed } from '@angular/core';
+import { Component, inject, signal, computed, OnInit } from '@angular/core';
 import { CommonModule, DecimalPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { FinancialService } from '../../../core/services/financial';
@@ -11,9 +11,13 @@ import { BoxIconComponent } from '../../../shared/components/box-icon/box-icon';
   templateUrl: './movimientos.html',
   styleUrl: './movimientos.scss'
 })
-export class Movimientos {
+export class Movimientos implements OnInit {
   readonly financialService = inject(FinancialService);
   readonly authService = inject(AuthService);
+
+  ngOnInit(): void {
+    this.financialService.cargarMovimientosApi();
+  }
 
   readonly searchQuery = signal<string>('');
   readonly selectedRegion = signal<string>('TODAS');

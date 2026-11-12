@@ -2,43 +2,51 @@
  * Configuración de endpoints y URLs de integración con el backend FastAPI
  */
 export const API_CONFIG = {
-  baseUrl: '/api',
+  baseUrl: '/api/v1',
   endpoints: {
     auth: {
-      login: '/api/auth/login',
-      me: '/api/auth/me',
-      refresh: '/api/auth/refresh',
-      logout: '/api/auth/logout'
+      login: '/api/v1/auth/login',
+      me: '/api/v1/auth/me',
+      refresh: '/api/v1/auth/refresh',
+      logout: '/api/v1/auth/logout',
+      changePassword: '/api/v1/auth/change-password'
     },
     presupuestos: {
-      techos: '/api/presupuestos/techos',
-      modificaciones: '/api/presupuestos/modificaciones',
-      aprobarModificacion: (id: number) => `/api/presupuestos/modificaciones/${id}/aprobar`,
-      resumen: '/api/presupuestos/resumen'
+      techos: '/api/v1/presupuestos/techos',
+      modificaciones: '/api/v1/presupuestos/modificaciones',
+      aprobarModificacion: (id: number) => `/api/v1/presupuestos/modificaciones/${id}/aprobar`,
+      resumen: '/api/v1/presupuestos/resumen'
     },
     ejecucion: {
-      movimientos: '/api/ejecucion/movimientos',
-      subirPlanilla: '/api/ejecucion/importador/subir',
-      confirmarLote: (loteId: number) => `/api/ejecucion/importador/${loteId}/confirmar`,
-      revertirLote: (loteId: number) => `/api/ejecucion/importador/${loteId}/revertir`,
-      lotes: '/api/ejecucion/importador/lotes'
+      movimientos: '/api/v1/movements',
+      subirPlanilla: '/api/v1/movements/import-excel',
+      confirmarLote: (batchId: number) => `/api/v1/movements/batches/${batchId}/confirm`,
+      revertirLote: (batchId: number) => `/api/v1/movements/batches/${batchId}`,
+      lotes: '/api/v1/movements/batches'
     },
     reportes: {
-      ejecucionDonante: '/api/reportes/ejecucion-donante',
-      porFinanciador: '/api/reportes/financiador',
-      porRegion: '/api/reportes/region',
-      porArea: '/api/reportes/area',
-      partidasDesviacion: '/api/reportes/desviaciones',
-      conciliacion: '/api/reportes/conciliacion',
-      auditoriaCambios: '/api/reportes/auditoria-presupuestaria',
-      exportarExcel: (tipoReporte: string) => `/api/reportes/exportar?tipo=${tipoReporte}`
+      ejecucionDonante: '/api/v1/reports/donor-execution',
+      porFinanciador: '/api/v1/reports/by-financier',
+      porRegion: '/api/v1/reports/by-region',
+      porArea: '/api/v1/reports/by-area',
+      partidasDesviacion: '/api/v1/reports/budget-variances',
+      conciliacion: '/api/v1/reports/reconciliation',
+      auditoriaCambios: '/api/v1/reports/budget-audit-timeline',
+      exportarExcel: (tipoReporte: string) => `/api/v1/reports/export?tipo=${tipoReporte}&format=excel`,
+      exportarPdf: (tipoReporte: string) => `/api/v1/reports/export?tipo=${tipoReporte}&format=pdf`
     },
     seguridad: {
-      usuarios: '/api/seguridad/usuarios',
-      roles: '/api/seguridad/roles',
-      permisos: '/api/seguridad/permisos',
-      auditoria: '/api/seguridad/auditoria',
-      verificarIntegridad: '/api/seguridad/auditoria/verificar-integridad'
+      usuarios: '/api/v1/users',
+      roles: '/api/v1/roles',
+      permisos: '/api/v1/permissions',
+      permisosCatalogo: '/api/v1/roles/permissions/catalog',
+      auditoria: '/api/v1/audit',
+      verificarIntegridad: '/api/v1/audit/integrity'
+    },
+    dashboard: {
+      kpis: '/api/v1/dashboard/kpis',
+      chartsFinanciador: '/api/v1/dashboard/charts/by-financier',
+      chartsRegiones: '/api/v1/dashboard/charts/by-region'
     }
   }
 };

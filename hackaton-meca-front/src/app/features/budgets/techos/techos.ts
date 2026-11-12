@@ -1,4 +1,4 @@
-import { Component, inject, signal, computed } from '@angular/core';
+import { Component, inject, signal, computed, OnInit } from '@angular/core';
 import { CommonModule, DecimalPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
@@ -13,9 +13,13 @@ import { PresupuestoTecho } from '../../../core/models/financial';
   templateUrl: './techos.html',
   styleUrl: './techos.scss'
 })
-export class Techos {
+export class Techos implements OnInit {
   readonly financialService = inject(FinancialService);
   readonly authService = inject(AuthService);
+
+  ngOnInit(): void {
+    this.financialService.cargarTechosApi();
+  }
 
   readonly searchQuery = signal<string>('');
   readonly selectedRegion = signal<string>('TODAS');

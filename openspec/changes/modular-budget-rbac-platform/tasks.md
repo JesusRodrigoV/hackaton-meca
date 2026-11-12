@@ -40,14 +40,14 @@
 
 ## 8. Frontend Master Suites (Angular)
 
-- [ ] 8.1 Build Login and forced password change screens with reactive forms and auth store in Angular
-- [ ] 8.2 Build main layout shell with collapsible Sidebar, Topbar showing active scope badge, and `*hasPermission` structural directive
-- [ ] 8.3 Build Executive Dashboard suite with KPI summary cards and Chart.js/ApexCharts visualizations
-- [ ] 8.4 Build Budget Ceilings and Modifications screens with data tables and transfer modals
-- [ ] 8.5 Build Movements Ledger and Excel Drag-and-Drop Ingestion suite with upload feedback and batch rollback buttons
-- [ ] 8.6 Build Financial Reports Center suite featuring 7-in-1 tabbed views, combined multi-filters, and Excel/PDF export buttons
-- [ ] 8.7 Build Security & Governance suite with Users directory, Dynamic RBAC checkbox matrix, and Audit Log timeline
+- [x] 8.1 Build Login and forced password change screens with reactive forms and auth store in Angular
+- [x] 8.2 Build main layout shell with collapsible Sidebar, Topbar showing active scope badge, and `*hasPermission` structural directive
+- [x] 8.3 Build Executive Dashboard suite with KPI summary cards and Chart.js/ApexCharts visualizations
+- [x] 8.4 Build Budget Ceilings and Modifications screens with data tables and transfer modals
+- [x] 8.5 Build Movements Ledger and Excel Drag-and-Drop Ingestion suite with upload feedback and batch rollback buttons
+- [x] 8.6 Build Financial Reports Center suite featuring 7-in-1 tabbed views, combined multi-filters, and Excel/PDF export buttons
+- [x] 8.7 Build Security & Governance suite with Users directory, Dynamic RBAC checkbox matrix, and Audit Log timeline
 
 ## 9. End-to-End Verification & Role Simulation
 
-- [ ] 9.1 Run simulated end-to-end user journeys verifying Super Admin, Finance Officer, Santa Cruz Coordinator, and External Donante profiles receive strictly scoped views and permissions
+- [x] 9.1 Run simulated end-to-end user journeys verifying Super Admin, Finance Officer, Santa Cruz Coordinator, and External Donante profiles receive strictly scoped views and permissions

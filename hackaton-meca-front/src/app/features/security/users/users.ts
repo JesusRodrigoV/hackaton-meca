@@ -1,7 +1,10 @@
-import { Component, signal } from '@angular/core';
+import { Component, signal, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { HttpClient } from '@angular/common/http';
+import { firstValueFrom } from 'rxjs';
 import { BoxIconComponent } from '../../../shared/components/box-icon/box-icon';
+import { API_CONFIG } from '../../../core/config/api.config';
 
 export interface UsuarioItem {
   id: number;
@@ -20,7 +23,8 @@ export interface UsuarioItem {
   templateUrl: './users.html',
   styleUrl: './users.scss'
 })
-export class Users {
+export class Users implements OnInit {
+  private readonly http = inject(HttpClient, { optional: true });
   readonly searchQuery = signal<string>('');
 
   readonly usuarios = signal<UsuarioItem[]>([
@@ -78,5 +82,28 @@ export class Users {
 
   toggleActivo(user: UsuarioItem): void {
     user.activo = !user.activo;
+  }
+
+  async ngOnInit(): Promise<void> {
+    if (!this.http) return;
+    try {
+      const resp = await firstValueFrom(this.http.get<any>(API_CONFIG.endpoints.seguridad.usuarios));
+      const items = Array.isArray(resp) ? resp : resp?.items;
+      if (Array.isArray(items) && items.length > 0) {
+        const loaded: UsuarioItem[] = items.map((u: any) => ({
+          id: u.id,
+          nombreCompleto: u.full_name || `${u.first_name || ''} ${u.last_name || ''}`.trim() || u.email,
+          email: u.email,
+          rol: u.roles?.[0]?.name || 'Usuario',
+          rolCodigo: u.roles?.[0]?.code || 'ADMIN',
+          alcanceTipo: 'GLOBAL',
+          alcanceValor: 'Nivel Nacional',
+          activo: u.is_active ?? true
+        }));
+        this.usuarios.set(loaded);
+      }
+    } catch {
+      // Mantiene usuarios demo por defecto
+    }
   }
 }

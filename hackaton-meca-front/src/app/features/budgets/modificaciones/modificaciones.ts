@@ -50,7 +50,7 @@ export class Modificaciones {
 
     const solicitante = this.authService.currentUser()?.fullName ?? 'Usuario Operativo';
 
-    this.financialService.agregarModificacion({
+    this.financialService.solicitarModificacionApi({
       tipo: this.tipoModificacion(),
       descripcion: this.descripcion(),
       cuentaOrigen: this.tipoModificacion() === 'TRASPASO' ? this.cuentaOrigen() : undefined,
@@ -64,6 +64,6 @@ export class Modificaciones {
 
   aprobar(id: number): void {
     const aprobador = this.authService.currentUser()?.fullName ?? 'Aprobador Autorizado';
-    this.financialService.aprobarModificacion(id, aprobador);
+    this.financialService.aprobarModificacionApi(id, aprobador);
   }
 }
