@@ -1,164 +1,118 @@
 import logging
-from sqlalchemy.orm import Session
-from redis.asyncio import Redis
 from datetime import datetime, timedelta, timezone
+
+from redis.asyncio import Redis
+
+from app.core.config import settings
+from app.models.security import User
 
 logger = logging.getLogger(__name__)
 
-from app.db.session import SessionLocal
-from app.models.user import User
-from app.db.cache import get_cache_client
-from fastapi import Depends
+MAX_FAILED_ATTEMPTS = settings.MAX_FAILED_ATTEMPTS
+LOCKOUT_DURATION_MINUTES = settings.LOCKOUT_DURATION_MINUTES
+FAILED_ATTEMPTS_TTL_SECONDS = LOCKOUT_DURATION_MINUTES * 60
+FAILED_LOGIN_PREFIX = "meca:failed_login:"
 
-
-MAX_FAILED_ATTEMPTS = 5
-# tiempo bloqueo
-LOCKOUT_DURATION_MINUTES = 5 
-# Cuanto va recordar redis el tiempo de bloqueo
-FAILED_ATTEMPTS_TTL_SECONDS = 300
-
-FAILED_LOGIN_PREFIX = "failed_login:"
-
-# In-memory dictionary fallback to store failed attempts with timestamp
-# Format: {identifier: {"count": int, "last_attempt": datetime}}
-_memory_failed_attempts = {}
+# In-memory fallback used only when Redis is not available.
+_memory_failed_attempts: dict[str, dict] = {}
 
 
 def _get_redis_key(identifier: str) -> str:
-    """Generar clave redis"""
     return f"{FAILED_LOGIN_PREFIX}{identifier.lower().strip()}"
 
 
-def _clean_expired_memory_attempts():
-    """Limpia los intentos de inicio de sesión expirados en memoria"""
+def _clean_expired_memory_attempts() -> None:
     now = datetime.now(timezone.utc)
-    expired_keys = []
-    for k, v in _memory_failed_attempts.items():
-        if now - v["last_attempt"] > timedelta(seconds=FAILED_ATTEMPTS_TTL_SECONDS):
-            expired_keys.append(k)
-    for k in expired_keys:
-        if k in _memory_failed_attempts:
-            del _memory_failed_attempts[k]
+    expired = [
+        key
+        for key, value in _memory_failed_attempts.items()
+        if now - value["last_attempt"] > timedelta(seconds=FAILED_ATTEMPTS_TTL_SECONDS)
+    ]
+    for key in expired:
+        _memory_failed_attempts.pop(key, None)
+
+
+def _increment_memory(identifier: str) -> None:
+    _clean_expired_memory_attempts()
+    now = datetime.now(timezone.utc)
+    current = _memory_failed_attempts.get(identifier)
+    if current:
+        current["count"] += 1
+        current["last_attempt"] = now
+    else:
+        _memory_failed_attempts[identifier] = {"count": 1, "last_attempt": now}
 
 
 async def increment_login_failure(
     email: str,
-    cache: Redis = Depends(get_cache_client)
-):
-    """
-    Incrementa el contador de fallos para un identificador en Redis (con fallback en memoria)
-    """
+    cache: Redis | None = None,
+) -> None:
     identifier = email.lower().strip()
-    if not cache:
-        logger.warning("Cliente Redis no disponible. Usando fallback en memoria para increment_login_failure")
-        _clean_expired_memory_attempts()
-        now = datetime.now(timezone.utc)
-        if identifier in _memory_failed_attempts:
-            _memory_failed_attempts[identifier]["count"] += 1
-            _memory_failed_attempts[identifier]["last_attempt"] = now
-        else:
-            _memory_failed_attempts[identifier] = {"count": 1, "last_attempt": now}
+    if cache is None:
+        _increment_memory(identifier)
         return
 
-    key = _get_redis_key(email)
+    key = _get_redis_key(identifier)
     try:
         async with cache.pipeline() as pipe:
             await pipe.incr(key)
             await pipe.expire(key, FAILED_ATTEMPTS_TTL_SECONDS)
             await pipe.execute()
-    except Exception as e:
-        logger.error("Error al incrementar fallos en Redis: %s. Usando fallback en memoria", e)
-        _clean_expired_memory_attempts()
-        now = datetime.now(timezone.utc)
-        if identifier in _memory_failed_attempts:
-            _memory_failed_attempts[identifier]["count"] += 1
-            _memory_failed_attempts[identifier]["last_attempt"] = now
-        else:
-            _memory_failed_attempts[identifier] = {"count": 1, "last_attempt": now}
+    except Exception:
+        logger.exception("No se pudo incrementar fallos en Redis; usando memoria")
+        _increment_memory(identifier)
 
 
 async def get_login_failures(
     email: str,
-    cache: Redis = Depends(get_cache_client)
+    cache: Redis | None = None,
 ) -> int:
-    """
-    Obtiene el numero de fallos acumulados (con fallback en memoria)
-    """
     identifier = email.lower().strip()
-    if not cache:
-        logger.warning("Cliente Redis no disponible. Usando fallback en memoria para get_login_failures")
+    if cache is None:
         _clean_expired_memory_attempts()
-        return _memory_failed_attempts.get(identifier, {}).get("count", 0)
+        return int(_memory_failed_attempts.get(identifier, {}).get("count", 0))
 
-    key = _get_redis_key(email)
     try:
-        failures = await cache.get(key)
+        failures = await cache.get(_get_redis_key(identifier))
         return int(failures) if failures else 0
-    except Exception as e:
-        logger.error("Error al obtener fallos de Redis: %s. Usando fallback en memoria", e)
+    except Exception:
+        logger.exception("No se pudieron leer fallos de Redis; usando memoria")
         _clean_expired_memory_attempts()
-        return _memory_failed_attempts.get(identifier, {}).get("count", 0)
+        return int(_memory_failed_attempts.get(identifier, {}).get("count", 0))
 
 
 async def clear_login_failures(
     email: str,
-    cache: Redis = Depends(get_cache_client)
-):
-    """
-    Limpia el contador de fallos (con fallback en memoria)
-    """
+    cache: Redis | None = None,
+) -> None:
     identifier = email.lower().strip()
-    if not cache:
-        logger.warning("Cliente Redis no disponible. Usando fallback en memoria para clear_login_failures")
-        if identifier in _memory_failed_attempts:
-            del _memory_failed_attempts[identifier]
+    _memory_failed_attempts.pop(identifier, None)
+    if cache is None:
         return
-        
-    key = _get_redis_key(email)
     try:
-        await cache.delete(key)
-    except Exception as e:
-        logger.error("Error al borrar fallos de Redis: %s. Usando fallback en memoria", e)
-        if identifier in _memory_failed_attempts:
-            del _memory_failed_attempts[identifier]
+        await cache.delete(_get_redis_key(identifier))
+    except Exception:
+        logger.exception("No se pudieron limpiar fallos de Redis")
 
 
-def lock_account(user_id: str) -> None:
-    """
-    Escribe el bloqueo oficial en la base de datos
-    """
-    db: Session = SessionLocal()
-    try:
-        # Búsqueda ultra robusta por ID, username o email para soportar cualquier identificador
-        user = db.query(User).filter(
-            (User.id == user_id) | 
-            (User.username == user_id) | 
-            (User.email == user_id)
-        ).first()
-        
-        if user:
-            lock_until_time = datetime.now(timezone.utc) + timedelta(minutes=LOCKOUT_DURATION_MINUTES)
-            user.locked_until = lock_until_time
-            db.add(user)
-            db.commit()
-            logger.info("Cuenta del usuario %s bloqueada exitosamente hasta %s", user.id, lock_until_time)
-    except Exception as e:
-        logger.exception("Error en background task (lock_account) para %s", user_id)
-        db.rollback()
-    finally:
-        db.close()
+def lockout_deadline() -> datetime:
+    return datetime.now(timezone.utc) + timedelta(minutes=LOCKOUT_DURATION_MINUTES)
+
+
+def _as_utc(value: datetime) -> datetime:
+    if value.tzinfo is None:
+        return value.replace(tzinfo=timezone.utc)
+    return value
 
 
 def is_account_locked(user: User) -> bool:
-    """
-    Verifica de forma segura y compatible con zonas horarias si la cuenta está bloqueada
-    """
     if not user.locked_until:
         return False
+    return _as_utc(user.locked_until) > datetime.now(timezone.utc)
 
-    locked_until = user.locked_until
-    # Soporte para base de datos con datetimes naive (sin zona horaria)
-    if locked_until.tzinfo is None:
-        locked_until = locked_until.replace(tzinfo=timezone.utc)
 
-    return locked_until > datetime.now(timezone.utc)
+def remaining_lockout_minutes(user: User) -> int:
+    if not user.locked_until:
+        return 0
+    remaining = _as_utc(user.locked_until) - datetime.now(timezone.utc)
+    return max(1, int(remaining.total_seconds() / 60))

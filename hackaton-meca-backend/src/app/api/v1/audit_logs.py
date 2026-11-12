@@ -1,66 +1,58 @@
-from fastapi import APIRouter, Depends
-from fastapi_pagination import Page
+from datetime import date
+from typing import Optional
+
+from fastapi import APIRouter, Depends, HTTPException, Query, status
+from fastapi_pagination import Page, Params
 from fastapi_pagination.ext.sqlalchemy import paginate
 from sqlalchemy.orm import Session
 
 from app.core.dependencies import require_permission
-from app.core.enums import AuditLogType, PermissionCode
+from app.core.enums import PermissionCode
 from app.crud import audit as crud_audit
 from app.db.session import get_db
+from app.models.security import User
 from app.schemas.audit import AuditLogOut
 
 router = APIRouter()
 
 
-from datetime import date
-from typing import Optional
-from fastapi import APIRouter, Depends, Query as FastAPIQuery
-
-@router.get(
-    "/application",
-    response_model=Page[AuditLogOut],
-    dependencies=[Depends(require_permission(PermissionCode.AUDIT_APPLICATION_LOGS))],
-    summary="Obtener log de aplicación",
-)
-def get_application_logs(
+@router.get("", response_model=Page[AuditLogOut])
+def list_audit_logs(
+    action: Optional[str] = Query(None),
+    entity: Optional[str] = Query(None),
+    entity_id: Optional[str] = Query(None),
+    user_id: Optional[int] = Query(None),
+    date_from: Optional[date] = Query(None),
+    date_to: Optional[date] = Query(None),
+    search: Optional[str] = Query(None),
+    page: int = Query(1, ge=1),
+    size: int = Query(20, ge=1, le=100),
+    _: User = Depends(require_permission(PermissionCode.AUDITORIA_VER)),
     db: Session = Depends(get_db),
-    date_from: Optional[date] = None,
-    date_to: Optional[date] = None,
-    search: Optional[str] = None,
-    user_id: Optional[str] = None,
 ):
-    return paginate(
-        crud_audit.get_audit_logs_by_type_query(
-            db=db, 
-            log_type=AuditLogType.APPLICATION,
-            date_from=date_from,
-            date_to=date_to,
-            search=search,
-            user_id=user_id
-        )
+    query = crud_audit.get_audit_logs_query(
+        db,
+        action=action,
+        entity=entity,
+        entity_id=entity_id,
+        user_id=user_id,
+        date_from=date_from,
+        date_to=date_to,
+        search=search,
     )
+    return paginate(query, Params(page=page, size=size))
 
 
-@router.get(
-    "/security",
-    response_model=Page[AuditLogOut],
-    dependencies=[Depends(require_permission(PermissionCode.AUDIT_SECURITY_LOGS))],
-    summary="Obtener log de seguridad OSI",
-)
-def get_security_logs(
+@router.get("/{log_id}", response_model=AuditLogOut)
+def get_audit_log(
+    log_id: int,
+    _: User = Depends(require_permission(PermissionCode.AUDITORIA_VER)),
     db: Session = Depends(get_db),
-    date_from: Optional[date] = None,
-    date_to: Optional[date] = None,
-    search: Optional[str] = None,
-    user_id: Optional[str] = None,
 ):
-    return paginate(
-        crud_audit.get_audit_logs_by_type_query(
-            db=db, 
-            log_type=AuditLogType.SECURITY,
-            date_from=date_from,
-            date_to=date_to,
-            search=search,
-            user_id=user_id
+    log = crud_audit.get_audit_log(db, log_id)
+    if not log:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Registro de auditoría no encontrado",
         )
-    )
+    return log

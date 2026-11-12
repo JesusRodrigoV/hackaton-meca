@@ -1,45 +1,32 @@
 from typing import List, Optional
 
-from pydantic import BaseModel, ConfigDict, EmailStr, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 
-class PermissionOut(BaseModel):
-    id: int
-    code: str
-    name: str
+class PermissionBase(BaseModel):
+    code: str = Field(..., min_length=1, max_length=100)
+    name: str = Field(..., min_length=1, max_length=120)
+    module: str = Field(..., min_length=1, max_length=50)
     description: Optional[str] = None
-    module: str
+
+
+class PermissionCreate(PermissionBase):
+    pass
+
+
+class PermissionUpdate(BaseModel):
+    name: Optional[str] = Field(None, min_length=1, max_length=120)
+    description: Optional[str] = None
+    is_active: Optional[bool] = None
+
+
+class PermissionOut(PermissionBase):
+    id: int
     is_active: bool
 
     model_config = ConfigDict(from_attributes=True)
 
 
-class UserPermissionToggle(BaseModel):
-    permission_id: int
-    allowed: bool = True
-
-
-class UserPermissionState(PermissionOut):
-    allowed: bool
-    source: str
-
-
-class UserPermissionMatrixItem(BaseModel):
-    id: int
-    email: EmailStr
-    username: str
-    is_active: bool
-    role_id: int
-    role_name: str
-    photo_url: Optional[str] = None
-    created_at: Optional[str] = None
-    permissions: List[UserPermissionState] = Field(default_factory=list)
-
-
-class UserPermissionMatrixPage(BaseModel):
-    items: List[UserPermissionMatrixItem]
-    total: int
-    page: int
-    size: int
-    pages: int
-    permissions: List[PermissionOut]
+class PermissionGroup(BaseModel):
+    module: str
+    permissions: List[PermissionOut] = Field(default_factory=list)

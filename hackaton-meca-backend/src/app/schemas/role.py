@@ -4,7 +4,8 @@ from pydantic import BaseModel, ConfigDict, Field
 
 
 class RoleBase(BaseModel):
-    name: str = Field(..., min_length=1, max_length=50, description="Nombre del rol")
+    name: str = Field(..., min_length=1, max_length=50)
+    description: Optional[str] = None
 
 
 class RoleCreate(RoleBase):
@@ -12,14 +13,14 @@ class RoleCreate(RoleBase):
 
 
 class RoleUpdate(BaseModel):
-    name: Optional[str] = Field(
-        None, min_length=1, max_length=50, description="Nombre del rol"
-    )
+    name: Optional[str] = Field(None, min_length=1, max_length=50)
+    description: Optional[str] = None
 
 
-class RolePermissionToggle(BaseModel):
-    permission_id: int
-    allowed: bool = True
+class RolePermissionUpdate(BaseModel):
+    """Reemplaza la matriz del rol. La presencia del permiso significa permitido."""
+
+    permission_ids: List[int] = Field(default_factory=list)
 
 
 class RolePermissionState(BaseModel):
@@ -29,20 +30,22 @@ class RolePermissionState(BaseModel):
     description: Optional[str] = None
     module: str
     is_active: bool
-    allowed: bool
+    assigned: bool = False
 
 
 class RolePermissionsItem(BaseModel):
     id: int
     name: str
+    description: Optional[str] = None
     permissions: List[RolePermissionState] = Field(default_factory=list)
 
 
 class RoleItem(BaseModel):
     id: int
     name: str
+    description: Optional[str] = None
+    is_system: bool = False
     user_count: int = 0
-    has_custom_permissions: bool = False
 
     model_config = ConfigDict(from_attributes=True)
 
@@ -54,5 +57,7 @@ class RoleDetail(RoleItem):
 class RoleOut(BaseModel):
     id: int
     name: str
+    description: Optional[str] = None
+    is_system: bool = False
 
     model_config = ConfigDict(from_attributes=True)
