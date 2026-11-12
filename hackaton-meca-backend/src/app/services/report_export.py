@@ -298,10 +298,48 @@ def _format_cell(value: Any, is_numeric: bool) -> str:
     return html.escape(str(value if value is not None else ""))
 
 
+def _compute_col_widths(
+    headers: list[str],
+    rows: list[list[Any]],
+    numeric_indices: set[int],
+) -> list[float]:
+    """Compute percentage widths summing to 100% so wide tables never overflow."""
+    n = len(headers)
+    if n == 0:
+        return []
+
+    sample_rows = rows[:50]
+    weights: list[float] = []
+    for idx, h in enumerate(headers):
+        # Header words can wrap, so weight by longest word + a fraction of total header
+        header_words = [len(w) for w in h.split()] or [len(h)]
+        header_weight = max(max(header_words) + 2, len(h) * 0.55)
+
+        if idx in numeric_indices:
+            max_num_len = max(
+                (len(_format_cell(r[idx], True)) for r in sample_rows if idx < len(r)),
+                default=8,
+            )
+            w = max(header_weight, max_num_len + 2, 10.0)
+        else:
+            avg_text_len = (
+                sum(len(str(r[idx] or "")) for r in sample_rows if idx < len(r)) / max(len(sample_rows), 1)
+            )
+            w = max(header_weight, min(avg_text_len * 0.85, 28.0), 8.0)
+        weights.append(w)
+
+    total = sum(weights) or 1.0
+    return [round((w / total) * 100.0, 2) for w in weights]
+
+
 def render_pdf_bytes(dataset: ReportDataset, generated_by: str, moneda: str = "BOB") -> bytes:
     from weasyprint import HTML
 
     generated_at = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
+    is_wide = len(dataset.headers) >= 10
+    col_widths = _compute_col_widths(dataset.headers, dataset.rows, dataset.numeric_indices)
+    colgroup_html = "<colgroup>" + "".join(f'<col style="width: {w}%;" />' for w in col_widths) + "</colgroup>"
+
     headers_html = "".join(
         f'<th class="{"num" if idx in dataset.numeric_indices else ""}">{html.escape(h)}</th>'
         for idx, h in enumerate(dataset.headers)
@@ -321,6 +359,10 @@ def render_pdf_bytes(dataset: ReportDataset, generated_by: str, moneda: str = "B
         colspan = max(len(dataset.headers), 1)
         rows_html = f'<tr><td colspan="{colspan}" class="empty">Sin registros para este reporte.</td></tr>'
 
+    base_font = "6.8pt" if is_wide else "8.5pt"
+    th_font = "6.6pt" if is_wide else "8pt"
+    cell_pad = "3.5px 4px" if is_wide else "5px 7px"
+
     html_doc = f"""<!DOCTYPE html>
 <html lang="es">
 <head>
@@ -328,30 +370,33 @@ def render_pdf_bytes(dataset: ReportDataset, generated_by: str, moneda: str = "B
 <style>
   @page {{
     size: A4 landscape;
-    margin: 14mm 12mm 16mm 12mm;
+    margin: 12mm 10mm 14mm 10mm;
     @bottom-left {{
       content: "Enseña por Bolivia · Sistema MECA";
       font-family: "DejaVu Sans", sans-serif;
-      font-size: 8pt;
+      font-size: 7.5pt;
       color: #64748b;
     }}
     @bottom-right {{
       content: "Página " counter(page) " de " counter(pages);
       font-family: "DejaVu Sans", sans-serif;
-      font-size: 8pt;
+      font-size: 7.5pt;
       color: #64748b;
     }}
   }}
+  * {{
+    box-sizing: border-box;
+  }}
   body {{
     font-family: "DejaVu Sans", sans-serif;
-    font-size: 8.5pt;
+    font-size: {base_font};
     color: #0f172a;
     margin: 0;
   }}
   .doc-header {{
     border-bottom: 2px solid #2B255C;
     padding-bottom: 8px;
-    margin-bottom: 12px;
+    margin-bottom: 10px;
     display: flex;
     justify-content: space-between;
     align-items: flex-end;
@@ -364,20 +409,20 @@ def render_pdf_bytes(dataset: ReportDataset, generated_by: str, moneda: str = "B
     letter-spacing: 0.04em;
   }}
   h1 {{
-    font-size: 14pt;
+    font-size: 13pt;
     margin: 2px 0 0 0;
     color: #0f172a;
   }}
   .meta {{
     text-align: right;
-    font-size: 8pt;
+    font-size: 7.5pt;
     color: #475569;
     line-height: 1.4;
   }}
   table {{
     width: 100%;
     border-collapse: collapse;
-    table-layout: auto;
+    table-layout: fixed;
   }}
   thead {{
     display: table-header-group;
@@ -390,15 +435,21 @@ def render_pdf_bytes(dataset: ReportDataset, generated_by: str, moneda: str = "B
     color: #ffffff;
     font-weight: 700;
     text-align: left;
-    padding: 6px 7px;
-    font-size: 8pt;
+    padding: {cell_pad};
+    font-size: {th_font};
+    line-height: 1.25;
     border: 1px solid #2B255C;
+    white-space: normal;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
   }}
   td {{
-    padding: 5px 7px;
+    padding: {cell_pad};
     border-bottom: 1px solid #e2e8f0;
     vertical-align: top;
-    word-break: break-word;
+    line-height: 1.25;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
   }}
   tbody tr:nth-child(even) {{
     background-color: #f8fafc;
@@ -428,6 +479,7 @@ def render_pdf_bytes(dataset: ReportDataset, generated_by: str, moneda: str = "B
     </div>
   </header>
   <table>
+    {colgroup_html}
     <thead><tr>{headers_html}</tr></thead>
     <tbody>{rows_html}</tbody>
   </table>
