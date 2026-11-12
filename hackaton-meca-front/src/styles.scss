@@ -1,1 +1,89 @@
-/* You can add global styles to this file, and also import other style files */
+/* ==========================================================================
+   PALETA OFICIAL - ENSEÑA POR BOLIVIA
+   ========================================================================== */
+
+/* CSS HEX Variables */
+:root {
+  --bright-snow: #f8f9faff;
+  --space-indigo: #1b2a49ff;
+  --mint-leaf: #10b981ff;
+  --rosewood: #b24c63ff;
+  --cerulean: #0081afff;
+
+  /* Semántica de Aplicación */
+  --color-bg: var(--bright-snow);
+  --color-surface: #ffffff;
+  --color-text-primary: var(--space-indigo);
+  --color-text-secondary: #4a5568;
+  --color-text-muted: #718096;
+  --color-accent: var(--cerulean);
+  --color-success: var(--mint-leaf);
+  --color-danger: var(--rosewood);
+  --color-border: #e2e8f0;
+}
+
+/* CSS HSL Variables */
+:root {
+  --bright-snow-hsl: hsla(210, 17%, 98%, 1);
+  --space-indigo-hsl: hsla(220, 46%, 20%, 1);
+  --mint-leaf-hsl: hsla(160, 84%, 39%, 1);
+  --rosewood-hsl: hsla(346, 40%, 50%, 1);
+  --cerulean-hsl: hsla(196, 100%, 34%, 1);
+}
+
+/* SCSS Variables (Hex) */
+$bright-snow: #f8f9faff;
+$space-indigo: #1b2a49ff;
+$mint-leaf: #10b981ff;
+$rosewood: #b24c63ff;
+$cerulean: #0081afff;
+
+/* SCSS Variables (HSL) */
+$bright-snow-hsl: hsla(210, 17%, 98%, 1);
+$space-indigo-hsl: hsla(220, 46%, 20%, 1);
+$mint-leaf-hsl: hsla(160, 84%, 39%, 1);
+$rosewood-hsl: hsla(346, 40%, 50%, 1);
+$cerulean-hsl: hsla(196, 100%, 34%, 1);
+
+/* SCSS Variables (RGB) */
+$bright-snow-rgb: rgba(248, 249, 250, 1);
+$space-indigo-rgb: rgba(27, 42, 73, 1);
+$mint-leaf-rgb: rgba(16, 185, 129, 1);
+$rosewood-rgb: rgba(178, 76, 99, 1);
+$cerulean-rgb: rgba(0, 129, 175, 1);
+
+/* SCSS Gradients */
+$gradient-top: linear-gradient(0deg, #f8f9faff, #1b2a49ff, #10b981ff, #b24c63ff, #0081afff);
+$gradient-right: linear-gradient(90deg, #f8f9faff, #1b2a49ff, #10b981ff, #b24c63ff, #0081afff);
+$gradient-bottom: linear-gradient(180deg, #f8f9faff, #1b2a49ff, #10b981ff, #b24c63ff, #0081afff);
+$gradient-left: linear-gradient(270deg, #f8f9faff, #1b2a49ff, #10b981ff, #b24c63ff, #0081afff);
+$gradient-top-right: linear-gradient(45deg, #f8f9faff, #1b2a49ff, #10b981ff, #b24c63ff, #0081afff);
+$gradient-bottom-right: linear-gradient(135deg, #f8f9faff, #1b2a49ff, #10b981ff, #b24c63ff, #0081afff);
+$gradient-top-left: linear-gradient(225deg, #f8f9faff, #1b2a49ff, #10b981ff, #b24c63ff, #0081afff);
+$gradient-bottom-left: linear-gradient(315deg, #f8f9faff, #1b2a49ff, #10b981ff, #b24c63ff, #0081afff);
+$gradient-radial: radial-gradient(#f8f9faff, #1b2a49ff, #10b981ff, #b24c63ff, #0081afff);
+
+/* ==========================================================================
+   ESTILOS GLOBALES BASE
+   ========================================================================== */
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background-color: var(--bright-snow);
+  color: var(--space-indigo);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Tipografía de cifras contables */
+.tabular-nums, .numeric-data {
+  font-family: 'JetBrains Mono', 'Roboto Mono', monospace;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
