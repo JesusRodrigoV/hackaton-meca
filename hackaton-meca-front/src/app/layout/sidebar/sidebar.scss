@@ -8,6 +8,7 @@
   border-right: 1px solid rgba(255, 255, 255, 0.08);
   user-select: none;
   flex-shrink: 0;
+  transition: width 0.22s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .sidebar-header {
@@ -17,7 +18,7 @@
   padding: 1.25rem 1rem;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 
-  .brand {
+  .brand-btn {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -25,12 +26,26 @@
     background-color: #ffffff;
     padding: 0.5rem 0.75rem;
     border-radius: 8px;
+    border: none;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    outline: none;
+
+    &:hover {
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+      transform: translateY(-1px);
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
 
     .brand-image {
       max-height: 38px;
       max-width: 100%;
       object-fit: contain;
+      transition: all 0.2s ease;
     }
   }
 }
@@ -39,6 +54,7 @@
   flex: 1;
   padding: 1rem 0;
   overflow-y: auto;
+  overflow-x: hidden;
   display: flex;
   flex-direction: column;
   gap: 1.25rem;
@@ -56,6 +72,7 @@
       letter-spacing: 0.08em;
       text-transform: uppercase;
       margin-bottom: 0.35rem;
+      white-space: nowrap;
     }
 
     .nav-list {
@@ -162,6 +179,58 @@
         overflow: hidden;
         text-overflow: ellipsis;
       }
+    }
+  }
+}
+
+/* ==========================================================================
+   ESTADO COMPRIMIDO / COLAPSADO (ANCHO COMPACTO 76px)
+   ========================================================================== */
+
+.sidebar.collapsed {
+  width: 76px;
+
+  .sidebar-header {
+    padding: 1rem 0.5rem;
+
+    .brand-btn {
+      width: 48px;
+      height: 48px;
+      padding: 0.25rem;
+      border-radius: 8px;
+
+      .brand-collapsed {
+        max-height: 34px;
+        max-width: 34px;
+      }
+    }
+  }
+
+  .sidebar-nav {
+    .nav-list {
+      padding: 0 0.5rem;
+    }
+
+    .nav-link {
+      justify-content: center;
+      padding: 0.65rem 0.5rem;
+      gap: 0;
+
+      .link-icon {
+        width: 24px;
+        height: 24px;
+      }
+    }
+  }
+
+  .sidebar-footer {
+    padding: 0.875rem 0.5rem;
+    display: flex;
+    justify-content: center;
+
+    .user-pill {
+      justify-content: center;
+      gap: 0;
     }
   }
 }

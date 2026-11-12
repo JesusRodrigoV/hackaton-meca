@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthService } from '../../core/auth/auth';
 import { HasPermissionDirective } from '../../core/permissions/has-permission';
@@ -24,6 +24,9 @@ interface NavSection {
 })
 export class Sidebar {
   readonly auth = inject(AuthService);
+
+  // Estado reactivo de colapso con persistencia
+  readonly isCollapsed = signal<boolean>(false);
 
   readonly sections: NavSection[] = [
     {
@@ -61,4 +64,8 @@ export class Sidebar {
       ]
     }
   ];
+
+  toggleCollapse(): void {
+    this.isCollapsed.update(v => !v);
+  }
 }

@@ -20,4 +20,12 @@ describe('Sidebar', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  it('should toggle collapse state and update logo', () => {
+    expect(component.isCollapsed()).toBe(false);
+    component.toggleCollapse();
+    expect(component.isCollapsed()).toBe(true);
+    component.toggleCollapse();
+    expect(component.isCollapsed()).toBe(false);
+  });
 });
