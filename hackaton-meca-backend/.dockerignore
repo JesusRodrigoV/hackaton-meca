@@ -3,6 +3,7 @@ __pycache__
 *.pyc
 *.pyo
 .git
+.env
 .vscode
 .pytest_cache
 .ruff_cache

@@ -3,8 +3,9 @@ from typing import Optional
 
 from fastapi import Request
 
-
 current_client_ip: ContextVar[Optional[str]] = ContextVar("current_client_ip", default=None)
+current_user_agent: ContextVar[Optional[str]] = ContextVar("current_user_agent", default=None)
+current_request_id: ContextVar[Optional[str]] = ContextVar("current_request_id", default=None)
 
 
 def resolve_client_ip(request: Request) -> Optional[str]:
@@ -21,3 +22,15 @@ def resolve_client_ip(request: Request) -> Optional[str]:
         return real_ip.strip() or None
 
     return request.client.host if request.client else None
+
+
+def resolve_request_id(request: Request) -> Optional[str]:
+    return (
+        request.headers.get("x-request-id")
+        or request.headers.get("x-correlation-id")
+        or None
+    )
+
+
+def resolve_user_agent(request: Request) -> Optional[str]:
+    return request.headers.get("user-agent")

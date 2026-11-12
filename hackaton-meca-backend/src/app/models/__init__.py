@@ -6,6 +6,11 @@ from app.models.security import (
     UserRole,
     UserDataScope,
 )
+from app.models.auth import (
+    RefreshToken,
+    PasswordResetToken,
+    TwoFactorBackupCode,
+)
 from app.models.catalogs import (
     Region,
     Area,
@@ -45,6 +50,9 @@ __all__ = [
     "RolePermission",
     "UserRole",
     "UserDataScope",
+    "RefreshToken",
+    "PasswordResetToken",
+    "TwoFactorBackupCode",
     "Region",
     "Area",
     "Rubro",
