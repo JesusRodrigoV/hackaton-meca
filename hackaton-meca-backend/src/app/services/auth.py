@@ -236,7 +236,7 @@ def reset_password(
     return user
 
 
-def setup_totp(db: Session, user: User) -> tuple[str, str]:
+def setup_totp(db: Session, user: User) -> tuple[str, str, str]:
     if user.is_totp_enabled:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -245,7 +245,8 @@ def setup_totp(db: Session, user: User) -> tuple[str, str]:
     secret = crud_2fa.generate_totp_secret()
     crud_2fa.save_totp_secret_for_user(db, user, secret)
     uri = crud_2fa.get_otpauth_uri(secret, user.email)
-    return secret, uri
+    qr_code = crud_2fa.generate_qr_code_data_uri(uri)
+    return secret, uri, qr_code
 
 
 def enable_totp(db: Session, user: User, code: str) -> list[str]:

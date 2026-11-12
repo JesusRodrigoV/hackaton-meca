@@ -7,7 +7,7 @@ def test_api_root():
     client = TestClient(app)
     response = client.get("/")
     assert response.status_code == 200
-    assert response.json()["message"] == "MECA API is running"
+    assert response.json()["message"] == "API is running"
 
 
 def test_healthz():

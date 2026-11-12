@@ -1,4 +1,4 @@
-import { Component, inject, signal, OnInit } from '@angular/core';
+import { Component, HostListener, inject, signal, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -18,7 +18,7 @@ export class Topbar implements OnInit {
 
   // Estado del modal de 2FA
   readonly showModal2Fa = signal<boolean>(false);
-  readonly setupData = signal<{ secret: string; otpauth_uri: string } | null>(null);
+  readonly setupData = signal<{ secret: string; otpauth_uri: string; qr_code?: string } | null>(null);
   readonly verifyCode = signal<string>('');
   readonly disablePassword = signal<string>('');
   readonly disableCode = signal<string>('');
@@ -26,9 +26,17 @@ export class Topbar implements OnInit {
   readonly errorMessage = signal<string>('');
   readonly successMessage = signal<string>('');
   readonly isProcessing = signal<boolean>(false);
+  readonly copiado = signal<boolean>(false);
 
   ngOnInit(): void {
     this.auth.check2FaStatus();
+  }
+
+  @HostListener('document:keydown.escape')
+  onEscape(): void {
+    if (this.showModal2Fa()) {
+      this.cerrarModal2Fa();
+    }
   }
 
   onGestionChange(event: Event): void {
@@ -50,11 +58,28 @@ export class Topbar implements OnInit {
     this.disableCode.set('');
     this.setupData.set(null);
     this.backupCodes.set([]);
+    this.copiado.set(false);
     this.auth.check2FaStatus();
   }
 
   cerrarModal2Fa(): void {
     this.showModal2Fa.set(false);
+    this.errorMessage.set('');
+    this.successMessage.set('');
+    this.verifyCode.set('');
+    this.disablePassword.set('');
+    this.disableCode.set('');
+    this.setupData.set(null);
+    this.copiado.set(false);
+  }
+
+  copiarClaveSecreta(): void {
+    const sec = this.setupData()?.secret;
+    if (sec && typeof navigator !== 'undefined' && navigator.clipboard) {
+      navigator.clipboard.writeText(sec);
+      this.copiado.set(true);
+      setTimeout(() => this.copiado.set(false), 2000);
+    }
   }
 
   async iniciarSetup2Fa(): Promise<void> {

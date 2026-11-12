@@ -106,18 +106,29 @@
 
             <div class="form-group">
               <label>Contraseña Actual</label>
-              <input type="password" [(ngModel)]="disablePassword" placeholder="••••••••••••" />
+              <input
+                type="password"
+                [ngModel]="disablePassword()"
+                (ngModelChange)="disablePassword.set($event)"
+                placeholder="••••••••••••"
+              />
             </div>
 
             <div class="form-group">
               <label>Código de Verificación Actual (6 dígitos)</label>
-              <input type="text" [(ngModel)]="disableCode" placeholder="000000" maxlength="8" />
+              <input
+                type="text"
+                [ngModel]="disableCode()"
+                (ngModelChange)="disableCode.set($event)"
+                placeholder="000000"
+                maxlength="8"
+              />
             </div>
 
             <button
               type="button"
               class="btn-danger-outline"
-              [disabled]="isProcessing()"
+              [disabled]="isProcessing() || !disablePassword().trim() || !disableCode().trim()"
               (click)="confirmarDesactivar2Fa()"
             >
               {{ isProcessing() ? 'Desactivando...' : 'Confirmar y Desactivar 2FA' }}
@@ -154,10 +165,31 @@
               <div class="step-box">
                 <span class="step-number">1</span>
                 <div class="step-content">
-                  <h4>Configura tu aplicación autenticadora</h4>
-                  <p>Abre Google Authenticator, Authy o Microsoft Authenticator e ingresa la siguiente clave secreta:</p>
-                  <div class="secret-box">
-                    <code class="secret-code">{{ setupData()?.secret }}</code>
+                  <h4>Escanea el código QR con tu aplicación</h4>
+                  <p>Abre Google Authenticator, Authy o Microsoft Authenticator y enfoca el código con la cámara:</p>
+
+                  @if (setupData()?.qr_code) {
+                    <div class="qr-container">
+                      <div class="qr-card">
+                        <img [src]="setupData()?.qr_code" alt="Código QR 2FA" class="qr-image" />
+                      </div>
+                    </div>
+                  }
+
+                  <div class="secret-box-wrapper">
+                    <span class="secret-label">O ingresa esta clave manualmente si no puedes escanear:</span>
+                    <div class="secret-box">
+                      <code class="secret-code">{{ setupData()?.secret }}</code>
+                      <button
+                        type="button"
+                        class="btn-copy-secret"
+                        (click)="copiarClaveSecreta()"
+                        [title]="copiado() ? '¡Copiado!' : 'Copiar clave secreta'"
+                      >
+                        <app-icon [name]="copiado() ? 'check' : 'copy'" size="14px" [color]="copiado() ? '#00923d' : '#64748b'"></app-icon>
+                        <span>{{ copiado() ? 'Copiado' : 'Copiar' }}</span>
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -170,7 +202,8 @@
                   <div class="form-group">
                     <input
                       type="text"
-                      [(ngModel)]="verifyCode"
+                      [ngModel]="verifyCode()"
+                      (ngModelChange)="verifyCode.set($event)"
                       placeholder="Ej. 123456"
                       maxlength="8"
                       class="input-code"

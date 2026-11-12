@@ -61,6 +61,14 @@ def test_token_type_mismatch_is_rejected():
         decode_token(access, TokenType.REFRESH)
 
 
+def test_qr_code_generation_returns_valid_png_data_uri():
+    from app.crud.two_factor import generate_qr_code_data_uri
+    uri = "otpauth://totp/Enseña%20por%20Bolivia:test@test.com?secret=JBSWY3DPEHPK3PXP"
+    qr_data = generate_qr_code_data_uri(uri)
+    assert qr_data.startswith("data:image/png;base64,")
+    assert len(qr_data) > 100
+
+
 def test_change_password_and_two_factor_token_types():
     change_payload = decode_token(
         create_change_password_token(7),

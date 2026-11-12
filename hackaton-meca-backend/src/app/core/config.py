@@ -33,13 +33,13 @@ class Settings(BaseSettings):
     PASSWORD_RESET_TOKEN_EXPIRE_MINUTES: int = 30
 
     # Refresh cookie
-    REFRESH_COOKIE_NAME: str = "meca_refresh_token"
+    REFRESH_COOKIE_NAME: str = "exb_refresh_token"
     REFRESH_COOKIE_SECURE: bool | None = None
     REFRESH_COOKIE_SAMESITE: Literal["lax", "strict", "none"] = "lax"
     REFRESH_COOKIE_PATH: str = "/api/v1/auth"
 
     # 2FA / TOTP
-    TOTP_ISSUER: str = "MECA"
+    TOTP_ISSUER: str = "Enseña por Bolivia"
     TOTP_ENCRYPTION_KEY: str = "5M7kUdbjMza9UnY1NjNd-_sv1BF3mJZgb45FbBF9bdk="
     BACKUP_CODE_COUNT: int = 5
 
@@ -56,7 +56,7 @@ class Settings(BaseSettings):
     MAIL_STARTTLS: bool = True
     MAIL_SSL_TLS: bool = False
     MAIL_FROM: EmailStr = "no-reply@ensenaporbolivia.org"
-    MAIL_FROM_NAME: str = "MECA"
+    MAIL_FROM_NAME: str = "Enseña por Bolivia"
     FRONTEND_RESET_PASSWORD_URL: str = "http://localhost:4200/reset-password"
 
     # CORS

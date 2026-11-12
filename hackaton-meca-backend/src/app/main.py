@@ -36,14 +36,14 @@ logger = logging.getLogger(__name__)
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    logger.info("Iniciando MECA API (%s)", settings.ENVIRONMENT)
+    logger.info("Iniciando API Enseña por Bolivia (%s)", settings.ENVIRONMENT)
     yield
-    logger.info("MECA API detenida")
+    logger.info("API Enseña por Bolivia detenida")
 
 
 app = FastAPI(
-    title="MECA API",
-    description="API de control presupuestario de Enseña por Bolivia",
+    title="API Enseña por Bolivia",
+    description="API de control presupuestario y financiero de Enseña por Bolivia",
     version="1.0.0",
     lifespan=lifespan,
 )
@@ -52,7 +52,7 @@ app = FastAPI(
 @app.get("/")
 async def root():
     return {
-        "message": "MECA API is running",
+        "message": "API is running",
         "docs": "/docs",
         "version": "1.0.0",
     }

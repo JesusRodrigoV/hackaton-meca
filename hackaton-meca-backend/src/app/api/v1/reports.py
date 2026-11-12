@@ -198,7 +198,7 @@ def export_report(
     if fmt == "pdf":
         generated_by = getattr(current_user, "full_name", None) or current_user.email
         pdf_bytes = render_pdf_bytes(dataset, generated_by=generated_by, moneda=moneda.upper())
-        filename = f"Reporte_MECA_{safe_code}.pdf"
+        filename = f"Reporte_{safe_code}.pdf"
         return Response(
             content=pdf_bytes,
             media_type="application/pdf",
@@ -206,7 +206,7 @@ def export_report(
         )
 
     xlsx_bytes = render_excel_bytes(dataset)
-    filename = f"Reporte_MECA_{safe_code}.xlsx"
+    filename = f"Reporte_{safe_code}.xlsx"
     return Response(
         content=xlsx_bytes,
         media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",

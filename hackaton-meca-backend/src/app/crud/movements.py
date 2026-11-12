@@ -71,7 +71,7 @@ def list_batches(db: Session) -> List[ImportacionLoteOut]:
                 id=b.id,
                 nombreArchivo=b.file_name,
                 fechaCarga=b.created_at.strftime("%Y-%m-%d %H:%M") if b.created_at else "",
-                usuarioCarga="Administrador MECA",
+                usuarioCarga="Administrador General",
                 totalRegistros=b.total_rows,
                 totalMontoBob=float(b.archivo_debe_bob or 0),
                 estado=estado_map.get(b.status, "CONFIRMADO"),

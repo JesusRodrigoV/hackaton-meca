@@ -372,7 +372,7 @@ def render_pdf_bytes(dataset: ReportDataset, generated_by: str, moneda: str = "B
     size: A4 landscape;
     margin: 12mm 10mm 14mm 10mm;
     @bottom-left {{
-      content: "Enseña por Bolivia · Sistema MECA";
+      content: "Enseña por Bolivia";
       font-family: "DejaVu Sans", sans-serif;
       font-size: 7.5pt;
       color: #64748b;

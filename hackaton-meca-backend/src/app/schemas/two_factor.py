@@ -7,6 +7,7 @@ from pydantic import BaseModel, Field
 class TOTPSetupResponse(BaseModel):
     secret: str
     otpauth_uri: str
+    qr_code: str
 
 
 TOTPCode = Annotated[
