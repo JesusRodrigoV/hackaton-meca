@@ -20,16 +20,6 @@
   padding: 2.75rem 2.5rem 2.25rem;
   position: relative;
   overflow: hidden;
-
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 3px;
-    background: linear-gradient(90deg, var(--space-indigo) 0%, var(--forest-green) 52%, var(--tuscan-sun) 100%);
-  }
 }
 
 .login-header {
