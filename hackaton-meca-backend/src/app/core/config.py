@@ -21,10 +21,10 @@ class Settings(BaseSettings):
     TIMEZONE: str = "America/La_Paz"
 
     # Database
-    DATABASE_URL: str
+    DATABASE_URL: str = "postgresql+psycopg2://postgres:postgres@localhost:5432/meca_db"
 
     # JWT
-    SECRET_KEY: str
+    SECRET_KEY: str = "temporary-development-secret-key-32-bytes-minimum!"
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 15
     REFRESH_TOKEN_EXPIRE_DAYS: int = 30
@@ -40,7 +40,7 @@ class Settings(BaseSettings):
 
     # 2FA / TOTP
     TOTP_ISSUER: str = "MECA"
-    TOTP_ENCRYPTION_KEY: str
+    TOTP_ENCRYPTION_KEY: str = "5M7kUdbjMza9UnY1NjNd-_sv1BF3mJZgb45FbBF9bdk="
     BACKUP_CODE_COUNT: int = 5
 
     # Login lockout
@@ -57,10 +57,10 @@ class Settings(BaseSettings):
     MAIL_SSL_TLS: bool = False
     MAIL_FROM: EmailStr = "no-reply@meca.local"
     MAIL_FROM_NAME: str = "MECA"
-    FRONTEND_RESET_PASSWORD_URL: str = "http://localhost:3000/reset-password"
+    FRONTEND_RESET_PASSWORD_URL: str = "http://localhost:4200/reset-password"
 
     # CORS
-    CORS_ORIGINS: List[str] = []
+    CORS_ORIGINS: List[str] = ["http://localhost:4200"]
 
     # Redis (optional rate limiting / cache)
     REDIS_URL: str | None = None

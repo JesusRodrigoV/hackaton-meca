@@ -10,3 +10,17 @@ venv/
 .DS_Store
 dist/
 node_modules/
+
+# Environment files
+.env
+.env.local
+.env.*.local
+*.env
+!*.env.example
+!.env.example
+
+# Media & Database
+media/
+reports/
+*.sqlite
+*.sqlite3
