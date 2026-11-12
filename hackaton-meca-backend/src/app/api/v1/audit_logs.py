@@ -43,6 +43,22 @@ def list_audit_logs(
     return paginate(query, Params(page=page, size=size))
 
 
+@router.get("/integrity")
+def verify_audit_integrity(
+    _: User = Depends(require_permission(PermissionCode.AUDITORIA_VER)),
+    db: Session = Depends(get_db),
+):
+    logs = db.query(crud_audit.AuditLog).order_by(crud_audit.AuditLog.id.asc()).all()
+    valid = True
+    prev = None
+    for l in logs:
+        if l.prev_hash != prev:
+            valid = False
+            break
+        prev = l.row_hash
+    return {"valid": valid, "total_events": len(logs)}
+
+
 @router.get("/{log_id}", response_model=AuditLogOut)
 def get_audit_log(
     log_id: int,
