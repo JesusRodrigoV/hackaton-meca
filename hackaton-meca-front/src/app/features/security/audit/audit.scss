@@ -123,9 +123,9 @@
     border: 1px solid var(--color-border);
 
     &.action-import {
-      background-color: rgba(35, 32, 70, 0.08);
+      background-color: var(--space-indigo-subtle);
       color: var(--space-indigo);
-      border-color: rgba(35, 32, 70, 0.2);
+      border-color: var(--space-indigo-border);
     }
 
     &.action-approve {

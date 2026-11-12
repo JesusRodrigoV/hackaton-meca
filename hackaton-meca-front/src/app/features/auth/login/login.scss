@@ -3,7 +3,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: var(--bright-snow);
+  background: radial-gradient(circle at 50% 15%, rgba(43, 37, 92, 0.05) 0%, var(--bright-snow) 70%);
   padding: 2rem 1rem;
 }
 
@@ -12,9 +12,22 @@
   max-width: 520px;
   background-color: var(--color-surface);
   border: 1px solid var(--color-border);
+  border-top: 4px solid var(--space-indigo);
   border-radius: 12px;
   box-shadow: var(--shadow-lg);
   padding: 2.5rem;
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--space-indigo) 0%, var(--forest-green) 50%, var(--tuscan-sun) 100%);
+  }
 }
 
 .login-header {
@@ -70,7 +83,7 @@
       &:focus-within {
         border-color: var(--forest-green);
         background-color: #ffffff;
-        box-shadow: 0 0 0 3px rgba(0, 146, 61, 0.12);
+        box-shadow: 0 0 0 3px var(--forest-green-glow);
       }
 
       input {
@@ -108,26 +121,27 @@
     gap: 0.5rem;
     width: 100%;
     padding: 0.75rem 1rem;
-    background-color: var(--forest-green);
+    background: linear-gradient(135deg, var(--forest-green) 0%, var(--forest-green-hover) 100%);
     color: #ffffff;
     border: none;
     border-radius: 8px;
     font-size: 0.9375rem;
     font-weight: 600;
     cursor: pointer;
-    box-shadow: var(--shadow-sm);
-    transition: background-color 0.15s ease, transform 0.1s ease;
+    box-shadow: 0 1px 3px rgba(0, 146, 61, 0.25);
+    transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
 
     &:hover:not(:disabled) {
-      background-color: var(--forest-green-hover);
+      box-shadow: 0 3px 8px rgba(0, 146, 61, 0.35);
+      transform: translateY(-1px);
     }
 
     &:active:not(:disabled) {
-      transform: scale(0.99);
+      transform: translateY(0);
     }
 
     &:disabled {
-      opacity: 0.6;
+      opacity: 0.55;
       cursor: not-allowed;
     }
   }

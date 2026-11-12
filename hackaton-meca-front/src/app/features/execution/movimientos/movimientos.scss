@@ -43,9 +43,9 @@
       transition: all 0.15s ease;
 
       &.active {
-        background-color: #ffffff;
-        color: var(--forest-green);
-        box-shadow: var(--shadow-sm);
+        background: linear-gradient(135deg, var(--forest-green) 0%, var(--forest-green-hover) 100%);
+        color: #ffffff;
+        box-shadow: 0 1px 3px rgba(0, 146, 61, 0.25);
         font-weight: 700;
       }
     }
@@ -226,9 +226,9 @@
   .badge-fin {
     display: inline-block;
     padding: 0.2rem 0.5rem;
-    background-color: rgba(35, 32, 70, 0.08);
+    background-color: var(--space-indigo-subtle);
     color: var(--space-indigo);
-    border: 1px solid rgba(35, 32, 70, 0.18);
+    border: 1px solid var(--space-indigo-border);
     border-radius: 4px;
     font-weight: 600;
     font-size: 0.6875rem;
